@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import {
@@ -20,7 +20,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { SlidersHorizontal, AlertTriangle, CheckCircle } from "lucide-react";
+import { SlidersHorizontal, AlertTriangle, CheckCircle, Video } from "lucide-react";
+import { analyzeConveyorBelt } from "@/ai/flows/analyze-conveyor-flow";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 type AnomalyLog = {
   timestamp: Date;
@@ -37,40 +39,83 @@ export function DashboardClient() {
   const [calibrationProgress, setCalibrationProgress] = useState(0);
   const { toast } = useToast();
 
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [hasCameraPermission, setHasCameraPermission] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+
+
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (isCalibrating) return;
+    const getCameraPermission = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        setHasCameraPermission(true);
 
-      const isAnomaly = Math.random() > 0.95;
-      let newDeviation;
-      if (isAnomaly) {
-        newDeviation = 2 + Math.random() * 2; // 2mm to 4mm
-      } else {
-        newDeviation = Math.random() * 1.5; // 0mm to 1.5mm
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+        }
+      } catch (error) {
+        console.error("Kameraya erişim hatası:", error);
+        setHasCameraPermission(false);
+        toast({
+          variant: "destructive",
+          title: "Kamera Erişimi Reddedildi",
+          description:
+            "Bu uygulamayı kullanmak için lütfen tarayıcı ayarlarınızda kamera izinlerini etkinleştirin.",
+        });
       }
-      setDeviation(newDeviation);
+    };
 
-      if (newDeviation >= 2) {
-        setStatus("ANOMALİ");
-        setLogs((prevLogs) =>
-          [
-            { timestamp: new Date(), deviation: newDeviation },
-            ...prevLogs,
-          ].slice(0, 100)
-        );
+    getCameraPermission();
+  }, [toast]);
+  
+
+  useEffect(() => {
+    const analyzeFrame = async () => {
+      if (isCalibrating || !hasCameraPermission || isProcessing || !videoRef.current || !canvasRef.current) return;
+  
+      setIsProcessing(true);
+  
+      const video = videoRef.current;
+      const canvas = canvasRef.current;
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const context = canvas.getContext('2d');
+      if(context){
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const frameDataUri = canvas.toDataURL('image/jpeg');
+    
+        try {
+          const result = await analyzeConveyorBelt({ frameDataUri });
+          const newDeviation = result.deviation;
+          setDeviation(newDeviation);
+    
+          if (newDeviation >= 2) {
+            setStatus("ANOMALİ");
+            setLogs((prevLogs) =>
+              [{ timestamp: new Date(), deviation: newDeviation }, ...prevLogs].slice(0, 100)
+            );
+          } else {
+             setStatus("NORMAL");
+          }
+        } catch (error) {
+          console.error("Yapay zeka analizi hatası:", error);
+           toast({
+            variant: "destructive",
+            title: "Analiz Hatası",
+            description: "Görüntü işlenirken bir hata oluştu.",
+          });
+        } finally {
+           setIsProcessing(false);
+        }
       } else {
-        setStatus((prevStatus) =>
-          prevStatus === "ANOMALİ" ? "ANOMALİ" : "NORMAL"
-        );
-        setTimeout(() => {
-            if(deviation < 2) setStatus("NORMAL");
-        }, 1000)
-
+        setIsProcessing(false);
       }
-    }, 2000);
-
+    };
+  
+    const interval = setInterval(analyzeFrame, 2000);
     return () => clearInterval(interval);
-  }, [isCalibrating, deviation]);
+  }, [isCalibrating, hasCameraPermission, isProcessing, toast]);
 
   useEffect(() => {
     if (calibrationProgress === 100) {
@@ -104,12 +149,44 @@ export function DashboardClient() {
 
   return (
     <div className="space-y-8">
+      <Card>
+        <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+                <Video />
+                Canlı İzleme
+            </CardTitle>
+            <CardDescription>
+                Yapay zeka, konveyör bandını kenar sapmaları için gerçek zamanlı olarak analiz eder.
+            </CardDescription>
+        </CardHeader>
+        <CardContent>
+            <div className="relative aspect-video w-full rounded-md bg-muted overflow-hidden">
+                <video ref={videoRef} className="w-full h-full object-cover" autoPlay muted playsInline />
+                <canvas ref={canvasRef} className="hidden" />
+                 {!hasCameraPermission && (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                        <Alert variant="destructive" className="w-auto">
+                            <AlertTitle>Kamera Erişimi Gerekli</AlertTitle>
+                            <AlertDescription>
+                                Lütfen bu özelliği kullanmak için kamera erişimine izin verin.
+                            </AlertDescription>
+                        </Alert>
+                    </div>
+                )}
+                {isProcessing && (
+                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                    <p className="text-white font-medium">İşleniyor...</p>
+                  </div>
+                )}
+            </div>
+        </CardContent>
+      </Card>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card className={cn(isAnomaly && "bg-accent text-accent-foreground")}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Sistem Durumu</CardTitle>
             {status === "NORMAL" && (
-              <CheckCircle className="h-6 w-6 text-muted-foreground" />
+              <CheckCircle className="h-6 w-6 text-green-500" />
             )}
             {status === "ANOMALİ" && (
               <AlertTriangle className="h-6 w-6 animate-pulse text-accent-foreground" />
@@ -140,7 +217,7 @@ export function DashboardClient() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Mevcut Sapma
+              Mevcut Sapma (AI)
             </CardTitle>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -168,7 +245,7 @@ export function DashboardClient() {
               {deviation.toFixed(2)} mm
             </div>
             <p className="text-xs text-muted-foreground">
-              Gerçek zamanlı kayma ölçümü
+              Yapay zeka destekli gerçek zamanlı ölçüm
             </p>
           </CardContent>
         </Card>
@@ -176,12 +253,12 @@ export function DashboardClient() {
         <Card>
           <CardHeader className="pb-4">
             <CardTitle className="text-sm font-medium">
-              Başlangıç Referansı
+              AI Kalibrasyonu
             </CardTitle>
             <CardDescription className="text-xs">
               {isCalibrating
-                ? "Referans oluşturuluyor..."
-                : "Yeni referans noktaları ayarlamak için yeniden kalibre edin."}
+                ? "AI modeli kalibre ediliyor..."
+                : "Yeni referans noktaları için AI'ı yeniden kalibre edin."}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -190,11 +267,11 @@ export function DashboardClient() {
             ) : (
               <Button
                 onClick={handleCalibrate}
-                disabled={isCalibrating}
+                disabled={isCalibrating || !hasCameraPermission}
                 className="w-full"
               >
                 <SlidersHorizontal className="mr-2 h-4 w-4" />
-                Kalibrasyonu Başlat
+                AI Kalibrasyonunu Başlat
               </Button>
             )}
           </CardContent>
@@ -205,7 +282,7 @@ export function DashboardClient() {
         <CardHeader>
           <CardTitle>Anomali Kayıtları</CardTitle>
           <CardDescription>
-            Kaydedilen anormal kayma örnekleri (sapma &ge; 2mm).
+            AI tarafından tespit edilen anormal kayma örnekleri (sapma &ge; 2mm).
           </CardDescription>
         </CardHeader>
         <CardContent>
