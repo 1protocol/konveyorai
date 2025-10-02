@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import {
@@ -20,15 +20,42 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { SlidersHorizontal, AlertTriangle, CheckCircle, Video } from "lucide-react";
+import {
+  SlidersHorizontal,
+  AlertTriangle,
+  CheckCircle,
+  Video,
+  Settings,
+} from "lucide-react";
 import { analyzeConveyorBelt } from "@/ai/flows/analyze-conveyor-flow";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
+import { Switch } from "@/components/ui/switch";
 
 type AnomalyLog = {
   timestamp: Date;
   deviation: number;
 };
 
+export type AppSettings = {
+  anomalyThreshold: number;
+  isSoundAlertEnabled: boolean;
+};
+
 export function DashboardClient() {
+  const [settings, setSettings] = useState<AppSettings>({
+    anomalyThreshold: 2.0,
+    isSoundAlertEnabled: true,
+  });
   const [deviation, setDeviation] = useState(0);
   const [status, setStatus] = useState<"NORMAL" | "ANOMALİ" | "KALİBRE EDİLİYOR">(
     "NORMAL"
@@ -40,7 +67,14 @@ export function DashboardClient() {
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+
+  const playAlertSound = useCallback(() => {
+    if (settings.isSoundAlertEnabled && audioRef.current) {
+      audioRef.current.play().catch(e => console.error("Ses çalma hatası:", e));
+    }
+  }, [settings.isSoundAlertEnabled]);
 
   useEffect(() => {
     const analyzeFrame = async () => {
@@ -49,7 +83,6 @@ export function DashboardClient() {
       setIsProcessing(true);
   
       const video = videoRef.current;
-      // Ensure video is playing and has dimensions, otherwise videoWidth/Height can be 0
       if (video.paused || video.ended || video.videoWidth === 0 || video.videoHeight === 0) {
         setIsProcessing(false);
         return;
@@ -69,7 +102,10 @@ export function DashboardClient() {
           const newDeviation = result.deviation;
           setDeviation(newDeviation);
     
-          if (newDeviation >= 2) {
+          if (newDeviation >= settings.anomalyThreshold) {
+            if (status !== "ANOMALİ") {
+              playAlertSound();
+            }
             setStatus("ANOMALİ");
             setLogs((prevLogs) =>
               [{ timestamp: new Date(), deviation: newDeviation }, ...prevLogs].slice(0, 100)
@@ -94,16 +130,16 @@ export function DashboardClient() {
   
     const interval = setInterval(analyzeFrame, 2000);
     return () => clearInterval(interval);
-  }, [isCalibrating, isProcessing, toast]);
+  }, [isCalibrating, isProcessing, toast, settings.anomalyThreshold, status, playAlertSound]);
 
   useEffect(() => {
-    if (calibrationProgress === 100) {
+    if (isCalibrating && calibrationProgress === 100) {
       toast({
         title: "Kalibrasyon Tamamlandı",
         description: "Başlangıç referans verileri ayarlandı.",
       });
     }
-  }, [calibrationProgress, toast]);
+  }, [calibrationProgress, isCalibrating, toast]);
 
   const handleCalibrate = () => {
     setIsCalibrating(true);
@@ -128,6 +164,11 @@ export function DashboardClient() {
 
   return (
     <div className="space-y-8">
+       <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold tracking-tight">Genel Bakış</h1>
+        <SettingsDialog settings={settings} onSettingsChange={setSettings} />
+      </div>
+
       <Card>
         <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -156,18 +197,19 @@ export function DashboardClient() {
                     <p className="text-white font-medium">İşleniyor...</p>
                   </div>
                 )}
+                 <audio ref={audioRef} src="/alert-sound.mp3" preload="auto"></audio>
             </div>
         </CardContent>
       </Card>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Card className={cn(isAnomaly && "bg-accent text-accent-foreground")}>
+        <Card className={cn(isAnomaly && "bg-destructive text-destructive-foreground")}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Sistem Durumu</CardTitle>
             {status === "NORMAL" && (
               <CheckCircle className="h-6 w-6 text-green-500" />
             )}
             {status === "ANOMALİ" && (
-              <AlertTriangle className="h-6 w-6 animate-pulse text-accent-foreground" />
+              <AlertTriangle className="h-6 w-6 animate-pulse" />
             )}
             {status === "KALİBRE EDİLİYOR" && (
               <SlidersHorizontal className="h-6 w-6 text-primary" />
@@ -180,11 +222,11 @@ export function DashboardClient() {
             <p
               className={cn(
                 "text-xs",
-                isAnomaly ? "text-accent-foreground/80" : "text-muted-foreground"
+                isAnomaly ? "text-destructive-foreground/80" : "text-muted-foreground"
               )}
             >
               {isAnomaly
-                ? "Kayma 2mm eşiğini aşıyor."
+                ? `Kayma ${settings.anomalyThreshold}mm eşiğini aşıyor.`
                 : status === "NORMAL"
                 ? "Konveyör bantları parametreler dahilinde çalışıyor."
                 : "Referans değerler oluşturuluyor."}
@@ -209,15 +251,16 @@ export function DashboardClient() {
               strokeLinejoin="round"
               className="h-4 w-4 text-muted-foreground"
             >
-              <path d="M12 19V5" />
-              <path d="m5 12 7-7 7 7" />
+              <path d="m6 9 6-6 6 6" />
+              <path d="M12 3v13.5" />
+              <path d="m6 9 6 6 6-6" />
             </svg>
           </CardHeader>
           <CardContent>
             <div
               className={cn(
                 "text-2xl font-bold",
-                deviation >= 2 && "text-destructive"
+                deviation >= settings.anomalyThreshold && "text-destructive"
               )}
             >
               {deviation.toFixed(2)} mm
@@ -260,7 +303,7 @@ export function DashboardClient() {
         <CardHeader>
           <CardTitle>Anomali Kayıtları</CardTitle>
           <CardDescription>
-            AI tarafından tespit edilen anormal kayma örnekleri (sapma &ge; 2mm).
+            AI tarafından tespit edilen anormal kayma örnekleri (sapma &ge; {settings.anomalyThreshold}mm).
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -298,5 +341,90 @@ export function DashboardClient() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+function SettingsDialog({
+  settings,
+  onSettingsChange,
+}: {
+  settings: AppSettings;
+  onSettingsChange: (settings: AppSettings) => void;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [currentSettings, setCurrentSettings] = useState(settings);
+
+  useEffect(() => {
+    setCurrentSettings(settings);
+  }, [settings, isOpen]);
+
+  const handleSave = () => {
+    onSettingsChange(currentSettings);
+    setIsOpen(false);
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <Button variant="outline">
+          <Settings className="mr-2" />
+          Ayarlar
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Gelişmiş Ayarlar</DialogTitle>
+          <DialogDescription>
+            Yapay zeka ve bildirim ayarlarını buradan yapılandırın.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-6 py-4">
+          <div className="space-y-4">
+            <Label htmlFor="anomaly-threshold" className="text-base">
+              Anomali Eşiği (mm)
+            </Label>
+            <div className="flex items-center gap-4">
+              <Slider
+                id="anomaly-threshold"
+                min={0.5}
+                max={5.0}
+                step={0.1}
+                value={[currentSettings.anomalyThreshold]}
+                onValueChange={(value) =>
+                  setCurrentSettings({ ...currentSettings, anomalyThreshold: value[0] })
+                }
+                className="flex-1"
+              />
+              <span className="w-16 rounded-md border text-center p-2 font-mono text-sm">
+                {currentSettings.anomalyThreshold.toFixed(1)}
+              </span>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Bu değerin üzerindeki sapmalar "Anomali" olarak kabul edilecektir.
+            </p>
+          </div>
+          <div className="flex items-center justify-between rounded-lg border p-4">
+            <div className="space-y-0.5">
+              <Label htmlFor="sound-alert" className="text-base">
+                Sesli Uyarı
+              </Label>
+              <p className="text-sm text-muted-foreground">
+                Anomali tespit edildiğinde sesli bir uyarı çal.
+              </p>
+            </div>
+            <Switch
+              id="sound-alert"
+              checked={currentSettings.isSoundAlertEnabled}
+              onCheckedChange={(checked) =>
+                setCurrentSettings({ ...currentSettings, isSoundAlertEnabled: checked })
+              }
+            />
+          </div>
+        </div>
+        <DialogFooter>
+          <Button onClick={handleSave}>Değişiklikleri Kaydet</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -1,8 +1,5 @@
 import Link from 'next/link';
-import {
-  LayoutDashboard,
-  Settings,
-} from 'lucide-react';
+import { LayoutDashboard, Settings } from 'lucide-react';
 
 import {
   Sidebar,
@@ -38,14 +35,6 @@ export default function DashboardPage() {
                 <LayoutDashboard />
                 <span className="group-data-[state=collapsed]:hidden">
                   Kontrol Paneli
-                </span>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton href="#" tooltip="Ayarlar">
-                <Settings />
-                <span className="group-data-[state=collapsed]:hidden">
-                  Ayarlar
                 </span>
               </SidebarMenuButton>
             </SidebarMenuItem>

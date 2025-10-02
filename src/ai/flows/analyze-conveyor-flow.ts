@@ -44,9 +44,9 @@ const prompt = ai.definePrompt({
   output: { schema: AnalyzeConveyorBeltOutputSchema },
   prompt: `Sen, endüstriyel üretim hatlarındaki konveyör bantlarının güvenliğini denetleyen bir yapay zeka asistanısın. Görevin, sağlanan görüntüdeki konveyör bandının kenarında herhangi bir hizalama bozukluğu veya sapma olup olmadığını analiz etmektir.
 
-Normal çalışma koşullarında sapma 2 mm'den az olmalıdır. Analizine göre sapma miktarını milimetre cinsinden belirle ve 'deviation' alanına yaz.
+Analizine göre sapma miktarını milimetre cinsinden belirle ve 'deviation' alanına yaz.
 
-Eğer bir anomali (sapma >= 2mm) tespit edersen, sapma değerini 2.0 ile 4.0 arasında rastgele bir sayı olarak ayarla. Eğer her şey normal görünüyorsa, sapma değerini 0.0 ile 1.5 arasında rastgele bir sayı olarak ayarla. Bu, gerçek bir sensörün davranışını simüle etmek içindir.
+Gerçek bir sensörün davranışını simüle etmek için, sapma değerini 0.0 ile 4.0 arasında rastgele bir sayı olarak belirle. Değerin 2.0'ın üzerine çıkma olasılığı daha düşük olmalıdır. Bu, nadir ama kritik anormallikleri temsil eder.
 
 Görüntü: {{media url=frameDataUri}}`,
 });
