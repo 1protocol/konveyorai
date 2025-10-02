@@ -29,7 +29,7 @@ type AnomalyLog = {
 
 export function DashboardClient() {
   const [deviation, setDeviation] = useState(0);
-  const [status, setStatus] = useState<"NORMAL" | "ANOMALY" | "CALIBRATING">(
+  const [status, setStatus] = useState<"NORMAL" | "ANOMALİ" | "KALİBRE EDİLİYOR">(
     "NORMAL"
   );
   const [logs, setLogs] = useState<AnomalyLog[]>([]);
@@ -51,7 +51,7 @@ export function DashboardClient() {
       setDeviation(newDeviation);
 
       if (newDeviation >= 2) {
-        setStatus("ANOMALY");
+        setStatus("ANOMALİ");
         setLogs((prevLogs) =>
           [
             { timestamp: new Date(), deviation: newDeviation },
@@ -59,11 +59,9 @@ export function DashboardClient() {
           ].slice(0, 100)
         );
       } else {
-        // Only switch to NORMAL if not already in an ANOMALY state from a previous check
         setStatus((prevStatus) =>
-          prevStatus === "ANOMALY" ? "ANOMALY" : "NORMAL"
+          prevStatus === "ANOMALİ" ? "ANOMALİ" : "NORMAL"
         );
-        // A slight delay to show the anomaly before it might return to normal
         setTimeout(() => {
             if(deviation < 2) setStatus("NORMAL");
         }, 1000)
@@ -73,19 +71,19 @@ export function DashboardClient() {
 
     return () => clearInterval(interval);
   }, [isCalibrating, deviation]);
-  
+
   useEffect(() => {
-    if (calibrationProgress === 100 && !isCalibrating) {
+    if (calibrationProgress === 100) {
       toast({
-        title: "Calibration Complete",
-        description: "Initial reference data has been set.",
+        title: "Kalibrasyon Tamamlandı",
+        description: "Başlangıç referans verileri ayarlandı.",
       });
     }
-  }, [calibrationProgress, isCalibrating, toast]);
+  }, [calibrationProgress, toast]);
 
   const handleCalibrate = () => {
     setIsCalibrating(true);
-    setStatus("CALIBRATING");
+    setStatus("KALİBRE EDİLİYOR");
     setCalibrationProgress(0);
 
     const progressInterval = setInterval(() => {
@@ -102,27 +100,27 @@ export function DashboardClient() {
     }, 300);
   };
 
-  const isAnomaly = status === "ANOMALY";
+  const isAnomaly = status === "ANOMALİ";
 
   return (
     <div className="space-y-8">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card className={cn(isAnomaly && "bg-accent text-accent-foreground")}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">System Status</CardTitle>
+            <CardTitle className="text-sm font-medium">Sistem Durumu</CardTitle>
             {status === "NORMAL" && (
               <CheckCircle className="h-6 w-6 text-muted-foreground" />
             )}
-            {status === "ANOMALY" && (
+            {status === "ANOMALİ" && (
               <AlertTriangle className="h-6 w-6 animate-pulse text-accent-foreground" />
             )}
-            {status === "CALIBRATING" && (
+            {status === "KALİBRE EDİLİYOR" && (
               <SlidersHorizontal className="h-6 w-6 text-primary" />
             )}
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {isAnomaly ? "Anomaly Detected" : status}
+              {isAnomaly ? "Anomali Tespit Edildi" : status}
             </div>
             <p
               className={cn(
@@ -131,10 +129,10 @@ export function DashboardClient() {
               )}
             >
               {isAnomaly
-                ? "Slippage exceeds 2mm threshold."
+                ? "Kayma 2mm eşiğini aşıyor."
                 : status === "NORMAL"
-                ? "Conveyor belts operating within parameters."
-                : "Establishing baseline references."}
+                ? "Konveyör bantları parametreler dahilinde çalışıyor."
+                : "Referans değerler oluşturuluyor."}
             </p>
           </CardContent>
         </Card>
@@ -142,7 +140,7 @@ export function DashboardClient() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Current Deviation
+              Mevcut Sapma
             </CardTitle>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -170,7 +168,7 @@ export function DashboardClient() {
               {deviation.toFixed(2)} mm
             </div>
             <p className="text-xs text-muted-foreground">
-              Real-time slippage measurement
+              Gerçek zamanlı kayma ölçümü
             </p>
           </CardContent>
         </Card>
@@ -178,12 +176,12 @@ export function DashboardClient() {
         <Card>
           <CardHeader className="pb-4">
             <CardTitle className="text-sm font-medium">
-              Initial Reference
+              Başlangıç Referansı
             </CardTitle>
             <CardDescription className="text-xs">
               {isCalibrating
-                ? "Establishing baseline..."
-                : "Recalibrate to set new reference points."}
+                ? "Referans oluşturuluyor..."
+                : "Yeni referans noktaları ayarlamak için yeniden kalibre edin."}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -196,7 +194,7 @@ export function DashboardClient() {
                 className="w-full"
               >
                 <SlidersHorizontal className="mr-2 h-4 w-4" />
-                Start Calibration
+                Kalibrasyonu Başlat
               </Button>
             )}
           </CardContent>
@@ -205,9 +203,9 @@ export function DashboardClient() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Anomaly Log</CardTitle>
+          <CardTitle>Anomali Kayıtları</CardTitle>
           <CardDescription>
-            Recorded instances of abnormal slippage (deviation &ge; 2mm).
+            Kaydedilen anormal kayma örnekleri (sapma &ge; 2mm).
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -215,15 +213,15 @@ export function DashboardClient() {
             <Table>
               <TableHeader className="sticky top-0 bg-card">
                 <TableRow>
-                  <TableHead>Timestamp</TableHead>
-                  <TableHead className="text-right">Deviation (mm)</TableHead>
+                  <TableHead>Zaman Damgası</TableHead>
+                  <TableHead className="text-right">Sapma (mm)</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {logs.length > 0 ? (
                   logs.map((log, index) => (
                     <TableRow key={index}>
-                      <TableCell>{log.timestamp.toLocaleString()}</TableCell>
+                      <TableCell>{log.timestamp.toLocaleString('tr-TR')}</TableCell>
                       <TableCell className="text-right font-medium text-destructive">
                         {log.deviation.toFixed(2)}
                       </TableCell>
@@ -235,7 +233,7 @@ export function DashboardClient() {
                       colSpan={2}
                       className="h-24 text-center text-muted-foreground"
                     >
-                      No anomalies recorded yet.
+                      Henüz anomali kaydedilmedi.
                     </TableCell>
                   </TableRow>
                 )}

@@ -27,25 +27,25 @@ export default function DashboardPage() {
           <Link href="/" className="flex items-center gap-2 p-2">
             <Icons.logo className="size-8 text-primary" />
             <span className="font-bold text-lg hidden group-data-[state=expanded]:inline">
-              ConveyorGuard
+              KonveyörGard
             </span>
           </Link>
         </SidebarHeader>
         <SidebarContent>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/" isActive={true} tooltip="Dashboard">
+              <SidebarMenuButton href="/" isActive={true} tooltip="Kontrol Paneli">
                 <LayoutDashboard />
                 <span className="group-data-[state=collapsed]:hidden">
-                  Dashboard
+                  Kontrol Paneli
                 </span>
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton href="#" tooltip="Settings">
+              <SidebarMenuButton href="#" tooltip="Ayarlar">
                 <Settings />
                 <span className="group-data-[state=collapsed]:hidden">
-                  Settings
+                  Ayarlar
                 </span>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -56,7 +56,7 @@ export default function DashboardPage() {
         <header className="flex h-14 items-center justify-between gap-4 border-b bg-card px-4 sm:px-6">
           <div className="flex items-center gap-4">
             <SidebarTrigger className="md:hidden" />
-            <h1 className="text-xl font-semibold">Dashboard</h1>
+            <h1 className="text-xl font-semibold">Kontrol Paneli</h1>
           </div>
           <UserNav />
         </header>

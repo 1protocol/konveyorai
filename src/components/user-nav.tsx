@@ -32,7 +32,7 @@ export function UserNav() {
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">Operator</p>
+            <p className="text-sm font-medium leading-none">Operatör</p>
             <p className="text-xs leading-none text-muted-foreground">
               operator@conveyorguard.com
             </p>
@@ -40,11 +40,11 @@ export function UserNav() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>Profile</DropdownMenuItem>
-          <DropdownMenuItem>Settings</DropdownMenuItem>
+          <DropdownMenuItem>Profil</DropdownMenuItem>
+          <DropdownMenuItem>Ayarlar</DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Log out</DropdownMenuItem>
+        <DropdownMenuItem>Çıkış Yap</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
