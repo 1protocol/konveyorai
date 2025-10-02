@@ -49,8 +49,8 @@ export function DashboardClient() {
       setIsProcessing(true);
   
       const video = videoRef.current;
-      // Ensure video is playing, otherwise videoWidth/Height can be 0
-      if (video.videoWidth === 0 || video.videoHeight === 0) {
+      // Ensure video is playing and has dimensions, otherwise videoWidth/Height can be 0
+      if (video.paused || video.ended || video.videoWidth === 0 || video.videoHeight === 0) {
         setIsProcessing(false);
         return;
       }
