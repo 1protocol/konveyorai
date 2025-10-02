@@ -73,6 +73,15 @@ export function DashboardClient() {
 
     return () => clearInterval(interval);
   }, [isCalibrating, deviation]);
+  
+  useEffect(() => {
+    if (calibrationProgress === 100 && !isCalibrating) {
+      toast({
+        title: "Calibration Complete",
+        description: "Initial reference data has been set.",
+      });
+    }
+  }, [calibrationProgress, isCalibrating, toast]);
 
   const handleCalibrate = () => {
     setIsCalibrating(true);
@@ -86,10 +95,6 @@ export function DashboardClient() {
           setIsCalibrating(false);
           setStatus("NORMAL");
           setDeviation(0);
-          toast({
-            title: "Calibration Complete",
-            description: "Initial reference data has been set.",
-          });
           return 100;
         }
         return prev + 10;
