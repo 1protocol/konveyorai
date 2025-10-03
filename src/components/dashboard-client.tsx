@@ -354,7 +354,12 @@ function SettingsDialog({
   const handleSoundSwitchChange = (checked: boolean) => {
     setCurrentSettings({ ...currentSettings, isSoundAlertEnabled: checked });
     if (checked && audioRef.current) {
-      audioRef.current.play().catch(e => console.error("Test sesi çalma hatası:", e));
+        // Reload the audio source to prevent "no supported sources" error on some browsers
+        if (!audioRef.current.src) {
+            audioRef.current.src = "/alert-sound.mp3";
+        }
+        audioRef.current.load();
+        audioRef.current.play().catch(e => console.error("Test sesi çalma hatası:", e));
     }
   };
 
