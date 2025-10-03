@@ -166,7 +166,7 @@ export function DashboardClient() {
     <div className="space-y-8">
        <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold tracking-tight">Genel Bakış</h1>
-        <SettingsDialog settings={settings} onSettingsChange={setSettings} />
+        <SettingsDialog settings={settings} onSettingsChange={setSettings} audioRef={audioRef} />
       </div>
 
       <Card>
@@ -347,9 +347,11 @@ export function DashboardClient() {
 function SettingsDialog({
   settings,
   onSettingsChange,
+  audioRef,
 }: {
   settings: AppSettings;
   onSettingsChange: (settings: AppSettings) => void;
+  audioRef: React.RefObject<HTMLAudioElement>;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [currentSettings, setCurrentSettings] = useState(settings);
@@ -361,6 +363,13 @@ function SettingsDialog({
   const handleSave = () => {
     onSettingsChange(currentSettings);
     setIsOpen(false);
+  };
+  
+  const handleSoundSwitchChange = (checked: boolean) => {
+    setCurrentSettings({ ...currentSettings, isSoundAlertEnabled: checked });
+    if (checked && audioRef.current) {
+      audioRef.current.play().catch(e => console.error("Test sesi çalma hatası:", e));
+    }
   };
 
   return (
@@ -415,9 +424,7 @@ function SettingsDialog({
             <Switch
               id="sound-alert"
               checked={currentSettings.isSoundAlertEnabled}
-              onCheckedChange={(checked) =>
-                setCurrentSettings({ ...currentSettings, isSoundAlertEnabled: checked })
-              }
+              onCheckedChange={handleSoundSwitchChange}
             />
           </div>
         </div>
