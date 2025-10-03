@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { LayoutDashboard, Settings } from 'lucide-react';
+import { LayoutDashboard, Settings, Network } from 'lucide-react';
 
 import {
   Sidebar,
@@ -15,6 +15,12 @@ import {
 import { Icons } from '@/components/icons';
 import { DashboardClient } from '@/components/dashboard-client';
 import { ThemeToggle } from '@/components/theme-toggle';
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+  } from "@/components/ui/accordion"
 
 export default function DashboardPage() {
   return (
@@ -38,6 +44,32 @@ export default function DashboardPage() {
                 </span>
               </SidebarMenuButton>
             </SidebarMenuItem>
+            <Accordion type="single" collapsible className="w-full px-2 group-data-[state=collapsed]:hidden">
+                <AccordionItem value="item-1" className="border-none">
+                    <AccordionTrigger className="hover:no-underline hover:bg-sidebar-accent rounded-md px-2 py-1.5 h-8 text-sm">
+                        <div className="flex items-center gap-2">
+                            <Network />
+                            <span>İstasyon</span>
+                        </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="pl-4 pt-1">
+                        <SidebarMenu>
+                            <SidebarMenuItem>
+                                <SidebarMenuButton href="/?bant=1" variant="ghost" size="sm" className="w-full justify-start">Bant 1</SidebarMenuButton>
+                            </SidebarMenuItem>
+                            <SidebarMenuItem>
+                                <SidebarMenuButton href="/?bant=2" variant="ghost" size="sm" className="w-full justify-start">Bant 2</SidebarMenuButton>
+                            </SidebarMenuItem>
+                            <SidebarMenuItem>
+                                <SidebarMenuButton href="/?bant=3" variant="ghost" size="sm" className="w-full justify-start">Bant 3</SidebarMenuButton>
+                            </SidebarMenuItem>
+                            <SidebarMenuItem>
+                                <SidebarMenuButton href="/?bant=4" variant="ghost" size="sm" className="w-full justify-start">Bant 4</SidebarMenuButton>
+                            </SidebarMenuItem>
+                        </SidebarMenu>
+                    </AccordionContent>
+                </AccordionItem>
+            </Accordion>
             <SidebarMenuItem>
                 <SidebarMenuButton href="/ayarlar" tooltip="Ayarlar">
                     <Settings />
@@ -48,8 +80,7 @@ export default function DashboardPage() {
         </SidebarContent>
       </Sidebar>
       <SidebarInset>
-        <header className="flex h-14 items-center justify-between gap-4 border-b bg-card px-4 sm:px-6">
-          <h1 className="text-xl font-semibold">Kontrol Paneli</h1>
+        <header className="flex h-14 items-center justify-end gap-4 border-b bg-card px-4 sm:px-6">
           <div className="flex items-center gap-4">
             <ThemeToggle />
             <SidebarTrigger className="md:hidden" />

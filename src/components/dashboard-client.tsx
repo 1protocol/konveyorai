@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import { useSearchParams } from 'next/navigation';
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import {
@@ -53,6 +54,9 @@ export type AppSettings = {
 };
 
 export function DashboardClient() {
+  const searchParams = useSearchParams();
+  const selectedBant = searchParams.get('bant') || '1';
+
   const [settings, setSettings] = useState<AppSettings>({
     anomalyThreshold: 2.0,
     isSoundAlertEnabled: true,
@@ -73,12 +77,19 @@ export function DashboardClient() {
 
   const playAlertSound = useCallback(() => {
     if (settings.isSoundAlertEnabled && audioRef.current) {
-      // Sadece çalmaya hazır olduğunda sesi oynat
-      if (audioRef.current.readyState >= 2) {
         audioRef.current.play().catch(e => console.error("Ses çalma hatası:", e));
-      }
     }
   }, [settings.isSoundAlertEnabled]);
+
+  useEffect(() => {
+    // Reset state when switching between belts
+    setDeviation(0);
+    setStatus("NORMAL");
+    setLogs([]);
+    setIsCalibrating(false);
+    setCalibrationProgress(0);
+  }, [selectedBant]);
+
 
   useEffect(() => {
     const analyzeFrame = async () => {
@@ -134,16 +145,16 @@ export function DashboardClient() {
   
     const interval = setInterval(analyzeFrame, 2000);
     return () => clearInterval(interval);
-  }, [isCalibrating, isProcessing, toast, settings.anomalyThreshold, status, playAlertSound]);
+  }, [isCalibrating, isProcessing, toast, settings.anomalyThreshold, status, playAlertSound, selectedBant]);
 
   useEffect(() => {
     if (isCalibrating && calibrationProgress === 100) {
       toast({
         title: "Kalibrasyon Tamamlandı",
-        description: "Başlangıç referans verileri ayarlandı.",
+        description: `Bant ${selectedBant} için başlangıç referans verileri ayarlandı.`,
       });
     }
-  }, [calibrationProgress, isCalibrating, toast]);
+  }, [calibrationProgress, isCalibrating, toast, selectedBant]);
 
   const handleCalibrate = () => {
     setIsCalibrating(true);
@@ -169,7 +180,7 @@ export function DashboardClient() {
   return (
     <div className="space-y-8">
        <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold tracking-tight">Genel Bakış</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Genel Bakış - Bant {selectedBant}</h1>
         <SettingsDialog settings={settings} onSettingsChange={setSettings} audioRef={audioRef} />
       </div>
 
@@ -177,7 +188,7 @@ export function DashboardClient() {
         <CardHeader>
             <CardTitle className="flex items-center gap-2">
                 <Video />
-                Canlı İzleme
+                Canlı İzleme - Bant {selectedBant}
             </CardTitle>
             <CardDescription>
                 Yapay zeka, konveyör bandını kenar sapmaları için gerçek zamanlı olarak analiz eder.
@@ -194,6 +205,7 @@ export function DashboardClient() {
                   loop
                   src="/conveyor-video.mp4" 
                   crossOrigin="anonymous"
+                  key={selectedBant}
                 />
                 <canvas ref={canvasRef} className="hidden" />
                 {isProcessing && (
@@ -290,7 +302,7 @@ export function DashboardClient() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Anomali Kayıtları</CardTitle>
+          <CardTitle>Anomali Kayıtları - Bant {selectedBant}</CardTitle>
           <CardDescription>
             AI tarafından tespit edilen anormal kayma örnekleri (sapma &ge; {settings.anomalyThreshold}mm).
           </CardDescription>
@@ -356,15 +368,11 @@ function SettingsDialog({
   
   const handleSoundSwitchChange = (checked: boolean) => {
     setCurrentSettings({ ...currentSettings, isSoundAlertEnabled: checked });
-    if (checked && audioRef.current && audioRef.current.src) {
-        // Sesi çalmadan önce tamamen yüklendiğinden emin olun
-        audioRef.current.load();
+    if (checked && audioRef.current?.src) {
+        audioRef.current.load(); // Ensure the audio is loaded
         const playPromise = audioRef.current.play();
         if (playPromise !== undefined) {
-          playPromise.then(_ => {
-            // Test sesi başarıyla çalındı.
-          }).catch(error => {
-            // Otomatik oynatma engellenmiş olabilir veya başka bir hata.
+          playPromise.catch(error => {
             console.error("Test sesi çalma hatası:", error);
           });
         }
@@ -398,7 +406,7 @@ function SettingsDialog({
                 max={5.0}
                 step={0.1}
                 value={[currentSettings.anomalyThreshold]}
-                onValuecha  ge={(value) =>
+                onValueChange={(value) =>
                   setCurrentSettings({ ...currentSettings, anomalyThreshold: value[0] })
                 }
                 className="flex-1"
