@@ -73,7 +73,10 @@ export function DashboardClient() {
 
   const playAlertSound = useCallback(() => {
     if (settings.isSoundAlertEnabled && audioRef.current) {
-      audioRef.current.play().catch(e => console.error("Ses çalma hatası:", e));
+      // Sadece çalmaya hazır olduğunda sesi oynat
+      if (audioRef.current.readyState >= 2) {
+        audioRef.current.play().catch(e => console.error("Ses çalma hatası:", e));
+      }
     }
   }, [settings.isSoundAlertEnabled]);
 
@@ -353,13 +356,18 @@ function SettingsDialog({
   
   const handleSoundSwitchChange = (checked: boolean) => {
     setCurrentSettings({ ...currentSettings, isSoundAlertEnabled: checked });
-    if (checked && audioRef.current) {
-        // Reload the audio source to prevent "no supported sources" error on some browsers
-        if (!audioRef.current.src) {
-            audioRef.current.src = "/alert-sound.mp3";
-        }
+    if (checked && audioRef.current && audioRef.current.src) {
+        // Sesi çalmadan önce tamamen yüklendiğinden emin olun
         audioRef.current.load();
-        audioRef.current.play().catch(e => console.error("Test sesi çalma hatası:", e));
+        const playPromise = audioRef.current.play();
+        if (playPromise !== undefined) {
+          playPromise.then(_ => {
+            // Test sesi başarıyla çalındı.
+          }).catch(error => {
+            // Otomatik oynatma engellenmiş olabilir veya başka bir hata.
+            console.error("Test sesi çalma hatası:", error);
+          });
+        }
     }
   };
 
@@ -390,7 +398,7 @@ function SettingsDialog({
                 max={5.0}
                 step={0.1}
                 value={[currentSettings.anomalyThreshold]}
-                onValueChange={(value) =>
+                onValuecha  ge={(value) =>
                   setCurrentSettings({ ...currentSettings, anomalyThreshold: value[0] })
                 }
                 className="flex-1"
