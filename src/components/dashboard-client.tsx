@@ -27,6 +27,9 @@ import {
   CheckCircle,
   Video,
   Settings,
+  BrainCircuit,
+  Bell,
+  Users,
 } from "lucide-react";
 import { analyzeConveyorBelt } from "@/ai/flows/analyze-conveyor-flow";
 import {
@@ -42,6 +45,7 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { SvgIcons } from "./ui/svg-icons";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 type AnomalyLog = {
   timestamp: Date;
@@ -76,7 +80,7 @@ export function DashboardClient() {
   const [isProcessing, setIsProcessing] = useState(false);
 
   const playAlertSound = useCallback(() => {
-    if (settings.isSoundAlertEnabled && audioRef.current) {
+    if (settings.isSoundAlertEnabled && audioRef.current?.src) {
         audioRef.current.play().catch(e => console.error("Ses çalma hatası:", e));
     }
   }, [settings.isSoundAlertEnabled]);
@@ -181,7 +185,14 @@ export function DashboardClient() {
     <div className="space-y-8">
        <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold tracking-tight">Genel Bakış - Bant {selectedBant}</h1>
-        <SettingsDialog settings={settings} onSettingsChange={setSettings} audioRef={audioRef} />
+        <SettingsDialog 
+          settings={settings} 
+          onSettingsChange={setSettings} 
+          audioRef={audioRef} 
+          isCalibrating={isCalibrating}
+          calibrationProgress={calibrationProgress}
+          onCalibrate={handleCalibrate}
+        />
       </div>
 
       <Card>
@@ -217,7 +228,7 @@ export function DashboardClient() {
             </div>
         </CardContent>
       </Card>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
         <Card className={cn(isAnomaly && "bg-destructive text-destructive-foreground")}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Sistem Durumu</CardTitle>
@@ -272,32 +283,6 @@ export function DashboardClient() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="pb-4">
-            <CardTitle className="text-sm font-medium">
-              AI Kalibrasyonu
-            </CardTitle>
-            <CardDescription className="text-xs">
-              {isCalibrating
-                ? "AI modeli kalibre ediliyor..."
-                : "Yeni referans noktaları için AI'ı yeniden kalibre edin."}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {isCalibrating ? (
-              <Progress value={calibrationProgress} className="w-full" />
-            ) : (
-              <Button
-                onClick={handleCalibrate}
-                disabled={isCalibrating}
-                className="w-full"
-              >
-                <SlidersHorizontal className="mr-2 h-4 w-4" />
-                AI Kalibrasyonunu Başlat
-              </Button>
-            )}
-          </CardContent>
-        </Card>
       </div>
 
       <Card>
@@ -349,10 +334,16 @@ function SettingsDialog({
   settings,
   onSettingsChange,
   audioRef,
+  isCalibrating,
+  calibrationProgress,
+  onCalibrate,
 }: {
   settings: AppSettings;
   onSettingsChange: (settings: AppSettings) => void;
   audioRef: React.RefObject<HTMLAudioElement>;
+  isCalibrating: boolean;
+  calibrationProgress: number;
+  onCalibrate: () => void;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [currentSettings, setCurrentSettings] = useState(settings);
@@ -369,11 +360,13 @@ function SettingsDialog({
   const handleSoundSwitchChange = (checked: boolean) => {
     setCurrentSettings({ ...currentSettings, isSoundAlertEnabled: checked });
     if (checked && audioRef.current?.src) {
-        audioRef.current.load(); // Ensure the audio is loaded
+        audioRef.current.load(); 
         const playPromise = audioRef.current.play();
         if (playPromise !== undefined) {
           playPromise.catch(error => {
-            console.error("Test sesi çalma hatası:", error);
+            if (error.name !== "AbortError") {
+              console.error("Test sesi çalma hatası:", error);
+            }
           });
         }
     }
@@ -384,61 +377,120 @@ function SettingsDialog({
       <DialogTrigger asChild>
         <Button variant="outline">
           <Settings className="mr-2 h-4 w-4" />
-          Ayarlar
+          Gelişmiş Ayarlar
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle>Gelişmiş Ayarlar</DialogTitle>
           <DialogDescription>
-            Yapay zeka ve bildirim ayarlarını buradan yapılandırın.
+            Sistem davranışını, yapay zeka parametrelerini ve bildirimleri yapılandırın.
           </DialogDescription>
         </DialogHeader>
-        <div className="grid gap-6 py-4">
-          <div className="space-y-4">
-            <Label htmlFor="anomaly-threshold" className="text-base">
-              Anomali Eşiği (mm)
-            </Label>
-            <div className="flex items-center gap-4">
-              <Slider
-                id="anomaly-threshold"
-                min={0.5}
-                max={5.0}
-                step={0.1}
-                value={[currentSettings.anomalyThreshold]}
-                onValueChange={(value) =>
-                  setCurrentSettings({ ...currentSettings, anomalyThreshold: value[0] })
-                }
-                className="flex-1"
+        <Tabs defaultValue="ai-settings">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="ai-settings"><BrainCircuit className="mr-2"/>Yapay Zeka</TabsTrigger>
+            <TabsTrigger value="notifications"><Bell className="mr-2"/>Bildirimler</TabsTrigger>
+            <TabsTrigger value="operators" disabled><Users className="mr-2"/>Operatörler</TabsTrigger>
+          </TabsList>
+          <TabsContent value="ai-settings" className="py-4">
+            <div className="space-y-6">
+                <div className="space-y-4 rounded-lg border p-4">
+                  <Label htmlFor="anomaly-threshold" className="text-base">
+                    Algılama Hassasiyeti (Anomali Eşiği)
+                  </Label>
+                  <div className="flex items-center gap-4">
+                    <Slider
+                      id="anomaly-threshold"
+                      min={0.5}
+                      max={5.0}
+                      step={0.1}
+                      value={[currentSettings.anomalyThreshold]}
+                      onValueChange={(value) =>
+                        setCurrentSettings({ ...currentSettings, anomalyThreshold: value[0] })
+                      }
+                      className="flex-1"
+                    />
+                    <span className="w-20 rounded-md border text-center p-2 font-mono text-sm">
+                      {currentSettings.anomalyThreshold.toFixed(1)} mm
+                    </span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Bu değerin üzerindeki sapmalar "Anomali" olarak kabul edilecektir. Düşük değerler hassasiyeti artırır.
+                  </p>
+                </div>
+                <div className="space-y-4 rounded-lg border p-4">
+                    <Label className="text-base">
+                        AI Kalibrasyonu
+                    </Label>
+                     <p className="text-sm text-muted-foreground pb-2">
+                        {isCalibrating
+                            ? "AI modeli, konveyör bandının mevcut durumunu referans olarak ayarlıyor..."
+                            : "Sistemin doğru çalışması için başlangıçta veya bantta fiziksel bir değişiklik yapıldığında AI'ı yeniden kalibre edin."}
+                    </p>
+                    {isCalibrating ? (
+                    <Progress value={calibrationProgress} className="w-full" />
+                    ) : (
+                    <Button
+                        onClick={onCalibrate}
+                        disabled={isCalibrating}
+                        className="w-full"
+                    >
+                        <SlidersHorizontal className="mr-2 h-4 w-4" />
+                        Kalibrasyonu Başlat
+                    </Button>
+                    )}
+                </div>
+            </div>
+          </TabsContent>
+          <TabsContent value="notifications" className="py-4">
+          <div className="space-y-6">
+            <div className="flex items-center justify-between rounded-lg border p-4">
+              <div className="space-y-0.5">
+                <Label htmlFor="sound-alert" className="text-base">
+                  Sesli Uyarı
+                </Label>
+                <p className="text-sm text-muted-foreground">
+                  Anomali tespit edildiğinde sesli bir uyarı çal.
+                </p>
+              </div>
+              <Switch
+                id="sound-alert"
+                checked={currentSettings.isSoundAlertEnabled}
+                onCheckedChange={handleSoundSwitchChange}
               />
-              <span className="w-16 rounded-md border text-center p-2 font-mono text-sm">
-                {currentSettings.anomalyThreshold.toFixed(1)}
-              </span>
             </div>
-            <p className="text-sm text-muted-foreground">
-              Bu değerin üzerindeki sapmalar "Anomali" olarak kabul edilecektir.
-            </p>
-          </div>
-          <div className="flex items-center justify-between rounded-lg border p-4">
-            <div className="space-y-0.5">
-              <Label htmlFor="sound-alert" className="text-base">
-                Sesli Uyarı
-              </Label>
-              <p className="text-sm text-muted-foreground">
-                Anomali tespit edildiğinde sesli bir uyarı çal.
-              </p>
+            <div className="flex items-center justify-between rounded-lg border p-4 opacity-50">
+              <div className="space-y-0.5">
+                <Label htmlFor="email-alert" className="text-base">
+                  E-posta Bildirimi (Yakında)
+                </Label>
+                <p className="text-sm text-muted-foreground">
+                  Kritik anomalilerde tanımlı operatörlere e-posta gönder.
+                </p>
+              </div>
+              <Switch
+                id="email-alert"
+                disabled
+              />
             </div>
-            <Switch
-              id="sound-alert"
-              checked={currentSettings.isSoundAlertEnabled}
-              onCheckedChange={handleSoundSwitchChange}
-            />
-          </div>
-        </div>
+            </div>
+          </TabsContent>
+           <TabsContent value="operators" className="py-4">
+            <div className="text-center text-muted-foreground p-8">
+              <Users className="mx-auto h-12 w-12 mb-4" />
+              <h3 className="text-lg font-semibold">Operatör Yönetimi</h3>
+              <p className="text-sm">Bu özellik yakında eklenecektir. Operatörleri tanımlayıp, bildirim atamaları yapabileceksiniz.</p>
+            </div>
+          </TabsContent>
+        </Tabs>
         <DialogFooter>
-          <Button onClick={handleSave}>Değişiklikleri Kaydet</Button>
+            <Button variant="outline" onClick={() => setIsOpen(false)}>İptal</Button>
+            <Button onClick={handleSave}>Değişiklikleri Kaydet</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 }
+
+    
