@@ -38,6 +38,12 @@ export default function DashboardPage() {
                 </span>
               </SidebarMenuButton>
             </SidebarMenuItem>
+            <SidebarMenuItem>
+                <SidebarMenuButton href="/ayarlar" tooltip="Ayarlar">
+                    <Settings />
+                    <span className="group-data-[state=collapsed]:hidden">Ayarlar</span>
+                </SidebarMenuButton>
+            </SidebarMenuItem>
           </SidebarMenu>
         </SidebarContent>
       </Sidebar>
