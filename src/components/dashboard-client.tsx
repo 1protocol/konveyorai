@@ -40,6 +40,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
+import { SvgIcons } from "./ui/svg-icons";
 
 type AnomalyLog = {
   timestamp: Date;
@@ -239,22 +240,7 @@ export function DashboardClient() {
             <CardTitle className="text-sm font-medium">
               Mevcut Sapma (AI)
             </CardTitle>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="h-4 w-4 text-muted-foreground"
-            >
-              <path d="m6 9 6-6 6 6" />
-              <path d="M12 3v13.5" />
-              <path d="m6 9 6 6 6-6" />
-            </svg>
+            <SvgIcons.ConveyorMovement className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div
@@ -376,7 +362,7 @@ function SettingsDialog({
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button variant="outline">
-          <Settings className="mr-2" />
+          <Settings className="mr-2 h-4 w-4" />
           Ayarlar
         </Button>
       </DialogTrigger>
