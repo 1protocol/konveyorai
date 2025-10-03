@@ -30,6 +30,7 @@ import {
   BrainCircuit,
   Bell,
   Users,
+  Camera,
 } from "lucide-react";
 import { analyzeConveyorBelt } from "@/ai/flows/analyze-conveyor-flow";
 import {
@@ -46,6 +47,7 @@ import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { SvgIcons } from "./ui/svg-icons";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "./ui/input";
 
 type AnomalyLog = {
   timestamp: Date;
@@ -57,6 +59,10 @@ export type AppSettings = {
   isSoundAlertEnabled: boolean;
 };
 
+export type CameraConfig = {
+  [key: string]: string;
+};
+
 export function DashboardClient() {
   const searchParams = useSearchParams();
   const selectedBant = searchParams.get('bant') || '1';
@@ -64,6 +70,12 @@ export function DashboardClient() {
   const [settings, setSettings] = useState<AppSettings>({
     anomalyThreshold: 2.0,
     isSoundAlertEnabled: true,
+  });
+  const [cameraConfig, setCameraConfig] = useState<CameraConfig>({
+    '1': '/conveyor-video.mp4',
+    '2': '/conveyor-video.mp4',
+    '3': '/conveyor-video.mp4',
+    '4': '/conveyor-video.mp4',
   });
   const [deviation, setDeviation] = useState(0);
   const [status, setStatus] = useState<"NORMAL" | "ANOMALİ" | "KALİBRE EDİLİYOR">(
@@ -86,13 +98,19 @@ export function DashboardClient() {
   }, [settings.isSoundAlertEnabled]);
 
   useEffect(() => {
-    // Reset state when switching between belts
     setDeviation(0);
     setStatus("NORMAL");
     setLogs([]);
     setIsCalibrating(false);
     setCalibrationProgress(0);
-  }, [selectedBant]);
+
+    if(videoRef.current) {
+      videoRef.current.src = cameraConfig[selectedBant] || '/conveyor-video.mp4';
+      videoRef.current.load();
+      videoRef.current.play().catch(e => console.error("Video oynatma hatası:", e));
+    }
+
+  }, [selectedBant, cameraConfig]);
 
 
   useEffect(() => {
@@ -102,7 +120,7 @@ export function DashboardClient() {
       setIsProcessing(true);
   
       const video = videoRef.current;
-      if (video.paused || video.ended || video.videoWidth === 0 || video.videoHeight === 0) {
+      if (video.paused || video.ended || video.readyState < 2) {
         setIsProcessing(false);
         return;
       }
@@ -192,6 +210,8 @@ export function DashboardClient() {
           isCalibrating={isCalibrating}
           calibrationProgress={calibrationProgress}
           onCalibrate={handleCalibrate}
+          cameraConfig={cameraConfig}
+          onCameraConfigChange={setCameraConfig}
         />
       </div>
 
@@ -214,7 +234,6 @@ export function DashboardClient() {
                   muted 
                   playsInline 
                   loop
-                  src="/conveyor-video.mp4" 
                   crossOrigin="anonymous"
                   key={selectedBant}
                 />
@@ -224,7 +243,7 @@ export function DashboardClient() {
                     <p className="text-white font-medium">İşleniyor...</p>
                   </div>
                 )}
-                 <audio ref={audioRef} src="/alert-sound.mp3" preload="auto"></audio>
+                 <audio ref={audioRef} src="/alert-sound.mp3" preload="auto" onCanPlayThrough={() => {}} onError={(e) => console.error("Ses dosyası yüklenemedi", e)}></audio>
             </div>
         </CardContent>
       </Card>
@@ -337,6 +356,8 @@ function SettingsDialog({
   isCalibrating,
   calibrationProgress,
   onCalibrate,
+  cameraConfig,
+  onCameraConfigChange,
 }: {
   settings: AppSettings;
   onSettingsChange: (settings: AppSettings) => void;
@@ -344,33 +365,46 @@ function SettingsDialog({
   isCalibrating: boolean;
   calibrationProgress: number;
   onCalibrate: () => void;
+  cameraConfig: CameraConfig;
+  onCameraConfigChange: (config: CameraConfig) => void;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [currentSettings, setCurrentSettings] = useState(settings);
+  const [currentCameraConfig, setCurrentCameraConfig] = useState(cameraConfig);
+
 
   useEffect(() => {
     setCurrentSettings(settings);
-  }, [settings, isOpen]);
+    setCurrentCameraConfig(cameraConfig);
+  }, [settings, cameraConfig, isOpen]);
 
   const handleSave = () => {
     onSettingsChange(currentSettings);
+    onCameraConfigChange(currentCameraConfig);
     setIsOpen(false);
   };
   
   const handleSoundSwitchChange = (checked: boolean) => {
     setCurrentSettings({ ...currentSettings, isSoundAlertEnabled: checked });
     if (checked && audioRef.current?.src) {
-        audioRef.current.load(); 
-        const playPromise = audioRef.current.play();
-        if (playPromise !== undefined) {
-          playPromise.catch(error => {
-            if (error.name !== "AbortError") {
-              console.error("Test sesi çalma hatası:", error);
-            }
-          });
-        }
+      // Ensure the audio is loaded before playing
+      audioRef.current.load();
+      const playPromise = audioRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          // Autoplay was prevented. This is a common browser policy.
+          // We can ignore this error in the context of a test sound.
+          if (error.name !== "AbortError") {
+             console.error("Test sesi çalma hatası:", error);
+          }
+        });
+      }
     }
   };
+
+  const handleCameraConfigFieldChange = (bant: string, value: string) => {
+    setCurrentCameraConfig(prev => ({...prev, [bant]: value}));
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -388,8 +422,9 @@ function SettingsDialog({
           </DialogDescription>
         </DialogHeader>
         <Tabs defaultValue="ai-settings">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="ai-settings"><BrainCircuit className="mr-2"/>Yapay Zeka</TabsTrigger>
+            <TabsTrigger value="cameras"><Camera className="mr-2"/>Kameralar</TabsTrigger>
             <TabsTrigger value="notifications"><Bell className="mr-2"/>Bildirimler</TabsTrigger>
             <TabsTrigger value="operators" disabled><Users className="mr-2"/>Operatörler</TabsTrigger>
           </TabsList>
@@ -443,6 +478,32 @@ function SettingsDialog({
                 </div>
             </div>
           </TabsContent>
+          <TabsContent value="cameras" className="py-4">
+             <div className="space-y-4 rounded-lg border p-4">
+                <Label className="text-base">
+                    Kamera Yapılandırması
+                </Label>
+                <p className="text-sm text-muted-foreground">
+                    Her bir konveyör bandı için video kaynağı URL'sini tanımlayın.
+                </p>
+                <div className="space-y-4 pt-2">
+                    {Object.keys(currentCameraConfig).map((bant) => (
+                         <div key={bant} className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor={`bant-${bant}-url`} className="text-right">
+                                Bant {bant}
+                            </Label>
+                            <Input
+                                id={`bant-${bant}-url`}
+                                value={currentCameraConfig[bant]}
+                                onChange={(e) => handleCameraConfigFieldChange(bant, e.target.value)}
+                                className="col-span-3"
+                                placeholder="örn: /video.mp4 veya http://192.168.1.10/stream"
+                            />
+                        </div>
+                    ))}
+                </div>
+             </div>
+          </TabsContent>
           <TabsContent value="notifications" className="py-4">
           <div className="space-y-6">
             <div className="flex items-center justify-between rounded-lg border p-4">
@@ -492,5 +553,3 @@ function SettingsDialog({
     </Dialog>
   );
 }
-
-    
