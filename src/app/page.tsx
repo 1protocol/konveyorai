@@ -13,7 +13,6 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { Icons } from '@/components/icons';
-import { UserNav } from '@/components/user-nav';
 import { DashboardClient } from '@/components/dashboard-client';
 import { ThemeToggle } from '@/components/theme-toggle';
 
@@ -53,7 +52,6 @@ export default function DashboardPage() {
           <h1 className="text-xl font-semibold">Kontrol Paneli</h1>
           <div className="flex items-center gap-4">
             <ThemeToggle />
-            <UserNav />
             <SidebarTrigger className="md:hidden" />
           </div>
         </header>
