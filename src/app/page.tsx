@@ -1,8 +1,10 @@
 "use client";
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { marked } from 'marked';
-import { Loader, UserCircle } from 'lucide-react';
-import { Card, CardHeader, CardTitle } from '@/components/ui/card';
+import { Loader, UserCircle, Map } from 'lucide-react';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 // Asenkron olarak markdown içeriğini getiren fonksiyon
 async function getMarkdownContent() {
@@ -44,6 +46,24 @@ export default function DocumentationPage() {
                 </div>
             </CardHeader>
         </Card>
+
+        <Card className="mb-8 bg-card/50 border-border/50">
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                    <Map className="h-5 w-5 text-accent"/>
+                    Geliştirici Haritası
+                </CardTitle>
+            </CardHeader>
+            <CardContent>
+                <p className="text-muted-foreground mb-4">
+                    Projenin teknik yapısını ve bileşenlerini görselleştiren interaktif haritayı keşfedin.
+                </p>
+                <Button asChild>
+                    <Link href="/devmap.html">Geliştirici Haritasını Görüntüle</Link>
+                </Button>
+            </CardContent>
+        </Card>
+
 
         {isLoading && (
           <div className="flex flex-col items-center justify-center text-center mt-20">
