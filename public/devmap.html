@@ -1,112 +1,102 @@
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-g">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Konveyor AI - Geliştirici Haritası</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --background: #0a0e1a;
-            --foreground: #e0e0e0;
-            --card-bg: rgba(18, 23, 41, 0.6);
-            --border: rgba(68, 80, 115, 0.4);
-            --accent: #ff9800;
-            --accent-glow: rgba(255, 152, 0, 0.3);
-            --primary: #4ab9f8;
-            --primary-glow: rgba(74, 185, 248, 0.2);
-            --green: #4caf50;
-            --red: #f44336;
-            --purple: #9c27b0;
-            --font-family: 'Poppins', 'Segoe UI', 'Roboto', sans-serif;
+            --bg-color: #0a0e1a;
+            --card-bg-color: rgba(20, 25, 40, 0.6);
+            --border-color: rgba(50, 60, 100, 0.5);
+            --text-color: #e0e5f0;
+            --muted-text-color: #808a9f;
+            --accent-color: #25a1ff;
+            --accent-glow: rgba(37, 161, 255, 0.3);
+            --font-family: 'Poppins', sans-serif;
+            --radius: 8px;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
         }
 
         body {
-            background-color: var(--background);
-            color: var(--foreground);
             font-family: var(--font-family);
+            background-color: var(--bg-color);
+            color: var(--text-color);
             margin: 0;
-            padding: 2rem;
-            line-height: 1.6;
+            padding: 30px;
+            line-height: 1.7;
             background-image:
-                radial-gradient(circle at 15% 50%, rgba(74, 185, 248, 0.1), transparent 30%),
-                radial-gradient(circle at 85% 30%, rgba(255, 152, 0, 0.08), transparent 30%);
-            background-attachment: fixed;
+                radial-gradient(circle at 15% 25%, var(--accent-glow), transparent 30%),
+                radial-gradient(circle at 85% 75%, rgba(200, 80, 255, 0.15), transparent 30%);
+            min-height: 100vh;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
+            padding: 20px;
         }
-        
-        header {
+
+        h1, h2 {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        h1 {
+            font-size: 2.8em;
+            font-weight: 800;
             text-align: center;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 1.5rem;
+            margin-bottom: 20px;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+            letter-spacing: 1px;
         }
 
-        header h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin: 0;
-            background: linear-gradient(90deg, var(--accent), var(--primary), var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: text-glow 5s ease-in-out infinite;
+        h2 {
+            font-size: 1.8em;
+            color: var(--accent-color);
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 10px;
+            margin-top: 40px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
-        @keyframes text-glow {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        header p {
-            font-size: 1.1rem;
-            color: #a0a0b0;
-            max-width: 80ch;
-            margin: 0.5rem auto 0;
-        }
-
-        .map-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .map-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 1.5rem;
+        .map-container {
+            background-color: var(--card-bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 30px;
             backdrop-filter: blur(10px);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
             position: relative;
             overflow: hidden;
         }
-        
-        .map-card:before {
+
+        .map-container::before {
             content: '';
             position: absolute;
             top: -50%;
             left: -50%;
             width: 200%;
             height: 200%;
-            background: conic-gradient(from 180deg at 50% 50%, transparent, var(--primary-glow), transparent 30%);
-            animation: border-glow 8s linear infinite;
-            opacity: 0;
-            transition: opacity 0.4s ease;
+            background: conic-gradient(from 180deg at 50% 50%, var(--accent-color), transparent, var(--accent-color), transparent, var(--accent-color));
+            animation: border-glow 10s linear infinite;
+            opacity: 0.3;
+            z-index: 1;
         }
 
-        .map-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        }
-        
-        .map-card:hover:before {
-            opacity: 1;
+        .map-content {
+            position: relative;
+            z-index: 2;
         }
 
         @keyframes border-glow {
@@ -114,284 +104,283 @@
             100% { transform: rotate(360deg); }
         }
 
-        .map-card h2 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--primary);
-            margin: 0 0 1rem 0;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        
-        .map-card h2 svg {
-            width: 24px;
-            height: 24px;
-        }
-
-        .tree, .tree ul {
+        .tree {
             list-style: none;
-            padding-left: 1.75rem;
-            position: relative;
-        }
-
-        .tree ul {
-            margin-top: 0.5rem;
+            padding-left: 20px;
         }
 
         .tree li {
             position: relative;
-            padding: 0.25rem 0;
-        }
-        
-        .tree li::before, .tree li::after {
-            content: '';
-            position: absolute;
-            left: -1rem;
-            border-color: var(--border);
+            padding: 8px 0 8px 30px;
         }
 
         .tree li::before {
-            border-top: 1px solid;
-            top: 14px;
-            width: 1rem;
-            height: 0;
-        }
-
-        .tree li::after {
-            border-left: 1px solid;
-            height: 100%;
-            width: 0;
+            content: '';
+            position: absolute;
             top: 0;
+            left: 0;
+            border-left: 1px dashed var(--border-color);
+            height: 100%;
         }
-        
-        .tree li:last-child::after {
-            height: 14px;
+        .tree li:last-child::before {
+             height: 22px; /* icon height center */
         }
-        
-        .tree details > summary {
+        .tree li::after {
+            content: '';
+            position: absolute;
+            top: 22px;
+            left: 0;
+            border-top: 1px dashed var(--border-color);
+            width: 20px;
+        }
+
+        .tree-node {
+            display: flex;
+            align-items: center;
+            gap: 12px;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            outline: none;
-            transition: color 0.2s;
+            transition: background-color 0.2s;
+            padding: 5px;
+            border-radius: 5px;
         }
 
-        .tree details > summary:hover {
-            color: var(--accent);
-        }
-        
-        .tree details[open] > summary {
-            color: var(--primary);
-        }
-        
-        .tree .file-item, .tree .folder-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+        .tree-node:hover {
+            background-color: rgba(255,255,255,0.05);
         }
 
-        .tree .description {
-            color: #a0a0b0;
-            font-size: 0.85rem;
-            margin-left: 20px;
-            padding-left: 0.5rem;
-            border-left: 1px dashed var(--border);
-        }
+        .tree-node.folder > .node-icon { color: var(--accent-color); }
+        .tree-node.file > .node-icon { color: var(--muted-text-color); }
         
-        .tree .tech-tag {
-            background-color: var(--border);
-            color: var(--foreground);
+        .node-name {
+            font-weight: 500;
+        }
+
+        .node-description {
+            font-size: 0.9em;
+            color: var(--muted-text-color);
+            margin-left: 5px;
+            font-style: italic;
+        }
+
+        .node-tech {
+            font-size: 0.8em;
+            background-color: var(--border-color);
+            color: var(--accent-color);
             padding: 2px 6px;
-            font-size: 0.75rem;
             border-radius: 4px;
             margin-left: auto;
+            font-weight: 600;
         }
-        
-        code {
-            font-family: 'SF Mono', 'Fira Code', 'Menlo', monospace;
-            background-color: var(--border);
-            padding: 0.2em 0.4em;
-            border-radius: 3px;
-            font-size: 0.9em;
-        }
-        
-        .command-line {
-            background-color: #000;
-            color: #0f0;
-            padding: 1rem;
-            border-radius: 6px;
-            font-family: 'SF Mono', 'Fira Code', 'Menlo', monospace;
-            margin-bottom: 1rem;
-            border: 1px solid #0f0;
-            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
-            white-space: pre-wrap;
-        }
-        .command-line span {
-            color: var(--foreground);
-        }
-        
-        .icon {
-            width: 16px;
-            height: 16px;
-            flex-shrink: 0;
-        }
-        .icon-folder { stroke: var(--primary); }
-        .icon-file { stroke: var(--foreground); }
-        .icon-config { stroke: var(--accent); }
-        .icon-media { stroke: var(--purple); }
-        .icon-ai { stroke: #da62c4; }
 
+        .tree ul {
+            list-style: none;
+            padding-left: 20px;
+            display: none; /* Collapsed by default */
+        }
+
+        .tree-node.expanded + ul {
+            display: block;
+        }
+        
+        .tree-node.folder.expanded .node-icon {
+            transform: rotate(90deg);
+            transition: transform 0.2s ease-in-out;
+        }
+        .tree-node.folder .node-icon {
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .card {
+            background-color: var(--card-bg-color);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: var(--radius);
+            margin-bottom: 20px;
+        }
+
+        .card p {
+            margin: 0;
+            color: var(--muted-text-color);
+        }
+
+        .icon {
+            width: 1em;
+            height: 1em;
+            display: inline-block;
+            vertical-align: -0.125em;
+        }
     </style>
 </head>
 <body>
-
     <div class="container">
-        <header>
-            <h1>Konveyor AI Geliştirici Haritası</h1>
-            <p>Bu harita, projenin yapısını, temel bileşenlerini ve geliştirme akışını anlamanıza yardımcı olmak için tasarlanmıştır. Her bölüm, projenin bir parçasını ve teknolojisini temsil eder.</p>
-        </header>
+        <h1>Konveyor AI - Geliştirici Haritası</h1>
 
-        <div class="map-grid">
-            
-            <div class="map-card" id="project-structure">
-                <h2>
-                    <svg class="icon" fill="none" stroke-width="1.5" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M3.75 12.75h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 0 1 0 3.75H5.625a1.875 1.875 0 0 1 0-3.75Z"></path></svg>
-                    Proje Mimarisi ve Dosya Yapısı
-                </h2>
-                <p class="description" style="margin: 0 0 1rem 0; padding:0; border: none;">Projenin temelini oluşturan klasör ve dosyaların hiyerarşik görünümü.</p>
-                <ul class="tree">
-                    <li>
-                        <details open>
-                            <summary class="folder-item">
-                                <svg class="icon icon-folder" fill="none" stroke-width="1.5" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M3.75 9.75h16.5a.75.75 0 0 1 .75.75v9a.75.75 0 0 1-.75.75H3a.75.75 0 0 1-.75-.75v-9a.75.75 0 0 1 .75-.75Zm15-4.5-3-3h-9l-3 3h15Z"></path></svg>
-                                <span>src</span>
-                            </summary>
-                            <ul>
-                                <li>
-                                    <details open>
-                                        <summary class="folder-item">
-                                            <svg class="icon icon-folder" fill="none" stroke-width="1.5" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M3.75 9.75h16.5a.75.75 0 0 1 .75.75v9a.75.75 0 0 1-.75.75H3a.75.75 0 0 1-.75-.75v-9a.75.75 0 0 1 .75-.75Zm15-4.5-3-3h-9l-3 3h15Z"></path></svg>
-                                            <span>app</span>
-                                            <span class="tech-tag">Next.js App Router</span>
-                                        </summary>
-                                        <ul>
-                                            <li><div class="file-item"><svg class="icon icon-file" fill="none" stroke-width="1.5" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"></path></svg> <span>page.tsx</span></div><p class="description">Proje tanıtım (landing) sayfası.</p></li>
-                                            <li><div class="file-item"><svg class="icon icon-file" fill="none" stroke-width="1.5" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"></path></svg> <span>layout.tsx</span></div><p class="description">Kök layout, genel sayfa yapısı ve fontlar.</p></li>
-                                            <li><div class="file-item"><svg class="icon icon-file" fill="none" stroke-width="1.5" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"></path></svg> <span>dashboard/page.tsx</span></div><p class="description">Ana kontrol paneli sayfası.</p></li>
-                                        </ul>
-                                    </details>
-                                </li>
-                                <li>
-                                    <details>
-                                        <summary class="folder-item">
-                                            <svg class="icon icon-folder" fill="none" stroke-width="1.5" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M3.75 9.75h16.5a.75.75 0 0 1 .75.75v9a.75.75 0 0 1-.75.75H3a.75.75 0 0 1-.75-.75v-9a.75.75 0 0 1 .75-.75Zm15-4.5-3-3h-9l-3 3h15Z"></path></svg>
-                                            <span>components</span>
-                                            <span class="tech-tag">React</span>
-                                        </summary>
-                                        <ul>
-                                            <li><div class="file-item"><svg class="icon icon-file" fill="none" stroke-width="1.5" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"></path></svg> <span>dashboard-client.tsx</span></div><p class="description">Panelin tüm istemci tarafı mantığı, state yönetimi.</p></li>
-                                            <li><div class="folder-item"><svg class="icon icon-folder" fill="none" stroke-width="1.5" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M3.75 9.75h16.5a.75.75 0 0 1 .75.75v9a.75.75 0 0 1-.75.75H3a.75.75 0 0 1-.75-.75v-9a.75.75 0 0 1 .75-.75Zm15-4.5-3-3h-9l-3 3h15Z"></path></svg> <span>ui/</span> <span class="tech-tag">Shadcn</span></div><p class="description">Shadcn UI temel bileşenleri (Button, Card vb.).</p></li>
-                                        </ul>
-                                    </details>
-                                </li>
-                                <li>
-                                    <details open>
-                                        <summary class="folder-item">
-                                            <svg class="icon icon-folder" fill="none" stroke-width="1.5" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M3.75 9.75h16.5a.75.75 0 0 1 .75.75v9a.75.75 0 0 1-.75.75H3a.75.75 0 0 1-.75-.75v-9a.75.75 0 0 1 .75-.75Zm15-4.5-3-3h-9l-3 3h15Z"></path></svg>
-                                            <span>ai</span>
-                                            <span class="tech-tag">Genkit</span>
-                                        </summary>
-                                        <ul>
-                                            <li><div class="file-item"><svg class="icon icon-ai" fill="none" stroke-width="1.5" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 4.5a.75.75 0 0 0 0-1.5.75.75 0 0 0 0 1.5Z"></path></svg> <span>flows/analyze-conveyor-flow.ts</span></div><p class="description">Görüntü analizi yapan ve sapma tespiti yapan AI akışı.</p></li>
-                                            <li><div class="file-item"><svg class="icon icon-ai" fill="none" stroke-width="1.5" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 4.5a.75.75 0 0 0 0-1.5.75.75 0 0 0 0 1.5Z"></path></svg> <span>genkit.ts</span></div><p class="description">Genkit yapılandırması ve Gemini modeli tanımı.</p></li>
-                                        </ul>
-                                    </details>
-                                </li>
-                            </ul>
-                        </details>
-                    </li>
-                    <li>
-                        <details>
-                            <summary class="folder-item">
-                                <svg class="icon icon-folder" fill="none" stroke-width="1.5" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M3.75 9.75h16.5a.75.75 0 0 1 .75.75v9a.75.75 0 0 1-.75.75H3a.75.75 0 0 1-.75-.75v-9a.75.75 0 0 1 .75-.75Zm15-4.5-3-3h-9l-3 3h15Z"></path></svg>
-                                <span>public</span>
-                            </summary>
-                             <ul>
-                                <li><div class="file-item"><svg class="icon icon-media" fill="none" stroke-width="1.5" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9A2.25 2.25 0 0 0 13.5 5.25h-9A2.25 2.25 0 0 0 2.25 7.5v9A2.25 2.25 0 0 0 4.5 18.75Z"></path></svg> <span>conveyor-video.mp4</span></div><p class="description">Varsayılan test videosu.</p></li>
-                                <li><div class="file-item"><svg class="icon icon-media" fill="none" stroke-width="1.5" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M9 9V4.5M9 9H4.5M9 9 3.75 3.75M9 15v4.5M9 15H4.5M9 15l-5.25 5.25M15 9h4.5M15 9V4.5M15 9l5.25-5.25M15 15h4.5M15 15v4.5m0-4.5 5.25 5.25"></path></svg> <span>alert-sound.mp3</span></div><p class="description">Anomali uyarı sesi.</p></li>
-                            </ul>
-                        </details>
-                    </li>
-                    <li>
-                        <div class="file-item"><svg class="icon icon-config" fill="none" stroke-width="1.5" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"></path></svg> <span>package.json</span></div><p class="description">Proje bağımlılıkları ve script'ler.</p>
-                    </li>
-                     <li>
-                        <div class="file-item"><svg class="icon icon-config" fill="none" stroke-width="1.5" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"></path></svg> <span>tailwind.config.ts</span></div><p class="description">Stil yapılandırması.</p>
-                    </li>
-                </ul>
-            </div>
-            
-            <div class="map-card" id="tech-stack">
-                <h2>
-                    <svg class="icon" fill="none" stroke-width="1.5" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M10.5 4.5a7.5 7.5 0 1 0 7.5 7.5h-7.5V4.5Z"></path><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z"></path></svg>
-                    Teknoloji Yığını & Akış
-                </h2>
-                <ul class="tree">
-                    <li><div class="file-item"><span class="tech-tag" style="background-color: #000; color: #fff; border: 1px solid #fff;">Next.js</span> <span>İstemci & Sunucu</span></div><p class="description">Uygulama arayüzü (UI) ve sunucu tarafı mantığı (SSR) için kullanılır.</p></li>
-                    <li><div class="file-item"><span class="tech-tag" style="background-color: #3178c6; color: white;">TypeScript</span> <span>Tip Güvenliği</span></div><p class="description">Tüm projede kod kalitesini ve güvenilirliğini artırır.</p></li>
-                    <li><div class="file-item"><span class="tech-tag" style="background-color: #06b6d4; color: white;">TailwindCSS</span> <span>Stil</span></div><p class="description">Hızlı ve modern arayüz tasarımı için kullanılır.</p></li>
-                    <li><div class="file-item"><span class="tech-tag" style="background: var(--card-bg); border: 1px solid var(--border)">Shadcn UI</span> <span>Bileşenler</span></div><p class="description">Tekrar kullanılabilir ve erişilebilir UI bileşenleri sağlar.</p></li>
-                    <li><div class="file-item"><span class="tech-tag" style="background-color: #4285F4; color: white;">Genkit (Gemini)</span> <span>Yapay Zeka</span></div><p class="description">Video akışından alınan kareleri analiz eder ve sapma değerini hesaplar.</p></li>
-                </ul>
-            </div>
+        <div class="map-container">
+            <div class="map-content">
 
-            <div class="map-card" id="setup">
+                <div class="card">
+                    <p>Bu harita, projenin yapısını, kullanılan teknolojileri ve bileşenlerin birbirleriyle nasıl etkileşimde bulunduğunu gösteren interaktif bir kılavuzdur. Klasörlere tıklayarak içeriğini genişletip daraltabilirsiniz.</p>
+                </div>
+
                 <h2>
-                   <svg class="icon" fill="none" stroke-width="1.5" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25A2.25 2.25 0 0 1 5.25 3h4.5M12 3v12"></path></svg>
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
+                    Proje Dosya Hiyerarşisi
+                </h2>
+                <ul class="tree" id="project-tree">
+                    <!-- JavaScript ile dinamik olarak doldurulacak -->
+                </ul>
+
+                <h2>
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    Genel Ayarlar ve Konfigürasyon
+                </h2>
+                <div class="card">
+                    <p><strong>package.json:</strong> Proje bağımlılıklarını ve `dev`, `build`, `start` gibi komut dosyalarını yönetir. Yeni bir paket eklendiğinde `npm install` komutu otomatik çalışır.</p>
+                    <p><strong>tailwind.config.ts:</strong> Tailwind CSS için tema renkleri, fontlar ve özel sınıflar burada tanımlanır. Projenin görsel kimliği bu dosyadan yönetilir.</p>
+                    <p><strong>next.config.ts:</strong> Next.js'e özgü yapılandırmalar (örneğin, resim optimizasyonu için harici domain izinleri) bu dosyada yer alır.</p>
+                </div>
+
+                <h2>
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     Kurulum ve Çalıştırma
                 </h2>
-                <p>Projeyi yerel makinenizde çalıştırmak için:</p>
-                <div class="command-line"><span>$</span> npm install</div>
-                <p>Geliştirme sunucusunu başlatmak için:</p>
-                <div class="command-line"><span>$</span> npm run dev</div>
-                <p>Uygulama <code>http://localhost:9002</code> adresinde çalışacaktır.</p>
+                <div class="card">
+                    <p>1. <strong>Bağımlılıkları Yükle:</strong> `npm install`</p>
+                    <p>2. <strong>Geliştirme Sunucusunu Başlat:</strong> `npm run dev`</p>
+                    <p>Uygulama varsayılan olarak `http://localhost:9002` adresinde çalışmaya başlayacaktır.</p>
+                </div>
             </div>
-            
-             <div class="map-card" id="roadmap">
-                <h2>
-                    <svg class="icon" fill="none" stroke-width="1.5" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244"></path></svg>
-                    Geliştirme ve Genişletme Alanları
-                </h2>
-                <p class="description" style="margin: 0 0 1rem 0; padding:0; border: none;">Projenin geleceği için potansiyel geliştirme fikirleri ve alanları.</p>
-                <ul class="tree">
-                    <li><div class="file-item"><svg class="icon" style="stroke: var(--green);" fill="none" stroke-width="1.5" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3h12"></path></svg> <span>Firebase Entegrasyonu</span></div><p class="description">Anomali loglarını ve kullanıcı ayarlarını bulutta saklamak.</p></li>
-                    <li><div class="file-item"><svg class="icon" style="stroke: var(--green);" fill="none" stroke-width="1.5" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"></path></svg> <span>Kullanıcı ve Operatör Yönetimi</span></div><p class="description">Farklı yetkilere sahip kullanıcı rolleri oluşturmak.</p></li>
-                    <li><div class="file-item"><svg class="icon" style="stroke: var(--green);" fill="none" stroke-width="1.5" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0 1 18 16.5h-2.25m-7.5 0h7.5m-7.5 0-1 3m8.5-3 1 3m0 0 .5 1.5m-.5-1.5h-9.5m0 0-.5 1.5M9 11.25v1.5M12 9v3.75m3-6v6"></path></svg> <span>Gelişmiş Raporlama</span></div><p class="description">Zaman içindeki anomali trendlerini gösteren detaylı raporlar ve grafikler.</p></li>
-                    <li><div class="file-item"><svg class="icon" style="stroke: var(--green);" fill="none" stroke-width="1.5" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"></path></svg> <span>Anlık Bildirimler</span></div><p class="description">E-posta, SMS veya anlık mesajlaşma uygulamaları ile anomali bildirimleri göndermek.</p></li>
-                </ul>
-            </div>
-
         </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const detailsElements = document.querySelectorAll('.tree details');
+        const projectData = {
+            name: "konveyor-ai",
+            type: "folder",
+            description: "Ana proje klasörü",
+            children: [
+                {
+                    name: "src",
+                    type: "folder",
+                    description: "Tüm kaynak kodlarının bulunduğu ana klasör",
+                    children: [
+                        {
+                            name: "app",
+                            type: "folder",
+                            description: "Next.js App Router sayfaları, layout'ları ve API rotaları.",
+                            tech: "Next.js",
+                            children: [
+                                { name: "dashboard/page.tsx", type: "file", description: "Ana kontrol paneli.", tech: "React" },
+                                { name: "layout.tsx", type: "file", description: "Kök layout, tüm sayfaları sarar.", tech: "React" },
+                                { name: "page.tsx", type: "file", description: "Proje tanıtım (landing) sayfası.", tech: "React" },
+                                { name: "globals.css", type: "file", description: "Global CSS ve ShadCN tema değişkenleri.", tech: "Tailwind" }
+                            ]
+                        },
+                        {
+                            name: "components",
+                            type: "folder",
+                            description: "Tekrar kullanılabilir React bileşenleri.",
+                            children: [
+                                { name: "ui", type: "folder", description: "Shadcn UI temel bileşenleri (Button, Card, vb.).", tech: "Shadcn UI" },
+                                { name: "dashboard-client.tsx", type: "file", description: "Panelin tüm istemci tarafı mantığını içerir.", tech: "React" },
+                                { name: "icons.tsx", type: "file", description: "Özel SVG ikonları.", tech: "React" }
+                            ]
+                        },
+                        {
+                            name: "ai",
+                            type- "folder",
+                            description: "Genkit ve yapay zeka ile ilgili kodlar.",
+                            tech: "Genkit",
+                            children: [
+                                { name: "flows/analyze-conveyor-flow.ts", type: "file", description: "Görüntü analizi yapan AI akışı.", tech: "Gemini" },
+                                { name: "genkit.ts", type: "file", description: "Genkit yapılandırması ve model seçimi." }
+                            ]
+                        },
+                         {
+                            name: "hooks",
+                            type: "folder",
+                            description: "Özel React hook'ları (use-toast, use-mobile).",
+                             tech: "React",
+                        },
+                        {
+                            name: "lib",
+                            type: "folder",
+                            description: "Yardımcı fonksiyonlar ve kütüphaneler (cn, placeholder-images).",
+                        }
+                    ]
+                },
+                {
+                    name: "public",
+                    type: "folder",
+                    description: "Statik varlıklar (video, ses dosyaları, resimler).",
+                    children: [
+                        { name: "conveyor-video.mp4", type: "file", description: "Varsayılan test videosu." },
+                        { name: "alert-sound.mp3", type: "file", description: "Anomali uyarı sesi." },
+                        { name: "devmap.html", type: "file", description: "Bu gördüğünüz geliştirici haritası." }
+                    ]
+                },
+                { name: "package.json", type: "file", description: "Proje bağımlılıkları ve script'ler.", tech: "NPM" },
+                { name: "tailwind.config.ts", type: "file", description: "Tailwind CSS yapılandırması.", tech: "Tailwind" },
+                { name: "next.config.ts", type: "file", description: "Next.js yapılandırması.", tech: "Next.js" },
+                { name: "README.md", type: "file", description: "Proje hakkında genel bilgiler." }
+            ]
+        };
 
-            detailsElements.forEach(details => {
-                const summary = details.querySelector('summary');
-                const children = details.querySelector('ul');
-                if (summary && children && children.children.length > 0) {
-                    // Default behavior is enough
-                } else if(summary) {
-                     summary.style.listStyle = 'none'; // hide arrow if no children
-                     summary.style.cursor = 'default';
-                }
+        const folderIcon = `<svg class="node-icon icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
+        const fileIcon = `<svg class="node-icon icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>`;
+        const folderOpenIcon = `<svg class="node-icon icon" style="transform: rotate(90deg);" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
+
+        function createTree(data, container) {
+            const ul = document.createElement('ul');
+            ul.className = 'tree';
+
+            // Custom sort: folders first, then files, then alphabetically
+            const sortedChildren = data.children.sort((a, b) => {
+                if (a.type === 'folder' && b.type !== 'folder') return -1;
+                if (a.type !== 'folder' && b.type === 'folder') return 1;
+                return a.name.localeCompare(b.name);
             });
+
+            sortedChildren.forEach(item => {
+                const li = document.createElement('li');
+                
+                const nodeDiv = document.createElement('div');
+                nodeDiv.className = `tree-node ${item.type}`;
+                nodeDiv.innerHTML = `
+                    ${item.type === 'folder' ? folderIcon : fileIcon}
+                    <span class="node-name">${item.name}</span>
+                    <span class="node-description">${item.description || ''}</span>
+                    ${item.tech ? `<span class="node-tech">${item.tech}</span>` : ''}
+                `;
+
+                li.appendChild(nodeDiv);
+
+                if (item.type === 'folder' && item.children) {
+                    nodeDiv.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        nodeDiv.classList.toggle('expanded');
+                        const icon = nodeDiv.querySelector('.node-icon');
+                        icon.style.transform = nodeDiv.classList.contains('expanded') ? 'rotate(90deg)' : 'rotate(0deg)';
+                    });
+                    createTree(item, li);
+                }
+
+                ul.appendChild(li);
+            });
+            container.appendChild(ul);
+        }
+
+        const projectTreeContainer = document.getElementById('project-tree');
+        createTree({ name: 'root', type: 'folder', children: [projectData] }, projectTreeContainer);
+
+        // Auto-expand the first level (src, public etc)
+        document.querySelectorAll('#project-tree > ul > li > .tree-node.folder').forEach(node => {
+            node.classList.add('expanded');
+            const icon = node.querySelector('.node-icon');
+            icon.style.transform = 'rotate(90deg)';
         });
     </script>
-
 </body>
 </html>
+
+    
