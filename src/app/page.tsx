@@ -20,7 +20,7 @@ export default function LandingPage() {
       description: "Canlı video akışı üzerine eklenen dinamik algılama çizgileri ile referans noktasını ve anlık sapmayı görsel olarak gösterir.",
     },
     {
-      icon: <SlidersHorizontal className="h-8 w-8 text-primary animate-spin" />,
+      icon: <SlidersHorizontal className="h-8 w-8 text-primary" />,
       title: "Dinamik Yapılandırma",
       description: "Anomali hassasiyetini, istasyonları ve uyarı ayarlarını 'Gelişmiş Ayarlar' menüsünden kolayca yönetin.",
     },
@@ -32,11 +32,12 @@ export default function LandingPage() {
   ];
 
   const techStack = [
-    { name: "Next.js", logo: "/tech/nextjs.svg" },
-    { name: "Genkit", logo: "/tech/genkit.svg" },
-    { name: "Tailwind CSS", logo: "/tech/tailwind.svg" },
-    { name: "Shadcn UI", logo: "/tech/shadcn.svg" },
-    { name: "TypeScript", logo: "/tech/typescript.svg" },
+    "Next.js",
+    "Google Genkit",
+    "Tailwind CSS",
+    "Shadcn UI",
+    "TypeScript",
+    "Lucide React"
   ];
 
   return (
@@ -148,11 +149,10 @@ export default function LandingPage() {
                         Projenin geliştirilmesinde kullanılan teknolojiler ve kütüphaneler.
                     </p>
                 </div>
-                <div className="mt-12 flex flex-wrap justify-center gap-8 md:gap-12">
+                <div className="mt-12 flex flex-wrap justify-center gap-x-6 gap-y-2 md:gap-x-8">
                     {techStack.map((tech) => (
-                        <div key={tech.name} className="flex flex-col items-center gap-2 transition-transform hover:scale-110">
-                             <img src={tech.logo} alt={tech.name} className="h-12 w-12 dark:invert" />
-                             <span className="text-sm font-medium text-muted-foreground">{tech.name}</span>
+                        <div key={tech} className="rounded-full border border-white/10 bg-white/5 px-4 py-1.5 transition-colors hover:bg-white/10">
+                             <span className="text-sm font-medium text-muted-foreground">{tech}</span>
                         </div>
                     ))}
                 </div>
