@@ -8,26 +8,28 @@ import { Button } from '@/components/ui/button';
 
 // Asenkron olarak markdown içeriğini getiren fonksiyon
 async function getMarkdownContent() {
-  const res = await fetch('/README.md');
-  if (!res.ok) {
-    throw new Error('Doküman yüklenemedi.');
+  try {
+    const res = await fetch('/README.md');
+    if (!res.ok) {
+        // We will just return an empty string if the file is not found
+        return '';
+    }
+    const markdown = await res.text();
+    return marked(markdown);
+  } catch (e) {
+    // Also return empty string on network error etc.
+    return '';
   }
-  const markdown = await res.text();
-  return marked(markdown);
 }
 
 export default function DocumentationPage() {
   const [htmlContent, setHtmlContent] = useState('');
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     getMarkdownContent()
       .then(html => {
         setHtmlContent(html);
-      })
-      .catch(err => {
-        setError(err.message);
       })
       .finally(() => {
         setIsLoading(false);
@@ -71,13 +73,7 @@ export default function DocumentationPage() {
             <p className="text-muted-foreground">Proje dokümanı yükleniyor...</p>
           </div>
         )}
-        {error && (
-          <div className="text-center mt-20 text-destructive">
-            <h2 className="text-2xl font-bold mb-2">Bir Hata Oluştu</h2>
-            <p>{error}</p>
-          </div>
-        )}
-        {!isLoading && !error && (
+        {!isLoading && htmlContent && (
           <article
             className="prose prose-invert prose-lg max-w-none 
                        prose-h1:font-heading prose-h2:font-heading prose-h3:font-heading
