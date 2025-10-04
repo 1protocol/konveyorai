@@ -2,12 +2,10 @@
 import { useEffect, useState } from 'react';
 import { marked } from 'marked';
 import { Loader, UserCircle } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 
 // Asenkron olarak markdown içeriğini getiren fonksiyon
 async function getMarkdownContent() {
-  // NOT: The original README.md has been renamed to PROJE_DOKUMANTASYONU.md
-  // for display purposes on the landing page.
   const res = await fetch('/README.md');
   if (!res.ok) {
     throw new Error('Doküman yüklenemedi.');
@@ -24,15 +22,17 @@ export default function DocumentationPage() {
   useEffect(() => {
     getMarkdownContent()
       .then(html => {
+        // İstemci tarafında DOMParser kullanarak ilk paragrafı kaldıralım
         if (typeof window !== 'undefined') {
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, 'text/html');
             const firstP = doc.querySelector('p');
             if (firstP) {
-                firstP.remove();
+                firstP.remove(); // İlk <p> etiketini kaldır
             }
             setHtmlContent(doc.body.innerHTML);
         } else {
+            // Sunucu tarafı render için fallback (ilk paragraf kalabilir)
             setHtmlContent(html);
         }
       })
