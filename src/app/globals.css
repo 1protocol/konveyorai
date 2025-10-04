@@ -82,3 +82,10 @@
     font-family: var(--font-body), sans-serif;
   }
 }
+
+@layer utilities {
+    @keyframes opacity-pulse {
+      '0%, 100%' = { opacity: 0.1 }
+      '50%' = { opacity: 1 }
+    }
+}
