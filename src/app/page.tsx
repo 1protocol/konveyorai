@@ -39,7 +39,7 @@ export default function DocumentationPage() {
          <div className="flex items-center gap-3">
           <Icons.logo className="h-8 w-8 text-primary" />
           <div className="flex flex-col">
-            <h1 className="text-3xl font-bold text-primary font-heading">
+            <h1 className="text-2xl font-bold text-primary font-heading">
               Konveyor AI: Proje Sunumu
             </h1>
             <p className="text-base text-muted-foreground">
