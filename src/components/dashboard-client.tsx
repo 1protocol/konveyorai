@@ -225,7 +225,7 @@ export function DashboardClient() {
       stopCameraStream();
     }
 
-  }, [selectedBant, cameraConfig]);
+  }, [selectedBant, cameraConfig, isWebcam, toast, selectedVideoSource]);
 
 
   useEffect(() => {
@@ -383,9 +383,12 @@ export function DashboardClient() {
                     </div>
                 )}
 
-                {isProcessing && (
+                {isProcessing && !isCalibrating && (
                   <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                    <p className="text-white font-medium">İşleniyor...</p>
+                    <div className="flex items-center gap-2 text-white font-medium">
+                        <Loader className="w-4 h-4 animate-spin"/>
+                        <span>Yapay Zeka Analiz Ediyor...</span>
+                    </div>
                   </div>
                 )}
                  <audio ref={audioRef} src="/alert-sound.mp3" preload="auto"></audio>
@@ -543,6 +546,10 @@ function SettingsDialog({
     onSettingsChange(currentSettings);
     onCameraConfigChange(currentCameraConfig);
     setIsOpen(false);
+    toast({
+        title: "Ayarlar Kaydedildi",
+        description: "Yeni yapılandırmanız başarıyla kaydedildi.",
+    });
   };
   
   const handleSoundSwitchChange = (checked: boolean) => {
@@ -584,10 +591,10 @@ function SettingsDialog({
         </DialogHeader>
         <Tabs defaultValue="ai-settings">
           <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="ai-settings"><BrainCircuit className="mr-2"/>Yapay Zeka</TabsTrigger>
-            <TabsTrigger value="cameras"><Camera className="mr-2"/>Kameralar</TabsTrigger>
-            <TabsTrigger value="notifications"><Bell className="mr-2"/>Bildirimler</TabsTrigger>
-            <TabsTrigger value="operators"><Users className="mr-2"/>Operatörler</TabsTrigger>
+            <TabsTrigger value="ai-settings"><BrainCircuit className="mr-2 h-4 w-4"/>Yapay Zeka</TabsTrigger>
+            <TabsTrigger value="cameras"><Camera className="mr-2 h-4 w-4"/>Kameralar</TabsTrigger>
+            <TabsTrigger value="notifications"><Bell className="mr-2 h-4 w-4"/>Bildirimler</TabsTrigger>
+            <TabsTrigger value="operators"><Users className="mr-2 h-4 w-4"/>Operatörler</TabsTrigger>
           </TabsList>
           <TabsContent value="ai-settings" className="py-4">
             <div className="space-y-6">
