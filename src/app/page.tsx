@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { marked } from 'marked';
-import { Loader, UserCircle, Map, Cpu, Layers, ShieldCheck } from 'lucide-react';
+import { Loader, UserCircle, Map, Cpu, Layers, ShieldCheck, LayoutDashboard } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
@@ -106,6 +106,20 @@ export default function DocumentationPage() {
                     Konveyor AI, üretim sürecindeki anomalileri anında tespit ederek proaktif bir risk yönetimi sağlar. Hatalı hizalanmış bir bant, ürün kalitesinin düşmesine, ham madde israfına ve hatta üretim hattının tamamen durmasına neden olabilir. Sistemimiz, bu tür riskleri erken aşamada belirleyerek operasyonel verimliliği artırır, plansız duruş sürelerini azaltır ve nihai ürün kalitesini güvence altına alır. Bu sayede, olası büyük maliyetli arızaların ve üretim kayıplarının önüne geçilir.
                 </p>
             </CardContent>
+        </Card>
+
+        <Card className="mb-8 bg-card/50 border-border/50">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <LayoutDashboard className="h-5 w-5 text-accent" />
+              İstasyon Tespit, Modelleme ve Raporlama
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground">
+              Sistem, tüm konveyör bant istasyonlarını merkezi bir "Teknik Kontrol Merkezi" üzerinden yönetme imkanı sunar. Bu merkez, her bir istasyondan gelen canlı verileri anlık olarak izler, zaman içindeki sapma verilerini modeller ve bu verilerden yönetimsel raporlar oluşturur. Bu sayede, hangi istasyonun ne sıklıkla bakıma ihtiyaç duyduğu, en verimli çalışma parametrelerinin ne olduğu gibi stratejik kararlar, somut verilere dayandırılarak alınabilir.
+            </p>
+          </CardContent>
         </Card>
 
 
