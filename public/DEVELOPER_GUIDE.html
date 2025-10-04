@@ -1,380 +1,393 @@
 <!DOCTYPE html>
 <html lang="tr">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Konveyor AI - Geliştirici Kılavuzu</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link
-      rel="preconnect"
-      href="https://fonts.gstatic.com"
-      crossorigin="anonymous"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      :root {
-        --background-start: hsl(224, 71%, 4%);
-        --background-end: hsl(224, 71%, 10%);
-        --text-color: hsl(210, 40%, 98%);
-        --muted-text: hsl(215, 20%, 65%);
-        --accent-color: hsl(32, 95%, 54%);
-        --hover-accent-color: hsl(32, 95%, 64%);
-        --card-bg: rgba(20, 22, 36, 0.7);
-        --card-inner-bg: rgba(60, 65, 85, 0.5);
-        --card-border: rgba(255, 255, 255, 0.1);
-        --btn-bg: rgba(255, 255, 255, 0.1);
-        --btn-hover-bg: rgba(255, 255, 255, 0.2);
-        --btn-border: rgba(255, 255, 255, 0.2);
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Konveyor AI - Geliştirici Kılavuzu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-      body {
-        font-family: "Poppins", sans-serif;
-        background-color: var(--background-start);
-        background-image: radial-gradient(
-            circle at 15% 50%,
-            hsla(220, 40%, 15%, 0.3),
-            transparent 40%
-          ),
-          radial-gradient(
-            circle at 85% 30%,
-            hsla(280, 40%, 15%, 0.2),
-            transparent 50%
-          );
-        color: var(--text-color);
-        margin: 0;
-        line-height: 1.8;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-      }
+    body {
+      font-family: "Poppins", sans-serif;
+      background-color: #0c0e1a;
+      color: #e0e0e0;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      background-image: radial-gradient(circle at 10% 20%, hsla(220, 70%, 50%, 0.1), transparent 35%),
+        radial-gradient(circle at 90% 80%, hsla(350, 70%, 50%, 0.1), transparent 40%);
+    }
 
-      .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 4rem 2rem;
-      }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
 
-      .grid-layout {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 2rem;
-      }
+    header {
+      padding: 1.5rem 0;
+    }
+    
+    .banner {
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 3rem;
+      padding: 2px;
+      border-radius: 20px;
+    }
 
-      header {
-        position: fixed;
+    .banner .card-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+
+    .card {
+      position: relative;
+      overflow: hidden;
+      padding: 2px;
+      border-radius: 20px;
+    }
+    
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background: rgba(20, 22, 36, 0.7);
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 18px;
+      padding: 30px;
+      z-index: 2;
+      overflow: hidden;
+    }
+
+    .card::after, .banner::after {
+      content: '';
+      position: absolute;
+      top: -50%; 
+      left: -50%;
+      width: 200%; 
+      height: 200%;
+      background: conic-gradient(
+        from 180deg at 50% 50%,
+        hsla(0, 70%, 60%, 0.8), 
+        transparent 50%,
+        hsla(0, 0%, 100%, 0.8), 
+        transparent 85%,
+        hsla(220, 70%, 60%, 0.8)
+      );
+      animation: border-glow 8s linear infinite;
+      z-index: 1;
+    }
+
+    @keyframes border-glow {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+    
+    .content-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2.5rem;
+      width: 100%;
+    }
+    
+    .signature-card {
+        grid-column: 1 / -1;
+        position: relative;
+        overflow: hidden;
+        border-radius: 20px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .signature-card .card-inner {
+        text-align: center;
+    }
+
+    .signature-card::after {
+        content: '';
+        position: absolute;
         top: 0;
         left: 0;
         right: 0;
-        z-index: 10;
-        background: rgba(10, 11, 18, 0.5);
-        backdrop-filter: blur(10px);
-        border-bottom: 1px solid var(--card-border);
-      }
+        bottom: 0;
+        background-image: 
+          radial-gradient(circle at 15% 50%, hsla(220, 80%, 70%, 0.5), transparent 30%),
+          radial-gradient(circle at 85% 50%, hsla(350, 80%, 70%, 0.4), transparent 30%);
+        background-size: 200% 200%;
+        z-index: 3;
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out;
+        pointer-events: none;
+    }
+    
+    .signature-card:hover {
+        transform: scale(1.02);
+    }
 
-      header .container {
-        padding: 1rem 2rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
+    .signature-card:hover::after {
+        opacity: 1;
+    }
 
-      .logo {
-        font-weight: 700;
-        font-size: 1.5rem;
-        color: var(--text-color);
-        text-decoration: none;
-      }
+    h1, h2, h3 {
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 1rem;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+    
+    .banner h1 {
+      font-size: 2.8rem;
+      line-height: 1.2;
+    }
 
-      .nav-links {
-        display: flex;
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      border-bottom: 2px solid hsla(var(--accent));
+      padding-bottom: 0.5rem;
+      display: inline-block;
+    }
+
+    p, li {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: #c0c0c0;
+    }
+    
+    .banner p {
+        font-size: 1.1rem;
+        max-width: 60ch;
+        color: #d0d0d0;
+    }
+
+    ul {
+      list-style-position: inside;
+      padding-left: 1rem;
+    }
+    
+    li {
+        margin-bottom: 0.5rem;
+    }
+
+    code {
+      font-family: 'SF Mono', 'Consolas', 'monospace';
+      background-color: rgba(0, 0, 0, 0.3);
+      padding: 0.2em 0.4em;
+      border-radius: 5px;
+      font-size: 0.9em;
+      color: hsl(var(--accent));
+    }
+    
+    pre {
+      background-color: rgba(0, 0, 0, 0.4);
+      padding: 1.5rem;
+      border-radius: 10px;
+      overflow-x: auto;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    pre code {
+        padding: 0;
+        background: none;
+        color: #e0e0e0;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 0.9rem 1.8rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      text-decoration: none;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+      backdrop-filter: blur(10px);
+      text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+
+    .btn:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 1024px) {
+      .container {
+        padding: 1.5rem;
+      }
+      .content-grid {
         gap: 1.5rem;
       }
+    }
 
-      .nav-links a {
-        text-decoration: none;
-        color: var(--muted-text);
-        transition: color 0.3s ease;
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
       }
-
-      .nav-links a:hover {
-        color: var(--text-color);
-      }
-
-      main {
-        padding-top: 80px;
-      }
-
-      .banner {
-        width: 100%;
-        margin-bottom: 3rem;
-        padding: 2px;
-        position: relative;
-        overflow: hidden;
-        background: transparent;
-        border-radius: 20px;
-      }
-
       .banner h1 {
-        font-size: 2.8rem;
-        margin: 0 0 0.5rem 0;
-        font-weight: 800;
-        letter-spacing: -1px;
-        line-height: 1.2;
+        font-size: 2.2rem;
       }
-
-      .banner p {
-        font-size: 1.1rem;
-        color: var(--muted-text);
-        max-width: 60ch;
-      }
-
-      .card,
-      .banner {
-        padding: 2px;
-        position: relative;
-        overflow: hidden;
-        background: transparent;
-        border-radius: 20px;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-      }
-
-      .card::after,
-      .banner::after {
-        content: "";
-        position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: conic-gradient(
-          from 180deg at 50% 50%,
-          hsla(0, 70%, 60%, 0.8),
-          transparent,
-          hsla(0, 0%, 100%, 0.8),
-          transparent,
-          hsla(220, 70%, 60%, 0.8)
-        );
-        animation: border-glow 8s linear infinite;
-        z-index: 1;
-      }
-
-      @keyframes border-glow {
-        0% {
-          transform: rotate(0deg);
-        }
-        100% {
-          transform: rotate(360deg);
-        }
-      }
-
-      .card-inner {
-        position: relative;
-        width: 100%;
-        height: 100%;
-        background: var(--card-bg);
-        backdrop-filter: blur(15px);
-        border-radius: 18px;
-        overflow: hidden;
-        z-index: 2;
-        padding: 30px;
-        display: flex;
-        flex-direction: column;
-      }
-
       .banner .card-inner {
-        padding: 40px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
       }
-
-      .card h3 {
-        font-size: 1.5rem;
-        margin-top: 0;
-        margin-bottom: 1rem;
-        color: var(--text-color);
-        font-weight: 600;
-      }
-
-      .card p,
-      .card ul {
-        color: var(--muted-text);
-        margin-top: 0;
-      }
-
-      .card ul {
-        padding-left: 20px;
-      }
-
-      .card li {
-        margin-bottom: 0.5rem;
-      }
-      
       .btn {
-        display: inline-block;
-        padding: 0.9rem 2.2rem;
-        background: var(--btn-bg);
-        border: 1px solid var(--btn-border);
-        color: var(--text-color);
-        text-decoration: none;
-        border-radius: 12px;
-        font-weight: 500;
-        transition: all 0.3s ease;
-        backdrop-filter: blur(5px);
-        text-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-        font-size: 1rem;
-      }
-
-      .btn:hover {
-        background: var(--btn-hover-bg);
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-      }
-      
-       /* Signature Card Özel Stilleri */
-      .signature-card {
-        grid-column: 1 / -1; /* Tam genişlik kaplaması için */
-      }
-      .signature-card::after {
-          /* Ana animasyonu iptal et */
-          display: none;
-      }
-      .signature-card .card-inner::before {
-          content: '';
-          position: absolute;
-          top: 0; left: 0; right: 0; bottom: 0;
-          background-image:
-              radial-gradient(circle at 15% 20%, hsla(220, 80%, 70%, 0.3), transparent 25%),
-              radial-gradient(circle at 85% 30%, hsla(340, 80%, 70%, 0.3), transparent 25%);
-          background-size: 200% 200%;
-          transition: opacity 0.5s ease-in-out;
-          opacity: 0;
-          z-index: -1;
-      }
-      .signature-card:hover {
-          transform: scale(1.02);
-      }
-      .signature-card:hover .card-inner::before {
-          opacity: 1;
-      }
-
-
-      @media (max-width: 1024px) {
-          .grid-layout {
-              gap: 1.5rem;
-          }
-          .container {
-              padding: 3rem 1.5rem;
-          }
-      }
-
-      @media (max-width: 768px) {
-        .grid-layout {
-          grid-template-columns: 1fr;
-          gap: 1.5rem;
-        }
-
-        .container {
-            padding: 2rem 1rem;
-        }
-
-        .banner .card-inner {
-          flex-direction: column;
+          width: 100%;
           text-align: center;
-          gap: 1.5rem;
-        }
-
-        .banner h1 {
-          font-size: 2.2rem;
-        }
-
-        .banner p {
-            font-size: 1rem;
-        }
-
-        .card h3 {
-          font-size: 1.3rem;
-        }
       }
-    </style>
-  </head>
-  <body>
+      h2 {
+        font-size: 1.6rem;
+      }
+      .content-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <!-- Header content can be added here if needed in the future -->
+    </header>
+
     <main>
-      <div class="container">
-        <section class="banner">
+      <section class="banner">
+        <div class="card-inner">
+          <div>
+            <h1>Geliştirici Kılavuzu</h1>
+            <p>
+              Konveyor AI projesinin teknik detaylarına, kurulumuna ve en iyi
+              kullanım pratiklerine hoş geldiniz.
+            </p>
+          </div>
+          <div>
+             <a href="/dashboard" class="btn">Operasyon Paneline Git</a>
+          </div>
+        </div>
+      </section>
+
+      <div class="content-grid">
+        <section class="card">
           <div class="card-inner">
-            <div>
-              <h1>Geliştirici Kılavuzu</h1>
-              <p>
-                Konveyor AI projesinin teknik altyapısı, kurulum adımları ve en iyi kullanım pratikleri.
-              </p>
-            </div>
-            <a href="/dashboard" class="btn">Operasyon Paneline Git</a>
+            <h2>Teknik Gereksinimler</h2>
+            <p>
+              Projeyi yerel makinenizde sorunsuz bir şekilde çalıştırmak için
+              aşağıdaki araçların kurulu olduğundan emin olun:
+            </p>
+            <ul>
+              <li>Node.js (v18.x veya üzeri)</li>
+              <li>npm (Genellikle Node.js ile birlikte gelir)</li>
+              <li>Modern bir web tarayıcısı (Chrome, Firefox, Edge)</li>
+            </ul>
           </div>
         </section>
 
-        <div class="grid-layout">
-            <section class="card">
-                <div class="card-inner">
-                    <h3>Teknik Gereksinimler</h3>
-                    <p>Projeyi yerel makinenizde sorunsuz bir şekilde çalıştırmak için aşağıdaki araçların kurulu olması gerekmektedir:</p>
-                    <ul>
-                        <li>Node.js (v18.x veya üzeri)</li>
-                        <li>npm (v9.x veya üzeri)</li>
-                        <li>Modern bir web tarayıcısı (Chrome, Firefox, Edge)</li>
-                    </ul>
-                </div>
-            </section>
-            
-            <section class="card">
-                <div class="card-inner">
-                    <h3>Kurulum ve Başlatma</h3>
-                    <p>Projeyi başlatmak için aşağıdaki komutları terminalde sırasıyla çalıştırın:</p>
-                    <ol>
-                        <li><strong>Bağımlılıkları Yükle:</strong> <code>npm install</code></li>
-                        <li><strong>Geliştirme Sunucusunu Başlat:</strong> <code>npm run dev</code></li>
-                    </ol>
-                    <p style="margin-top: 1rem;">Uygulama varsayılan olarak <code>http://localhost:9002</code> adresinde çalışacaktır.</p>
-                </div>
-            </section>
-            
-            <section class="card">
-                <div class="card-inner">
-                    <h3>Proje Yapısı ve Hiyerarşi</h3>
-                    <p>Proje, Next.js App Router mimarisine uygun olarak modüler bir yapıda tasarlanmıştır:</p>
-                    <ul>
-                        <li><code>src/app/</code>: Ana sayfa ve panel yönlendirmeleri.</li>
-                        <li><code>src/components/</code>: Tekrar kullanılabilir UI bileşenleri.</li>
-                        <li><code>src/ai/</code>: Google Genkit ile yapay zeka akışları.</li>
-                        <li><code>public/</code>: Statik varlıklar (video, ses dosyaları).</li>
-                    </ul>
-                </div>
-            </section>
+        <section class="card">
+          <div class="card-inner">
+            <h2>Kurulum ve Başlatma</h2>
+            <p>Projeyi başlatmak için terminalde aşağıdaki adımları izleyin:</p>
+            <pre><code># 1. Proje bağımlılıklarını yükleyin
+npm install
 
-            <section class="card">
-                <div class="card-inner">
-                    <h3>Temel Teknolojiler</h3>
-                    <p>Konveyor AI, modern ve güçlü teknolojiler kullanılarak geliştirilmiştir:</p>
-                    <ul>
-                        <li><strong>Next.js:</strong> Sunucu tarafı render ve performans optimizasyonu.</li>
-                        <li><strong>Genkit (Gemini):</strong> Görüntü analizi için yapay zeka altyapısı.</li>
-                        <li><strong>Shadcn UI & Tailwind:</strong> Hızlı ve estetik arayüz geliştirme.</li>
-                        <li><strong>TypeScript:</strong> Kod kalitesi ve güvenliği.</li>
-                    </ul>
-                </div>
-            </section>
+# 2. Geliştirme sunucusunu başlatın
+npm run dev</code></pre>
+            <p style="margin-top: 1rem;">
+              Uygulama <code>http://localhost:9002</code> adresinde
+              çalışmaya başlayacaktır.
+            </p>
+          </div>
+        </section>
 
-             <section class="card signature-card">
-              <div class="card-inner">
-                  <h3 style="text-align: center;">Geliştirme Sorumlusu</h3>
-                  <p style="text-align: center; margin-top: 1rem; font-size: 1.2rem; color: var(--text-color);">Mustafa USLU</p>
-              </div>
-            </section>
-        </div>
+        <section class="card">
+            <div class="card-inner">
+                <h2>Temel Teknolojiler</h2>
+                <p>Proje, modern ve performans odaklı teknolojiler üzerine kurulmuştur:</p>
+                <ul>
+                    <li><strong>Next.js:</strong> Sunucu tarafı render ve statik site oluşturma yetenekleriyle güçlü bir React framework'ü.</li>
+                    <li><strong>Genkit (Gemini):</strong> Görüntü analizi ve anomali tespiti için kullanılan yapay zeka altyapısı.</li>
+                    <li><strong>Shadcn UI:</strong> Tekrar kullanılabilir ve özelleştirilebilir modern UI bileşenleri sağlar.</li>
+                    <li><strong>Tailwind CSS:</strong> Hızlı ve pratik bir şekilde stil oluşturmayı sağlayan bir CSS framework'ü.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="card">
+          <div class="card-inner">
+            <h2>Proje Yapısı ve Hiyerarşi</h2>
+            <p>
+              Projenin ana dizin yapısı, modülerliği ve okunabilirliği
+              artırmak için özenle tasarlanmıştır:
+            </p>
+            <ul>
+                <li><code>/src/app</code>: Uygulamanın ana sayfaları ve yönlendirme mantığı.</li>
+                <li><code>/src/components</code>: Arayüzde kullanılan tekrar edilebilir React bileşenleri.</li>
+                <li><code>/src/ai</code>: Genkit akışları ve yapay zeka ile ilgili tüm kodlar.</li>
+                <li><code>/public</code>: Videolar, resimler ve ses dosyaları gibi statik varlıklar.</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="card signature-card">
+            <div class="card-inner">
+              <h3 style="font-size: 1rem; color: #a0a0a0; font-weight: 500; margin-bottom: 0.5rem;">Geliştirme Sorumlusu</h3>
+              <p style="font-size: 1.5rem; font-weight: 600; color: #ffffff; margin: 0;">Mustafa USLU</p>
+            </div>
+        </section>
       </div>
+
+       <section class="card" style="margin-top: 2.5rem; grid-column: 1 / -1;">
+          <div class="card-inner">
+            <h2>Tasarım Felsefesi ve Teknik Detaylar: "VR Cam Çerçeve" Efekti</h2>
+            <p>Arayüzde kullanılan modern "VR Cam Çerçeve" kart efektinin arkasındaki HTML ve CSS yapısı aşağıda detaylandırılmıştır. Bu efekt, NFT kartlarından ve fütüristik kullanıcı arayüzlerinden ilham alınarak tasarlanmıştır.</p>
+            
+            <h3 style="margin-top: 2rem; margin-bottom: 1rem; font-size: 1.4rem;">1. Katmanlı HTML Yapısı</h3>
+            <p>Efektin temelini, iç içe geçmiş iki katmanlı bir HTML yapısı oluşturur. Bu yapı, derinlik ve görsel ayrım kazandırma esnekliği sunar.</p>
+            <pre><code>&lt;div class="card"&gt; &lt;!-- Dış Katman (Hareketli Çerçeve) --&gt;
+  &lt;div class="card-inner"&gt; &lt;!-- İç Katman (Cam Panel) --&gt;
+    &lt;!-- İçerik buraya gelir --&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+
+            <h3 style="margin-top: 2rem; margin-bottom: 1rem; font-size: 1.4rem;">2. CSS ile Hareketli "VR" Kenarlık</h3>
+            <p>Kartın en dikkat çekici kısmı, etrafında dönen çok renkli ışıktır. Bu, CSS'in <code>conic-gradient</code> ve <code>@keyframes</code> özellikleri kullanılarak elde edilir.</p>
+             <pre><code>.card::after {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: conic-gradient(...);
+  animation: border-glow 8s linear infinite;
+}
+
+@keyframes border-glow {
+  100% { transform: rotate(360deg); }
+}</code></pre>
+
+            <h3 style="margin-top: 2rem; margin-bottom: 1rem; font-size: 1.4rem;">3. "Glassmorphism" İç Panel</h3>
+            <p>İçerik paneli, hareketli çerçevenin üzerinde yüzen bir cam parçası hissi verir. Bu, <code>background: rgba(...)</code>, <code>backdrop-filter: blur(...)</code> ve <code>z-index</code> özelliklerinin birleşimiyle sağlanır.</p>
+          </div>
+        </section>
     </main>
-  </body>
+  </div>
+</body>
 </html>
