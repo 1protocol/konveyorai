@@ -308,20 +308,26 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
     const ctx = overlay.getContext('2d');
     if (!ctx) return;
     
-    // Match canvas size to video element size
-    overlay.width = video.clientWidth;
-    overlay.height = video.clientHeight;
+    const resizeOverlay = () => {
+      overlay.width = video.clientWidth;
+      overlay.height = video.clientHeight;
+    }
+    
+    // Initial resize
+    resizeOverlay();
+    
+    const observer = new ResizeObserver(resizeOverlay);
+    observer.observe(video);
 
     ctx.clearRect(0, 0, overlay.width, overlay.height);
 
     if (isCalibrating || status === "KALİBRE EDİLİYOR" ) return;
     
-    // Settings for the lines
     const lineX = overlay.width / 2;
-    const deviationScale = 20; // How much 1mm deviation moves the line in pixels
+    const deviationScale = 20; 
     const deviationPx = deviation * deviationScale;
 
-    // Draw Reference Line (center)
+    // Draw Reference Line
     ctx.strokeStyle = 'rgba(0, 255, 0, 0.7)';
     ctx.lineWidth = 2;
     ctx.setLineDash([5, 5]);
@@ -331,7 +337,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
     ctx.stroke();
 
     // Draw Deviation Line
-    ctx.strokeStyle = isAnomaly ? 'rgba(255, 0, 0, 1)' : 'rgba(255, 165, 0, 1)';
+    ctx.strokeStyle = isAnomaly ? 'rgba(255, 20, 20, 1)' : 'rgba(255, 165, 0, 1)';
     ctx.lineWidth = 3;
     ctx.setLineDash([]);
     ctx.beginPath();
@@ -339,13 +345,16 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
     ctx.lineTo(lineX + deviationPx, overlay.height);
     ctx.stroke();
 
-    // Draw Text
     if (deviation > 0.1) {
-        ctx.fillStyle = isAnomaly ? 'rgba(255, 0, 0, 1)' : 'rgba(255, 165, 0, 1)';
-        ctx.font = 'bold 16px sans-serif';
+        ctx.fillStyle = isAnomaly ? 'rgba(255, 20, 20, 1)' : 'rgba(255, 165, 0, 1)';
+        ctx.font = 'bold 16px Poppins, sans-serif';
         ctx.textAlign = deviationPx > 0 ? 'left' : 'right';
         const textX = lineX + deviationPx + (deviationPx > 0 ? 5 : -5);
         ctx.fillText(`${deviation.toFixed(2)} mm`, textX, 20);
+    }
+
+    return () => {
+      observer.disconnect();
     }
 
   }, [deviation, isAnomaly, isCalibrating, status]);
@@ -383,7 +392,6 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
     const params = new URLSearchParams(searchParams.toString());
     params.set('station', stationId);
     window.history.pushState(null, '', `${pathname}?${params.toString()}`);
-    // Manually trigger a re-render or state update if needed, e.g., by using router
     router.replace(`${pathname}?${params.toString()}`, { scroll: false });
   };
   
@@ -404,12 +412,12 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
             <h1 className="text-2xl font-bold tracking-tight">Genel Bakış</h1>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="min-w-48 justify-between">
+                    <Button variant="outline" className="min-w-48 justify-between bg-transparent backdrop-blur-sm">
                        {selectedStation.name}
                        <ChevronDown className="h-4 w-4" />
                     </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56">
+                <DropdownMenuContent className="w-56 bg-background/80 backdrop-blur-xl border-white/10">
                     {stations.map(station => (
                          <DropdownMenuItem key={station.id} onSelect={() => handleStationSelect(station.id)}>
                             {station.name}
@@ -430,7 +438,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
         />
       </div>
 
-      <Card>
+      <Card className="bg-background/30 backdrop-blur-xl border border-white/10">
         <CardHeader>
             <CardTitle className="flex items-center gap-2">
                 <Video />
@@ -442,7 +450,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
             </CardDescription>
         </CardHeader>
         <CardContent>
-            <div className="relative aspect-video w-full rounded-md bg-muted overflow-hidden">
+            <div className="relative aspect-video w-full rounded-md bg-black/50 overflow-hidden border border-white/10">
                 <video 
                   ref={videoRef} 
                   className="w-full h-full object-cover" 
@@ -477,17 +485,17 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
         </CardContent>
       </Card>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
-        <Card className={cn(isAnomaly && "bg-destructive text-destructive-foreground")}>
+        <Card className={cn("bg-background/30 backdrop-blur-xl border border-white/10", isAnomaly && "bg-red-900/50 text-white border-red-500/50")}>
           <CardHeader>
             <CardTitle className="text-sm font-medium">Sistem Durumu</CardTitle>
             {status === "NORMAL" && (
-              <CheckCircle className="h-6 w-6 text-green-500" />
+              <CheckCircle className="h-6 w-6 text-green-400" />
             )}
             {status === "ANOMALİ" && (
-              <AlertTriangle className="h-6 w-6 animate-pulse" />
+              <AlertTriangle className="h-6 w-6 text-red-400 animate-pulse" />
             )}
             {status === "KALİBRE EDİLİYOR" && (
-              <SlidersHorizontal className="h-6 w-6 text-primary" />
+              <SlidersHorizontal className="h-6 w-6 text-accent" />
             )}
           </CardHeader>
           <CardContent>
@@ -497,7 +505,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
             <p
               className={cn(
                 "text-xs",
-                isAnomaly ? "text-destructive-foreground/80" : "text-muted-foreground"
+                isAnomaly ? "text-red-200" : "text-muted-foreground"
               )}
             >
               {isAnomaly
@@ -509,7 +517,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-background/30 backdrop-blur-xl border border-white/10">
           <CardHeader>
             <CardTitle className="text-sm font-medium">
               Mevcut Sapma (AI)
@@ -520,7 +528,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
             <div
               className={cn(
                 "text-2xl font-bold",
-                deviation >= settings.anomalyThreshold && "text-destructive"
+                deviation >= settings.anomalyThreshold && "text-red-400"
               )}
             >
               {deviation.toFixed(2)} mm
@@ -533,7 +541,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
 
       </div>
 
-      <Card>
+      <Card className="bg-background/30 backdrop-blur-xl border border-white/10">
         <CardHeader>
           <CardTitle>Anomali Kayıtları - {selectedStation.name}</CardTitle>
           <CardDescription>
@@ -543,7 +551,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
         <CardContent>
           <div className="relative max-h-96 overflow-y-auto">
             <Table>
-              <TableHeader className="sticky top-0 bg-card">
+              <TableHeader className="sticky top-0 bg-card/80 backdrop-blur-sm">
                 <TableRow>
                   <TableHead>Zaman Damgası</TableHead>
                   <TableHead className="text-right">Sapma (mm)</TableHead>
@@ -552,9 +560,9 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
               <TableBody>
                 {filteredLogs.length > 0 ? (
                   filteredLogs.map((log, index) => (
-                    <TableRow key={index}>
+                    <TableRow key={index} className="hover:bg-white/5">
                       <TableCell>{new Date(log.timestamp).toLocaleString('tr-TR')}</TableCell>
-                      <TableCell className="text-right font-medium text-destructive">
+                      <TableCell className="text-right font-medium text-red-400">
                         {log.deviation.toFixed(2)}
                       </TableCell>
                     </TableRow>
@@ -574,13 +582,13 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
           </div>
         </CardContent>
       </Card>
-      <Card>
+      <Card className="bg-background/30 backdrop-blur-xl border border-white/10">
         <CardHeader>
             <CardTitle>Tüm Bantlar İçin 8 Saatlik Eylem Raporu</CardTitle>
             <CardDescription>Son 8 saat içinde tüm bantlarda tespit edilen anomaliler.</CardDescription>
         </CardHeader>
         <CardContent>
-            <Alert>
+            <Alert variant="default" className="bg-blue-900/30 border-blue-500/30">
                 <Users className="h-4 w-4" />
                 <AlertTitle>Gelecek Özellik</AlertTitle>
                 <AlertDescription>
@@ -684,12 +692,12 @@ function SettingsDialog({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">
+        <Button variant="outline" className="bg-transparent backdrop-blur-sm">
           <Settings className="mr-2 h-4 w-4" />
           Gelişmiş Ayarlar
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-3xl">
+      <DialogContent className="sm:max-w-3xl bg-background/80 backdrop-blur-xl border-white/10">
         <DialogHeader>
           <DialogTitle>Gelişmiş Ayarlar</DialogTitle>
           <DialogDescription>
@@ -697,7 +705,7 @@ function SettingsDialog({
           </DialogDescription>
         </DialogHeader>
         <Tabs defaultValue="ai-settings">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-4 bg-white/5">
             <TabsTrigger value="ai-settings"><BrainCircuit className="mr-2 h-4 w-4"/>Yapay Zeka</TabsTrigger>
             <TabsTrigger value="cameras"><Camera className="mr-2 h-4 w-4"/>İstasyonlar</TabsTrigger>
             <TabsTrigger value="notifications"><Bell className="mr-2 h-4 w-4"/>Bildirimler</TabsTrigger>
@@ -705,7 +713,7 @@ function SettingsDialog({
           </TabsList>
           <TabsContent value="ai-settings" className="py-4">
             <div className="space-y-6">
-                <div className="space-y-4 rounded-lg border p-4">
+                <div className="space-y-4 rounded-lg border p-4 border-white/10 bg-white/5">
                   <Label htmlFor="anomaly-threshold" className="text-base">
                     Algılama Hassasiyeti (Anomali Eşiği)
                   </Label>
@@ -721,7 +729,7 @@ function SettingsDialog({
                       }
                       className="flex-1"
                     />
-                    <span className="w-20 rounded-md border text-center p-2 font-mono text-sm">
+                    <span className="w-24 rounded-md border text-center p-2 font-mono text-sm bg-background/50 border-white/20">
                       {currentSettings.anomalyThreshold.toFixed(1)} mm
                     </span>
                   </div>
@@ -729,7 +737,7 @@ function SettingsDialog({
                     Bu değerin üzerindeki sapmalar "Anomali" olarak kabul edilecektir. Düşük değerler hassasiyeti artırır.
                   </p>
                 </div>
-                <div className="space-y-4 rounded-lg border p-4">
+                <div className="space-y-4 rounded-lg border p-4 border-white/10 bg-white/5">
                     <Label className="text-base">
                         AI Kalibrasyonu (Başlangıç Referansı)
                     </Label>
@@ -754,7 +762,7 @@ function SettingsDialog({
             </div>
           </TabsContent>
           <TabsContent value="cameras" className="py-4">
-             <div className="space-y-4 rounded-lg border p-4">
+             <div className="space-y-4 rounded-lg border p-4 border-white/10 bg-white/5">
                 <div className="flex justify-between items-center mb-4">
                     <div>
                         <h3 className="text-base font-medium">
@@ -764,7 +772,7 @@ function SettingsDialog({
                             Her bir konveyör bandı için video kaynağı tanımlayın.
                         </p>
                     </div>
-                    <Button variant="outline" onClick={handleScanNetwork}>
+                    <Button variant="outline" onClick={handleScanNetwork} className="bg-transparent">
                         <Scan className="mr-2 h-4 w-4" />
                         Ağdaki Kameraları Tara
                     </Button>
@@ -781,14 +789,14 @@ function SettingsDialog({
                                 id={`station-${station.id}-name`}
                                 value={station.name}
                                 onChange={(e) => handleStationFieldChange(station.id, 'name', e.target.value)}
-                                className="col-span-4"
+                                className="col-span-4 bg-background/50"
                                 placeholder="İstasyon Adı"
                             />
                             <Input
                                 id={`station-${station.id}-source`}
                                 value={station.source}
                                 onChange={(e) => handleStationFieldChange(station.id, 'source', e.target.value)}
-                                className="col-span-7"
+                                className="col-span-7 bg-background/50"
                                 placeholder="Video Kaynağı (URL veya 'webcam')"
                             />
                             <Button variant="ghost" size="icon" onClick={() => handleRemoveStation(station.id)} className="col-span-1 text-muted-foreground hover:text-destructive">
@@ -797,7 +805,7 @@ function SettingsDialog({
                         </div>
                     ))}
                 </div>
-                <Button variant="outline" onClick={handleAddStation} className="w-full mt-4">
+                <Button variant="outline" onClick={handleAddStation} className="w-full mt-4 bg-transparent">
                     <PlusCircle className="mr-2 h-4 w-4" />
                     Yeni İstasyon Ekle
                 </Button>
@@ -805,7 +813,7 @@ function SettingsDialog({
           </TabsContent>
           <TabsContent value="notifications" className="py-4">
           <div className="space-y-6">
-            <div className="flex items-center justify-between rounded-lg border p-4">
+            <div className="flex items-center justify-between rounded-lg border p-4 border-white/10 bg-white/5">
               <div className="space-y-0.5">
                 <Label htmlFor="sound-alert" className="text-base">
                   Sesli Uyarı
@@ -820,7 +828,7 @@ function SettingsDialog({
                 onCheckedChange={handleSoundSwitchChange}
               />
             </div>
-            <div className="flex items-center justify-between rounded-lg border p-4 opacity-50">
+            <div className="flex items-center justify-between rounded-lg border p-4 border-white/10 bg-white/5 opacity-50">
               <div className="space-y-0.5">
                 <Label htmlFor="email-alert" className="text-base">
                   E-posta Bildirimi (Yakında)
@@ -834,7 +842,7 @@ function SettingsDialog({
                 disabled
               />
             </div>
-            <div className="flex items-center justify-between rounded-lg border p-4 opacity-50">
+            <div className="flex items-center justify-between rounded-lg border p-4 border-white/10 bg-white/5 opacity-50">
               <div className="space-y-0.5">
                 <Label htmlFor="sms-alert" className="text-base">
                   SMS & WhatsApp Bildirimi (Yakında)
@@ -851,19 +859,18 @@ function SettingsDialog({
             </div>
           </TabsContent>
            <TabsContent value="operators" className="py-4">
-            <div className="text-center text-muted-foreground p-8">
+            <div className="text-center text-muted-foreground p-8 rounded-lg bg-white/5 border border-dashed border-white/10">
               <Users className="mx-auto h-12 w-12 mb-4" />
               <h3 className="text-lg font-semibold">Operatör Yönetimi</h3>
               <p className="text-sm">Bu özellik yakında eklenecektir. Operatörleri tanımlayıp, bildirim atamaları yapabileceksiniz.</p>
             </div>
           </TabsContent>
         </Tabs>
-        <DialogFooter>
-            <Button variant="outline" onClick={() => setIsOpen(false)}>İptal</Button>
-            <Button onClick={handleSave}>Değişiklikleri Kaydet</Button>        </DialogFooter>
+        <DialogFooter className="pt-4">
+            <Button variant="outline" onClick={() => setIsOpen(false)} className="bg-transparent">İptal</Button>
+            <Button onClick={handleSave}>Değişiklikleri Kaydet</Button>        
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 }
-
-    

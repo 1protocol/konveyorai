@@ -98,7 +98,9 @@ const SidebarProvider = React.forwardRef<
         }
 
         // This sets the cookie to keep the sidebar state.
-        document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`
+        if (typeof document !== 'undefined') {
+         document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`
+        }
       },
       [setOpenProp, open]
     )
@@ -159,7 +161,7 @@ const SidebarProvider = React.forwardRef<
               } as React.CSSProperties
             }
             className={cn(
-              "group/sidebar-wrapper flex min-h-svh w-full has-[[data-variant=inset]]:bg-sidebar",
+              "group/sidebar-wrapper flex min-h-svh w-full",
               className
             )}
             ref={ref}
@@ -217,11 +219,11 @@ const Sidebar = React.forwardRef<
         data-state={state}
         data-testid="sidebar"
         className={cn("peer hidden text-sidebar-foreground transition-[width] md:block", 
-          "w-[var(--sidebar-width)] data-[state=collapsed]:w-[var(--sidebar-width-icon)]", className
+          "w-[var(--sidebar-width)] data-[state=collapsed]:w-[var(--sidebar-width-icon)]", "bg-sidebar-background border-r border-sidebar-border", className
         )}
         {...props}
       >
-        <div className="flex h-full flex-col border-r">{children}</div>
+        <div className="flex h-full flex-col">{children}</div>
       </div>
     )
   }
