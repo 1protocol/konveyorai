@@ -25,7 +25,7 @@ import {
 export default function DashboardPage() {
   return (
     <SidebarProvider>
-      <Sidebar>
+      <Sidebar side="right">
         <SidebarHeader className="border-b">
           <Link href="/" className="flex items-center gap-2 p-2">
             <Icons.logo className="size-8 text-primary" />
