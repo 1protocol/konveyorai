@@ -3,8 +3,8 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
-  title: 'KonveyörGard',
-  description: 'Endüstriyel konveyör bandı izleme ve anormallik tespit sistemi.',
+  title: 'ConveyorAI',
+  description: 'Yapay zeka destekli endüstriyel konveyör bandı izleme ve anomali tespit sistemi.',
 };
 
 export default function RootLayout({

@@ -30,7 +30,7 @@ export default function DashboardPage() {
           <Link href="/" className="flex items-center gap-2.5">
             <Icons.logo className="size-8 text-primary" />
             <span className="font-bold text-lg group-data-[state=collapsed]:hidden">
-              KonveyörGard
+              ConveyorAI
             </span>
           </Link>
         </SidebarHeader>
@@ -84,7 +84,7 @@ export default function DashboardPage() {
            <div className="flex items-center gap-2.5">
              <Link href="/" className="flex items-center gap-2.5">
                 <Icons.logo className="size-8 text-primary" />
-                <h1 className="font-bold text-lg">KonveyörGard</h1>
+                <h1 className="font-bold text-lg">ConveyorAI</h1>
              </Link>
            </div>
           <div className="flex items-center gap-4">

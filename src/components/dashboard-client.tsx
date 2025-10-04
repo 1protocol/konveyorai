@@ -107,9 +107,9 @@ export function DashboardClient() {
   useEffect(() => {
     if (isClient) {
       try {
-        const savedSettings = localStorage.getItem("konveyorGardSettings");
-        const savedCameraConfig = localStorage.getItem("konveyorGardCameraConfig");
-        const savedLogs = localStorage.getItem("konveyorGardLogs");
+        const savedSettings = localStorage.getItem("conveyorAISettings");
+        const savedCameraConfig = localStorage.getItem("conveyorAICameraConfig");
+        const savedLogs = localStorage.getItem("conveyorAILogs");
 
         if (savedSettings) {
           setSettings(JSON.parse(savedSettings));
@@ -128,7 +128,7 @@ export function DashboardClient() {
         console.error("Yerel depolamadan ayarlar okunurken hata oluştu:", error);
         toast({
             variant: "destructive",
-            title: "Ayarlar Yüklenemedi",
+            title: "Ayarlar Yüklenelemedi",
             description: "Ayarlarınız yüklenirken bir sorun oluştu.",
         });
       }
@@ -138,21 +138,21 @@ export function DashboardClient() {
   const saveSettings = useCallback((newSettings: AppSettings) => {
     setSettings(newSettings);
     if (isClient) {
-        localStorage.setItem("konveyorGardSettings", JSON.stringify(newSettings));
+        localStorage.setItem("conveyorAISettings", JSON.stringify(newSettings));
     }
   }, [isClient]);
 
   const saveCameraConfig = useCallback((newConfig: CameraConfig) => {
     setCameraConfig(newConfig);
     if (isClient) {
-        localStorage.setItem("konveyorGardCameraConfig", JSON.stringify(newConfig));
+        localStorage.setItem("conveyorAICameraConfig", JSON.stringify(newConfig));
     }
   }, [isClient]);
 
   const saveLogs = useCallback((newLogs: AnomalyLog[]) => {
     setLogs(newLogs);
     if (isClient) {
-        localStorage.setItem("konveyorGardLogs", JSON.stringify(newLogs));
+        localStorage.setItem("conveyorAILogs", JSON.stringify(newLogs));
     }
   }, [isClient]);
 
@@ -482,8 +482,12 @@ function SettingsDialog({
   
   const handleSoundSwitchChange = (checked: boolean) => {
     setCurrentSettings({ ...currentSettings, isSoundAlertEnabled: checked });
-    if (checked && audioRef.current?.src) {
-      audioRef.current.play().catch(e => console.error("Test sesi çalınamadı:", e));
+    if (checked && audioRef.current) {
+        if (!audioRef.current.src) {
+            audioRef.current.src = "/alert-sound.mp3";
+            audioRef.current.load();
+        }
+        audioRef.current.play().catch(e => console.error("Test sesi çalınamadı:", e));
     }
   };
 

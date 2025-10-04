@@ -1,6 +1,6 @@
-# KonveyörGard - Yapay Zeka Destekli Konveyör Bandı Güvenlik Sistemi
+# ConveyorAI - Yapay Zeka Destekli Konveyör Bandı Güvenlik Sistemi
 
-KonveyörGard, endüstriyel üretim hatlarındaki konveyör bantlarını gerçek zamanlı olarak izleyen ve yapay zeka kullanarak olası sapmaları tespit eden modern bir web uygulamasıdır. Bu sistem, üretim hattı güvenliğini artırmak ve olası arızaları önceden tahmin etmek için geliştirilmiştir.
+ConveyorAI, endüstriyel üretim hatlarındaki konveyör bantlarını gerçek zamanlı olarak izleyen ve yapay zeka kullanarak olası sapmaları tespit eden modern bir web uygulamasıdır. Bu sistem, üretim hattı güvenliğini artırmak ve olası arızaları önceden tahmin etmek için geliştirilmiştir.
 
 ## ✨ Temel Özellikler
 
