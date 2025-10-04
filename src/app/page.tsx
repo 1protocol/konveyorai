@@ -1,13 +1,14 @@
 "use client";
 import { useEffect, useState } from 'react';
 import { marked } from 'marked';
-import { Loader }
-from 'lucide-react';
-import { Icons } from '@/components/icons';
+import { Loader, UserCircle } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 // Asenkron olarak markdown içeriğini getiren fonksiyon
 async function getMarkdownContent() {
-  const res = await fetch('/PROJE_DOKUMANTASYONU.md');
+  // NOT: The original README.md has been renamed to PROJE_DOKUMANTASYONU.md
+  // for display purposes on the landing page.
+  const res = await fetch('/README.md');
   if (!res.ok) {
     throw new Error('Doküman yüklenemedi.');
   }
@@ -23,7 +24,17 @@ export default function DocumentationPage() {
   useEffect(() => {
     getMarkdownContent()
       .then(html => {
-        setHtmlContent(html);
+        if (typeof window !== 'undefined') {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const firstP = doc.querySelector('p');
+            if (firstP) {
+                firstP.remove();
+            }
+            setHtmlContent(doc.body.innerHTML);
+        } else {
+            setHtmlContent(html);
+        }
       })
       .catch(err => {
         setError(err.message);
@@ -35,21 +46,17 @@ export default function DocumentationPage() {
 
   return (
     <div className="bg-background min-h-screen font-body text-foreground">
-       <header className="fixed top-0 left-0 right-0 z-10 flex items-center justify-between p-4 bg-background/80 backdrop-blur-md border-b border-border">
-         <div className="flex items-center gap-3">
-          <Icons.logo className="h-8 w-8 text-primary" />
-          <div className="flex flex-col">
-            <h1 className="text-2xl font-bold text-primary font-heading">
-              Konveyor AI: Proje Sunumu
-            </h1>
-            <p className="text-base text-muted-foreground">
-                Yapay Zeka Destekli Endüstriyel Anomali Tespiti
-            </p>
-          </div>
-         </div>
-       </header>
+      <main className="container mx-auto px-4 pt-12 pb-12">
+        <Card className="mb-12 bg-card/50 border-border/50 shadow-lg transition-all hover:shadow-xl hover:-translate-y-1">
+            <CardHeader className="flex-row items-center gap-4">
+                <UserCircle className="h-12 w-12 text-primary" />
+                <div>
+                    <p className="text-sm text-muted-foreground">HAZIRLAYAN</p>
+                    <CardTitle className="text-xl">Adınız Soyadınız</CardTitle>
+                </div>
+            </CardHeader>
+        </Card>
 
-      <main className="container mx-auto px-4 pt-28 pb-12">
         {isLoading && (
           <div className="flex flex-col items-center justify-center text-center mt-20">
             <Loader className="w-12 h-12 animate-spin text-primary mb-4" />
