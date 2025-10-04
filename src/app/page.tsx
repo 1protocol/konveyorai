@@ -57,7 +57,7 @@ export default function DocumentationPage() {
                 </div>
                 <div className="flex">
                     <strong className="w-32 shrink-0 text-muted-foreground">Proje Amacı:</strong>
-                    <span>Endüstriyel konveyör bantlarında sapma tespiti</span>
+                    <span>Endüstriyel konveyör bant hıza sapmaların tespiti anormal durum bildirimi ve risk uyarılarını kayıt altına alma gerçek zamanlı teknik bildirim süreçlerinin yapay zeka destekli sürdürülebilir olmasını sağlamak</span>
                 </div>
                 <div className="flex">
                     <strong className="w-32 shrink-0 text-muted-foreground">Geliştirici:</strong>
@@ -68,8 +68,8 @@ export default function DocumentationPage() {
 
         <Card className="mb-8 bg-card/50 border-border/50">
             <CardHeader>
-                <CardTitle className="flex items-center gap-3 text-lg">
-                    <Cpu className="h-6 w-6 text-accent"/>
+                <CardTitle className="flex items-center gap-3 text-xl">
+                    <Cpu className="h-7 w-7 text-accent"/>
                     Donanım Opsiyonları ve Operasyonel Etki
                 </CardTitle>
             </CardHeader>
@@ -82,8 +82,8 @@ export default function DocumentationPage() {
 
         <Card className="mb-8 bg-card/50 border-border/50">
             <CardHeader>
-                <CardTitle className="flex items-center gap-3 text-lg">
-                    <Layers className="h-6 w-6 text-accent"/>
+                <CardTitle className="flex items-center gap-3 text-xl">
+                    <Layers className="h-7 w-7 text-accent"/>
                     Endüstri 4.0 Standartlarına Uyum
                 </CardTitle>
             </CardHeader>
@@ -96,8 +96,8 @@ export default function DocumentationPage() {
 
         <Card className="mb-8 bg-card/50 border-border/50">
             <CardHeader>
-                <CardTitle className="flex items-center gap-3 text-lg">
-                    <ShieldCheck className="h-6 w-6 text-accent"/>
+                <CardTitle className="flex items-center gap-3 text-xl">
+                    <ShieldCheck className="h-7 w-7 text-accent"/>
                     Kalite ve Risk Yönetimi
                 </CardTitle>
             </CardHeader>
@@ -110,8 +110,8 @@ export default function DocumentationPage() {
 
         <Card className="mb-8 bg-card/50 border-border/50">
           <CardHeader>
-            <CardTitle className="flex items-center gap-3 text-lg">
-              <LayoutDashboard className="h-6 w-6 text-accent" />
+            <CardTitle className="flex items-center gap-3 text-xl">
+              <LayoutDashboard className="h-7 w-7 text-accent" />
               İstasyon Tespit, Modelleme ve Raporlama
             </CardTitle>
           </CardHeader>
@@ -124,8 +124,8 @@ export default function DocumentationPage() {
 
         <Card className="mb-8 bg-card/50 border-border/50">
           <CardHeader>
-            <CardTitle className="flex items-center gap-3 text-lg">
-              <FileText className="h-6 w-6 text-accent" />
+            <CardTitle className="flex items-center gap-3 text-xl">
+              <FileText className="h-7 w-7 text-accent" />
               Geliştirici Kılavuzu
             </CardTitle>
           </CardHeader>
@@ -196,3 +196,5 @@ export default function DocumentationPage() {
     </div>
   );
 }
+
+    
