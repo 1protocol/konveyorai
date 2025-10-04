@@ -46,7 +46,7 @@ export default function DocumentationPage() {
                     <Bot className="h-12 w-12 text-primary" />
                     <div>
                         <CardTitle className="text-2xl">Konveyor AI</CardTitle>
-                        <CardDescription>Yapay Zeka Destekli Konveyör Güvenlik Sistemi</CardDescription>
+                        <CardDescription>Proaktif Üretim Kontrol Ünitesi / Konveyör Bant Hıza dedektörü Teknik İstasyon Süreç Analizi ve Eylem İstatistik Raporlama</CardDescription>
                     </div>
                 </div>
             </CardHeader>
