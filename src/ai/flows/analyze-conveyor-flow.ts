@@ -58,24 +58,7 @@ const analyzeConveyorBeltFlow = ai.defineFlow(
     outputSchema: AnalyzeConveyorBeltOutputSchema,
   },
   async (input) => {
-    // This is a mock implementation to simulate realistic behavior.
-    // In a real-world scenario, this would involve a complex computer vision model.
-
-    // Simulate a rare anomaly spike
-    const isAnomalySpike = Math.random() < 0.05; // 5% chance of a spike
-
-    let deviation: number;
-
-    if (isAnomalySpike) {
-      // Generate a high deviation value for an anomaly
-      deviation = 2.5 + Math.random() * 2.0; // Range: 2.5 to 4.5
-    } else {
-      // Generate a normal, low deviation value
-      deviation = 0.1 + Math.random() * 1.4; // Range: 0.1 to 1.5
-    }
-
-    return {
-      deviation: parseFloat(deviation.toFixed(2)),
-    };
+    const { output } = await prompt(input);
+    return output!;
   }
 );

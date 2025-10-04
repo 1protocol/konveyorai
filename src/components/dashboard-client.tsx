@@ -126,15 +126,11 @@ export function DashboardClient() {
         if (savedLogs) {
           setLogs(JSON.parse(savedLogs));
         }
-        toast({
-            title: "Ayarlar Yüklendi",
-            description: "Kaydedilmiş yapılandırmanız başarıyla yüklendi.",
-        });
       } catch (error) {
         console.error("Yerel depolamadan ayarlar okunurken hata oluştu:", error);
         toast({
             variant: "destructive",
-            title: "Ayarlar Yüklenelemedi",
+            title: "Ayarlar Yüklenemedi",
             description: "Ayarlarınız yüklenirken bir sorun oluştu.",
         });
       }
@@ -241,7 +237,7 @@ export function DashboardClient() {
       }
       
       // For webcam, permission must be granted
-      if (isWebcam && !hasCameraPermission) {
+      if (isWebcam && hasCameraPermission === false) { // Explicitly check for false
         setIsProcessing(false);
         return;
       }
@@ -397,7 +393,7 @@ export function DashboardClient() {
       </Card>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
         <Card className={cn(isAnomaly && "bg-destructive text-destructive-foreground")}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader>
             <CardTitle className="text-sm font-medium">Sistem Durumu</CardTitle>
             {status === "NORMAL" && (
               <CheckCircle className="h-6 w-6 text-green-500" />
@@ -429,7 +425,7 @@ export function DashboardClient() {
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader>
             <CardTitle className="text-sm font-medium">
               Mevcut Sapma (AI)
             </CardTitle>
@@ -538,8 +534,10 @@ function SettingsDialog({
 
 
   useEffect(() => {
-    setCurrentSettings(settings);
-    setCurrentCameraConfig(cameraConfig);
+    if (isOpen) {
+      setCurrentSettings(settings);
+      setCurrentCameraConfig(cameraConfig);
+    }
   }, [settings, cameraConfig, isOpen]);
 
   const handleSave = () => {
@@ -748,5 +746,3 @@ function SettingsDialog({
     </Dialog>
   );
 }
-
-    
