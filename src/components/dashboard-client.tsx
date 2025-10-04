@@ -158,8 +158,10 @@ export function DashboardClient() {
 
 
   const playAlertSound = useCallback(() => {
-    if (settings.isSoundAlertEnabled && audioRef.current?.src) {
-        audioRef.current.play().catch(e => console.error("Ses çalma hatası:", e));
+    if (settings.isSoundAlertEnabled && audioRef.current) {
+        if (audioRef.current.src && !audioRef.current.src.endsWith('null')) {
+            audioRef.current.play().catch(e => console.error("Ses çalma hatası:", e));
+        }
     }
   }, [settings.isSoundAlertEnabled]);
 
@@ -483,7 +485,7 @@ function SettingsDialog({
   const handleSoundSwitchChange = (checked: boolean) => {
     setCurrentSettings({ ...currentSettings, isSoundAlertEnabled: checked });
     if (checked && audioRef.current) {
-        if (!audioRef.current.src) {
+        if (!audioRef.current.src || audioRef.current.src.endsWith('null')) {
             audioRef.current.src = "/alert-sound.mp3";
             audioRef.current.load();
         }
