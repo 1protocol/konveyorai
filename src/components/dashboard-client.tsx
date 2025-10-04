@@ -486,7 +486,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
                        <ChevronDown className="h-5 w-5" />
                     </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-64 text-base p-2 bg-background/80 backdrop-blur-xl border-white/10 shadow-2xl">
+                <DropdownMenuContent className="w-64 text-base p-2 bg-background/95 backdrop-blur-xl border-white/10 shadow-2xl">
                     {stations.map(station => (
                          <DropdownMenuItem key={station.id} onSelect={() => handleStationSelect(station.id)} className="p-2">
                            <Network className="mr-2 h-5 w-5" />
@@ -966,3 +966,6 @@ function SettingsDialog({
 
     
 
+
+
+    
