@@ -42,7 +42,7 @@ export default function DocumentationPage() {
       <main className="container mx-auto px-4 pt-12 pb-12">
         
         <Link href="/dashboard" passHref>
-          <Button variant="outline" size="lg" className="w-full h-20 mb-8 text-xl font-bold bg-card/50 border-border/50 shadow-lg text-primary justify-between px-8 group">
+          <Button variant="outline" size="lg" className="w-full h-20 mb-8 text-xl font-bold bg-card/50 border-border/50 shadow-lg text-primary justify-between px-8 group hover:bg-card/50 hover:text-primary">
             Kontrol Paneli
             <ArrowRight className="h-8 w-8" />
           </Button>
@@ -204,9 +204,3 @@ export default function DocumentationPage() {
     </div>
   );
 }
-
-    
-
-    
-
-    
