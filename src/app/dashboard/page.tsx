@@ -124,7 +124,7 @@ function PageContent() {
              <h1 className="font-bold text-lg hidden sm:block">Konveyor AI</h1>
            </div>
           <div className="flex items-center gap-4">
-             <SidebarTrigger className="h-10 w-10" />
+             {/* <SidebarTrigger className="h-10 w-10" /> */}
           </div>
         </header>
         <main className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8">
