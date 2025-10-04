@@ -96,16 +96,18 @@ export default function LandingPage() {
           </div>
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4" style={{ perspective: '1200px' }}>
             {features.map((feature) => (
-              <Card key={feature.title} className="card-3d text-center bg-background/30 backdrop-blur-xl border-transparent shadow-lg">
-                <CardHeader>
-                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 card-icon">
-                    {feature.icon}
-                  </div>
-                  <CardTitle>{feature.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">{feature.description}</p>
-                </CardContent>
+              <Card key={feature.title} className="card-3d text-center shadow-lg bg-transparent border-transparent">
+                <div className="card-3d-inner">
+                    <CardHeader>
+                      <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 card-icon">
+                        {feature.icon}
+                      </div>
+                      <CardTitle>{feature.title}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-muted-foreground">{feature.description}</p>
+                    </CardContent>
+                </div>
               </Card>
             ))}
           </div>
