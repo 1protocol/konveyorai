@@ -38,13 +38,18 @@ export default function DocumentationPage() {
        <header className="fixed top-0 left-0 right-0 z-10 flex items-center justify-between p-4 bg-background/80 backdrop-blur-md border-b border-border">
          <div className="flex items-center gap-3">
           <Icons.logo className="h-8 w-8 text-primary" />
-          <h1 className="text-xl font-bold text-primary">
-            Konveyor AI: Proje Sunumu
-          </h1>
+          <div className="flex flex-col">
+            <h1 className="text-xl font-bold text-primary">
+              Konveyor AI: Proje Sunumu
+            </h1>
+            <p className="text-sm text-muted-foreground">
+                Endüstri 4.0 Standartlarında Yapay Zeka Destekli Anomali Tespiti
+            </p>
+          </div>
          </div>
        </header>
 
-      <main className="container mx-auto px-4 pt-24 pb-12">
+      <main className="container mx-auto px-4 pt-28 pb-12">
         {isLoading && (
           <div className="flex flex-col items-center justify-center text-center mt-20">
             <Loader className="w-12 h-12 animate-spin text-primary mb-4" />
