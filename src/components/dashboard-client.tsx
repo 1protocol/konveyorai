@@ -32,6 +32,7 @@ import {
   Users,
   Camera,
   Loader,
+  VideoOff,
 } from "lucide-react";
 import { analyzeConveyorBelt } from "@/ai/flows/analyze-conveyor-flow";
 import {
@@ -73,7 +74,7 @@ const defaultSettings: AppSettings = {
 
 const defaultCameraConfig: CameraConfig = {
     '1': '/conveyor-video.mp4',
-    '2': '/conveyor-video.mp4',
+    '2': 'webcam',
     '3': '/conveyor-video.mp4',
     '4': '/conveyor-video.mp4',
 };
@@ -98,6 +99,10 @@ export function DashboardClient() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
+  
+  const selectedVideoSource = cameraConfig[selectedBant] || '/conveyor-video.mp4';
+  const isWebcam = selectedVideoSource === 'webcam';
 
   // --- Data Persistence Effects ---
   useEffect(() => {
@@ -165,19 +170,58 @@ export function DashboardClient() {
     }
   }, [settings.isSoundAlertEnabled]);
 
+  const stopCameraStream = () => {
+    if (videoRef.current && videoRef.current.srcObject) {
+      const stream = videoRef.current.srcObject as MediaStream;
+      stream.getTracks().forEach(track => track.stop());
+      videoRef.current.srcObject = null;
+    }
+  };
+
   useEffect(() => {
     setDeviation(0);
     setStatus("NORMAL");
     setIsCalibrating(false);
     setCalibrationProgress(0);
+    setHasCameraPermission(null);
+    stopCameraStream(); // Stop any previous stream
 
-    if(videoRef.current) {
-      const videoSource = cameraConfig[selectedBant] || '/conveyor-video.mp4';
-      if (videoRef.current.src !== window.location.origin + videoSource) {
-          videoRef.current.src = videoSource;
-          videoRef.current.load();
-          videoRef.current.play().catch(e => console.error("Video oynatma hatası:", e));
-      }
+    const videoElement = videoRef.current;
+    if (!videoElement) return;
+
+    if (isWebcam) {
+      const getCameraPermission = async () => {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+          setHasCameraPermission(true);
+          if (videoRef.current) {
+            videoRef.current.srcObject = stream;
+            videoRef.current.src = ""; // Clear src for srcObject to work
+            videoRef.current.play().catch(e => console.error("Webcam oynatma hatası:", e));
+          }
+        } catch (error) {
+          console.error('Kamera erişim hatası:', error);
+          setHasCameraPermission(false);
+          toast({
+            variant: 'destructive',
+            title: 'Kamera Erişimi Reddedildi',
+            description: 'Bu özelliği kullanmak için tarayıcı ayarlarından kamera izinlerini etkinleştirin.',
+          });
+        }
+      };
+      getCameraPermission();
+    } else {
+        if (videoRef.current.src !== window.location.origin + selectedVideoSource) {
+            videoRef.current.srcObject = null; // Clear srcObject for src to work
+            videoRef.current.src = selectedVideoSource;
+            videoRef.current.load();
+            videoRef.current.play().catch(e => console.error("Video oynatma hatası:", e));
+        }
+    }
+    
+    // Cleanup function
+    return () => {
+      stopCameraStream();
     }
 
   }, [selectedBant, cameraConfig]);
@@ -190,11 +234,17 @@ export function DashboardClient() {
       setIsProcessing(true);
   
       const video = videoRef.current;
-      if (video.paused || video.ended || video.readyState < 3) { // Use readyState 3 (HAVE_FUTURE_DATA) for more reliability
+      if (video.paused || video.ended || video.readyState < 3) { 
         setIsProcessing(false);
         return;
       }
       
+      // For webcam, permission must be granted
+      if (isWebcam && !hasCameraPermission) {
+        setIsProcessing(false);
+        return;
+      }
+
       const canvas = canvasRef.current;
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
@@ -241,7 +291,7 @@ export function DashboardClient() {
   
     const interval = setInterval(analyzeFrame, 2000);
     return () => clearInterval(interval);
-  }, [isCalibrating, isProcessing, toast, settings.anomalyThreshold, status, playAlertSound, selectedBant, logs, saveLogs]);
+  }, [isCalibrating, isProcessing, toast, settings.anomalyThreshold, status, playAlertSound, selectedBant, logs, saveLogs, isWebcam, hasCameraPermission]);
 
   useEffect(() => {
     if (isCalibrating && calibrationProgress === 100) {
@@ -316,11 +366,22 @@ export function DashboardClient() {
                   autoPlay 
                   muted 
                   playsInline 
-                  loop
+                  loop={!isWebcam} // Loop only for video files
                   crossOrigin="anonymous"
-                  key={cameraConfig[selectedBant] || selectedBant}
+                  key={selectedVideoSource + selectedBant}
                 />
                 <canvas ref={canvasRef} className="hidden" />
+                
+                {isWebcam && hasCameraPermission === false && (
+                    <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center text-center text-white p-4">
+                        <VideoOff className="h-16 w-16 mb-4" />
+                        <h3 className="text-xl font-semibold">Kamera Erişimi Gerekli</h3>
+                        <p className="text-muted-foreground text-white/80">
+                           Canlı görüntüyü başlatmak için lütfen tarayıcınızın ayarlarından kamera izni verin.
+                        </p>
+                    </div>
+                )}
+
                 {isProcessing && (
                   <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
                     <p className="text-white font-medium">İşleniyor...</p>
@@ -575,7 +636,7 @@ function SettingsDialog({
                     Kamera Yapılandırması
                 </Label>
                 <p className="text-sm text-muted-foreground">
-                    Her bir konveyör bandı için video kaynağı URL'sini tanımlayın.
+                    Her bir konveyör bandı için video kaynağı tanımlayın. Cihazın kamerasını kullanmak için 'webcam' yazın.
                 </p>
                 <div className="space-y-4 pt-2">
                     {Object.keys(currentCameraConfig).map((bant) => (
@@ -588,7 +649,7 @@ function SettingsDialog({
                                 value={currentCameraConfig[bant]}
                                 onChange={(e) => handleCameraConfigFieldChange(bant, e.target.value)}
                                 className="col-span-3"
-                                placeholder="örn: /video.mp4 veya http://192.168.1.10/stream"
+                                placeholder="örn: /video.mp4 veya webcam"
                             />
                         </div>
                     ))}
@@ -658,3 +719,5 @@ function SettingsDialog({
     </Dialog>
   );
 }
+
+    
