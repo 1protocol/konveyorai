@@ -1,6 +1,6 @@
-# ConveyorAI - Yapay Zeka Destekli Konveyör Bandı Güvenlik Sistemi
+# Konveyor AI - Yapay Zeka Destekli Konveyör Bandı Güvenlik Sistemi
 
-ConveyorAI, endüstriyel üretim hatlarındaki konveyör bantlarını gerçek zamanlı olarak izleyen ve yapay zeka kullanarak olası yönsel kayma (kayıklık) sorunlarını otomatik olarak tespit eden modern bir web uygulamasıdır. Bu sistem, harici bir veri seti olmaksızın, çalışmaya başladığında kendi referansını oluşturarak üretim hattı güvenliğini artırmak ve olası arızaları önceden tahmin etmek için geliştirilmiştir.
+Konveyor AI, endüstriyel üretim hatlarındaki konveyör bantlarını gerçek zamanlı olarak izleyen ve yapay zeka kullanarak olası yönsel kayma (kayıklık) sorunlarını otomatik olarak tespit eden modern bir web uygulamasıdır. Bu sistem, harici bir veri seti olmaksızın, çalışmaya başladığında kendi referansını oluşturarak üretim hattı güvenliğini artırmak ve olası arızaları önceden tahmin etmek için geliştirilmiştir.
 
 ## ✨ Temel Özellikler
 

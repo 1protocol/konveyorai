@@ -17,9 +17,9 @@ export const Icons = {
         className={cn('text-primary', className)}
         {...props}
       >
-        {/* Highway Lanes Icon */}
-        <path d="M7 22V2" />
-        <path d="M17 22V2" />
+        <rect x="2" y="7" width="20" height="10" rx="2" ry="2" />
+        <circle cx="6" cy="12" r="1.5" fill="currentColor"/>
+        <circle cx="18" cy="12" r="1.5" fill="currentColor"/>
       </svg>
     );
   },

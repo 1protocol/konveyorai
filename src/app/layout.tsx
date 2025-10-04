@@ -3,7 +3,7 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
-  title: 'ConveyorAI',
+  title: 'Konveyor AI',
   description: 'Yapay zeka destekli endüstriyel konveyör bandı izleme ve anomali tespit sistemi.',
 };
 

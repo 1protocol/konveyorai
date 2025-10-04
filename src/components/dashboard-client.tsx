@@ -141,13 +141,13 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
   useEffect(() => {
     if (isClient) {
       try {
-        const savedSettings = localStorage.getItem("conveyorAISettings");
-        const savedLogs = localStorage.getItem("conveyorAILogs");
+        const savedSettings = localStorage.getItem("konveyorAISettings");
+        const savedLogs = localStorage.getItem("konveyorAILogs");
 
         if (savedSettings) {
           setSettings(JSON.parse(savedSettings));
         } else {
-          localStorage.setItem("conveyorAISettings", JSON.stringify(defaultSettings));
+          localStorage.setItem("konveyorAISettings", JSON.stringify(defaultSettings));
         }
         
         if (savedLogs) {
@@ -167,23 +167,23 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
   const saveSettings = useCallback((newSettings: AppSettings) => {
     setSettings(newSettings);
     if (isClient) {
-        localStorage.setItem("conveyorAISettings", JSON.stringify(newSettings));
-         window.dispatchEvent(new StorageEvent('storage', { key: 'conveyorAISettings', newValue: JSON.stringify(newSettings) }));
+        localStorage.setItem("konveyorAISettings", JSON.stringify(newSettings));
+         window.dispatchEvent(new StorageEvent('storage', { key: 'konveyorAISettings', newValue: JSON.stringify(newSettings) }));
     }
   }, [isClient]);
 
   const saveStations = useCallback((newStations: Station[]) => {
     onStationsChange(newStations);
     if (isClient) {
-        localStorage.setItem("conveyorAIStations", JSON.stringify(newStations));
-        window.dispatchEvent(new StorageEvent('storage', { key: 'conveyorAIStations', newValue: JSON.stringify(newStations) }));
+        localStorage.setItem("konveyorAIStations", JSON.stringify(newStations));
+        window.dispatchEvent(new StorageEvent('storage', { key: 'konveyorAIStations', newValue: JSON.stringify(newStations) }));
     }
   }, [isClient, onStationsChange]);
 
   const saveLogs = useCallback((newLogs: AnomalyLog[]) => {
     setLogs(newLogs);
     if (isClient) {
-        localStorage.setItem("conveyorAILogs", JSON.stringify(newLogs));
+        localStorage.setItem("konveyorAILogs", JSON.stringify(newLogs));
     }
   }, [isClient]);
 

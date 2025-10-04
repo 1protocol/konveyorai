@@ -24,7 +24,7 @@ export default function DeveloperGuidePage() {
         <iframe
           src="/DEVELOPER_GUIDE.html"
           className="w-full h-full border-0"
-          title="ConveyorAI Developer Guide"
+          title="Konveyor AI Developer Guide"
         />
       </main>
     </div>

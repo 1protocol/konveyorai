@@ -50,7 +50,7 @@ function PageContent() {
     useEffect(() => {
         setIsClient(true);
         try {
-            const savedStations = localStorage.getItem("conveyorAIStations");
+            const savedStations = localStorage.getItem("konveyorAIStations");
             if (savedStations) {
                 const parsedStations = JSON.parse(savedStations);
                 if(Array.isArray(parsedStations) && parsedStations.length > 0) {
@@ -59,12 +59,12 @@ function PageContent() {
                   // If localStorage is corrupt or empty, set a default
                   const defaultStations: Station[] = [{ id: '1', name: 'Bant 1', source: '/conveyor-video.mp4' }];
                   setStations(defaultStations);
-                  localStorage.setItem("conveyorAIStations", JSON.stringify(defaultStations));
+                  localStorage.setItem("konveyorAIStations", JSON.stringify(defaultStations));
                 }
             } else {
                 const defaultStations: Station[] = [{ id: '1', name: 'Bant 1', source: '/conveyor-video.mp4' }];
                 setStations(defaultStations);
-                localStorage.setItem("conveyorAIStations", JSON.stringify(defaultStations));
+                localStorage.setItem("konveyorAIStations", JSON.stringify(defaultStations));
             }
         } catch (e) {
             console.error("Failed to load stations from localStorage", e);
@@ -76,7 +76,7 @@ function PageContent() {
     // Listen for storage changes to update stations list dynamically
     useEffect(() => {
         const handleStorageChange = (event: StorageEvent) => {
-            if (event.key === 'conveyorAIStations') {
+            if (event.key === 'konveyorAIStations') {
                 try {
                     if (event.newValue) {
                         setStations(JSON.parse(event.newValue));
@@ -121,7 +121,7 @@ function PageContent() {
              <Link href="/" className="flex items-center gap-2.5 md:hidden">
                 <Icons.logo className="size-8 text-primary" />
              </Link>
-             <h1 className="font-bold text-lg hidden sm:block">ConveyorAI</h1>
+             <h1 className="font-bold text-lg hidden sm:block">Konveyor AI</h1>
            </div>
           <div className="flex items-center gap-4">
              <SidebarTrigger className="h-10 w-10" />
@@ -137,7 +137,7 @@ function PageContent() {
                 <Link href="/" className="flex items-center gap-2">
                     <Icons.logo className="size-8 text-primary" />
                     <span className="font-bold text-lg group-data-[state=collapsed]:hidden">
-                    ConveyorAI
+                    Konveyor AI
                     </span>
                 </Link>
            </div>
