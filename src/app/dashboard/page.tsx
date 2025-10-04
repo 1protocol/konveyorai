@@ -115,6 +115,22 @@ function PageContent() {
 
     return (
     <>
+      <SidebarInset>
+        <header className="flex h-16 items-center justify-between gap-4 border-b bg-card px-4 sm:px-6">
+           <div className="flex items-center gap-2.5">
+             <Link href="/" className="flex items-center gap-2.5 md:hidden">
+                <Icons.logo className="size-8 text-primary" />
+             </Link>
+             <h1 className="font-bold text-lg hidden sm:block">ConveyorAI</h1>
+           </div>
+          <div className="flex items-center gap-4">
+             <SidebarTrigger className="h-10 w-10" />
+          </div>
+        </header>
+        <main className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8">
+          <DashboardClient stations={stations} onStationsChange={setStations} />
+        </main>
+      </SidebarInset>
       <Sidebar>
         <SidebarHeader className="border-b p-3 justify-center">
             <div className="flex items-center gap-2.5">
@@ -205,23 +221,6 @@ function PageContent() {
           </SidebarMenu>
         </SidebarContent>
       </Sidebar>
-      <SidebarInset>
-        <header className="flex h-16 items-center justify-between gap-4 border-b bg-card px-4 sm:px-6">
-           <div className="flex items-center gap-2.5">
-             <SidebarTrigger className="h-9 w-9" />
-             <Link href="/" className="flex items-center gap-2.5 md:hidden">
-                <Icons.logo className="size-8 text-primary" />
-             </Link>
-             <h1 className="font-bold text-lg hidden sm:block">ConveyorAI</h1>
-           </div>
-          <div className="flex items-center gap-4">
-            {/* ThemeToggle has been removed */}
-          </div>
-        </header>
-        <main className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8">
-          <DashboardClient stations={stations} onStationsChange={setStations} />
-        </main>
-      </SidebarInset>
     </>
   );
 }
