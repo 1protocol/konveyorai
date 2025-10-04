@@ -22,19 +22,7 @@ export default function DocumentationPage() {
   useEffect(() => {
     getMarkdownContent()
       .then(html => {
-        // İstemci tarafında DOMParser kullanarak ilk paragrafı kaldıralım
-        if (typeof window !== 'undefined') {
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, 'text/html');
-            const firstP = doc.querySelector('p');
-            if (firstP) {
-                firstP.remove(); // İlk <p> etiketini kaldır
-            }
-            setHtmlContent(doc.body.innerHTML);
-        } else {
-            // Sunucu tarafı render için fallback (ilk paragraf kalabilir)
-            setHtmlContent(html);
-        }
+        setHtmlContent(html);
       })
       .catch(err => {
         setError(err.message);
