@@ -53,7 +53,7 @@ export default function DocumentationPage() {
         {isLoading && (
           <div className="flex flex-col items-center justify-center text-center mt-20">
             <Loader className="w-12 h-12 animate-spin text-primary mb-4" />
-            <p className="text-muted-foreground">Akademik doküman yükleniyor...</p>
+            <p className="text-muted-foreground">Proje dokümanı yükleniyor...</p>
           </div>
         )}
         {error && (
