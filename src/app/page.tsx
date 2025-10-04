@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { marked } from 'marked';
-import { Loader, UserCircle, Map, Cpu, Layers } from 'lucide-react';
+import { Loader, UserCircle, Map, Cpu, Layers, ShieldCheck } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
@@ -90,6 +90,20 @@ export default function DocumentationPage() {
             <CardContent>
                 <p className="text-muted-foreground">
                     Konveyor AI, Endüstri 4.0'ın temel taşları olan siber-fiziksel sistemler konseptiyle tam uyum içinde çalışır. Gerçek zamanlı veri toplama, yapay zeka ile bu veriyi anlık olarak işleme ve otonom uyarı mekanizmaları oluşturma yeteneği, onu akıllı fabrikaların modüler bir bileşeni haline getirir. Sistem, üretim hattından topladığı verilerle şeffaflık sağlar ve merkezi olmayan karar alma süreçlerini destekleyerek operasyonel verimliliği artırır.
+                </p>
+            </CardContent>
+        </Card>
+
+        <Card className="mb-8 bg-card/50 border-border/50">
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                    <ShieldCheck className="h-5 w-5 text-accent"/>
+                    Kalite ve Risk Yönetimi
+                </CardTitle>
+            </CardHeader>
+            <CardContent>
+                <p className="text-muted-foreground">
+                    Konveyor AI, üretim sürecindeki anomalileri anında tespit ederek proaktif bir risk yönetimi sağlar. Hatalı hizalanmış bir bant, ürün kalitesinin düşmesine, ham madde israfına ve hatta üretim hattının tamamen durmasına neden olabilir. Sistemimiz, bu tür riskleri erken aşamada belirleyerek operasyonel verimliliği artırır, plansız duruş sürelerini azaltır ve nihai ürün kalitesini güvence altına alır. Bu sayede, olası büyük maliyetli arızaların ve üretim kayıplarının önüne geçilir.
                 </p>
             </CardContent>
         </Card>
