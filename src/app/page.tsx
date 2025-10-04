@@ -69,23 +69,6 @@ export default function DocumentationPage() {
         <Card className="mb-8 bg-card/50 border-border/50">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                    <Map className="h-5 w-5 text-accent"/>
-                    Geliştirici Haritası
-                </CardTitle>
-            </CardHeader>
-            <CardContent>
-                <p className="text-muted-foreground mb-4">
-                    Projenin teknik yapısını ve bileşenlerini görselleştiren interaktif haritayı keşfedin.
-                </p>
-                <Button asChild>
-                    <Link href="/devmap.html">Geliştirici Haritasını Görüntüle</Link>
-                </Button>
-            </CardContent>
-        </Card>
-
-        <Card className="mb-8 bg-card/50 border-border/50">
-            <CardHeader>
-                <CardTitle className="flex items-center gap-2">
                     <Cpu className="h-5 w-5 text-accent"/>
                     Donanım Opsiyonları ve Operasyonel Etki
                 </CardTitle>
