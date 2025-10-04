@@ -6,15 +6,15 @@ ConveyorAI, endüstriyel üretim hatlarındaki konveyör bantlarını gerçek za
 
 - **🤖 Otomatik Referans ve AI Destekli Analiz:** Sistem ilk çalıştırıldığında, bantın mevcut konumunu otomatik olarak bir başlangıç referansı olarak kaydeder. Canlı video akışını sürekli analiz ederek konveyör bandının bu referanstan sapmalarını milimetre cinsinden tespit eder.
 - **📹 Gerçek Zamanlı Görselleştirme:** Canlı video akışı üzerine eklenen dinamik çizgilerle, yapay zekanın referans noktasını ve anlık sapmayı nasıl ölçtüğünü görsel olarak gösterir.
-- **⚙️ Çoklu İstasyon Yönetimi:** Birden fazla konveyör bandını (istasyon) ayrı ayrı izleme ve yönetme imkanı sunar. Her istasyonun anlık durumu, ana panelden veya kenar çubuğundan kolayca seçilebilir.
-- **⚠️ Anomali Tespiti ve Uyarı:** Kullanıcı tarafından belirlenen sapma eşik değeri (örn: 2mm) aşıldığında anında "Anomali" durumu oluşturur ve sesli/görsel uyarılar verir.
+- **⚙️ Çoklu İstasyon Yönetimi:** Birden fazla konveyör bandını (istasyon) ayrı ayrı izleme ve yönetme imkanı sunar. Her istasyonun anlık durumu, kullanıcı deneyimi odaklı tasarlanmış modern açılır menülerden kolayca seçilebilir.
+- **⚠️ Anomali Tespiti ve Uyarı:** Kullanıcı tarafından belirlenen sapma eşik değeri aşıldığında anında "Anomali" durumu oluşturur ve sesli/görsel uyarılar verir.
 - **🔧 Dinamik Yapılandırma:** Kullanıcılar, "Gelişmiş Ayarlar" menüsünden aşağıdaki parametreleri dinamik olarak yönetebilir:
     - **İstasyon Yönetimi:** Yeni konveyör bantları (istasyonlar) ekleme, isimlendirme ve video kaynağını (webcam veya dosya yolu) atama.
     - **Hassasiyet Ayarı:** Anomali olarak kabul edilecek sapma eşiğini (mm cinsinden) ayarlama.
     - **AI Kalibrasyonu:** Tek tıklamayla yapay zeka modelinin başlangıç referans noktasını yeniden oluşturma.
     - **Sesli Uyarılar:** Anomali uyarı sesini açıp kapatma.
+- **🎨 Fütüristik Arayüz (VR/Glassmorphism):** Proje, kenarları boyunca hareket eden neon çizgilerle aydınlatılmış, katmanlı ve yarı saydam "cam" kartlar gibi gelişmiş görsel efektlerle zenginleştirilmiş, tamamen karanlık modda çalışan bir tasarıma sahiptir.
 - **📈 Anomali Kayıtları:** Tespit edilen tüm anormal sapmalar, istasyon bilgisi, zaman damgası ve sapma değeriyle birlikte bir kayıt defterine eklenir.
-- **🌓 Açık ve Koyu Tema:** Kullanıcı tercihine göre aydınlık ve karanlık mod arasında geçiş yapılabilir.
 
 ## 🚀 Kullanılan Teknolojiler
 
@@ -33,20 +33,22 @@ Projenin temel dosya ve klasör yapısı aşağıda açıklanmıştır:
 .
 ├── src
 │   ├── app/                # Next.js App Router sayfaları ve ana layout
-│   │   ├── layout.tsx
-│   │   └── page.tsx        # Ana kontrol paneli ve kenar çubuğu yerleşimi
+│   │   ├── dashboard/
+│   │   │   └── page.tsx    # Ana kontrol paneli sayfası
+│   │   ├── layout.tsx      # Kök layout
+│   │   └── page.tsx        # Proje tanıtım (landing) sayfası
 │   │
 │   ├── components/         # Tekrar kullanılabilir React bileşenleri
-│   │   ├── ui/             # Shadcn UI temel bileşenleri
+│   │   ├── ui/             # Shadcn UI temel bileşenleri (Button, Card, Sidebar etc.)
 │   │   ├── dashboard-client.tsx # Panelin ana istemci tarafı mantığı
-│   │   └── theme-toggle.tsx     # Açık/Koyu tema değiştirici
+│   │   └── icons.tsx       # Özel ikonlar
 │   │
 │   ├── ai/                 # Genkit ve yapay zeka ile ilgili kodlar
 │   │   ├── flows/
 │   │   │   └── analyze-conveyor-flow.ts # Görüntü analizi yapan AI akışı
 │   │   └── genkit.ts       # Genkit yapılandırması
 │   │
-│   ├── hooks/              # Özel React hook'ları (örn: use-toast)
+│   ├── hooks/              # Özel React hook'ları (örn: use-toast, use-mobile)
 │   │
 │   ├── lib/                # Yardımcı fonksiyonlar (örn: cn)
 │
