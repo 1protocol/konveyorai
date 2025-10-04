@@ -41,8 +41,8 @@ export default function DocumentationPage() {
       <main className="container mx-auto px-4 pt-12 pb-12">
         
         <Link href="/dashboard" passHref>
-          <Button size="lg" className="w-full h-16 mb-8 text-lg bg-card/50 border-border/50 shadow-lg transition-all hover:shadow-xl hover:-translate-y-1 hover:bg-card/70 text-primary">
-            <LayoutDashboard className="mr-3 h-8 w-8" />
+          <Button size="lg" className="w-full h-20 mb-8 text-2xl font-bold bg-card/50 border-border/50 shadow-lg transition-all hover:shadow-xl hover:shadow-primary/20 hover:-translate-y-1 hover:bg-card/80 text-primary">
+            <LayoutDashboard className="mr-4 h-9 w-9" />
             Kontrol Paneli
           </Button>
         </Link>
