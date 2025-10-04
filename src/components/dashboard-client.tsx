@@ -108,6 +108,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
   const captureCanvasRef = useRef<HTMLCanvasElement>(null);
   const overlayCanvasRef = useRef<HTMLCanvasElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const animationFrameId = useRef<number>();
   const [isProcessing, setIsProcessing] = useState(false);
   const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
   
@@ -303,61 +304,102 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
   useEffect(() => {
     const overlay = overlayCanvasRef.current;
     const video = videoRef.current;
-    if (!overlay || !video) return;
+    if (!overlay || !video ) return;
 
     const ctx = overlay.getContext('2d');
     if (!ctx) return;
-    
-    const resizeOverlay = () => {
-      overlay.width = video.clientWidth;
-      overlay.height = video.clientHeight;
-    }
-    
-    // Initial resize
-    resizeOverlay();
-    
-    const observer = new ResizeObserver(resizeOverlay);
-    observer.observe(video);
 
-    ctx.clearRect(0, 0, overlay.width, overlay.height);
+    let pulseOpacity = 1;
+    let pulseDirection = -1;
 
-    if (isCalibrating || status === "KALİBRE EDİLİYOR" ) return;
-    
-    const lineX = overlay.width / 2;
-    const deviationScale = 20; 
-    const deviationPx = deviation * deviationScale;
+    const draw = () => {
+        if (!overlay || !video) return;
+        
+        // Resize overlay to match video element size
+        if (overlay.width !== video.clientWidth || overlay.height !== video.clientHeight) {
+            overlay.width = video.clientWidth;
+            overlay.height = video.clientHeight;
+        }
 
-    // Draw Reference Line
-    ctx.strokeStyle = 'rgba(0, 255, 0, 0.7)';
-    ctx.lineWidth = 2;
-    ctx.setLineDash([5, 5]);
-    ctx.beginPath();
-    ctx.moveTo(lineX, 0);
-    ctx.lineTo(lineX, overlay.height);
-    ctx.stroke();
+        ctx.clearRect(0, 0, overlay.width, overlay.height);
 
-    // Draw Deviation Line
-    ctx.strokeStyle = isAnomaly ? 'rgba(255, 20, 20, 1)' : 'rgba(255, 165, 0, 1)';
-    ctx.lineWidth = 3;
-    ctx.setLineDash([]);
-    ctx.beginPath();
-    ctx.moveTo(lineX + deviationPx, 0);
-    ctx.lineTo(lineX + deviationPx, overlay.height);
-    ctx.stroke();
+        if (isCalibrating || status === "KALİBRE EDİLİYOR") {
+            animationFrameId.current = requestAnimationFrame(draw);
+            return;
+        }
 
-    if (deviation > 0.1) {
-        ctx.fillStyle = isAnomaly ? 'rgba(255, 20, 20, 1)' : 'rgba(255, 165, 0, 1)';
-        ctx.font = 'bold 16px Poppins, sans-serif';
-        ctx.textAlign = deviationPx > 0 ? 'left' : 'right';
-        const textX = lineX + deviationPx + (deviationPx > 0 ? 5 : -5);
-        ctx.fillText(`${deviation.toFixed(2)} mm`, textX, 20);
-    }
+        const lineY = overlay.height / 2; // Horizontal center
+        const deviationScale = 25; // Pixels per mm
+        const deviationPx = deviation * deviationScale;
+
+        // --- Draw Reference Line ---
+        ctx.strokeStyle = 'rgba(0, 255, 0, 0.6)';
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(0, lineY);
+        ctx.lineTo(overlay.width, lineY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+
+        if (Math.abs(deviation) > 0.1) {
+            // --- Pulsing animation for anomaly ---
+            if (isAnomaly) {
+                pulseOpacity += pulseDirection * 0.05;
+                if (pulseOpacity < 0.3 || pulseOpacity > 1) {
+                    pulseDirection *= -1;
+                    pulseOpacity = Math.max(0.3, Math.min(1, pulseOpacity));
+                }
+            } else {
+                pulseOpacity = 1;
+            }
+            
+            const anomalyColor = `rgba(255, 20, 20, ${pulseOpacity})`;
+            const normalColor = 'rgba(255, 165, 0, 1)';
+            const currentColor = isAnomaly ? anomalyColor : normalColor;
+            
+            // --- Draw Deviation Line (Ruler) ---
+            ctx.strokeStyle = currentColor;
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.moveTo(0, lineY - deviationPx);
+            ctx.lineTo(overlay.width, lineY - deviationPx);
+            ctx.stroke();
+
+            // --- Draw Measurement/Ruler Marks ---
+            ctx.lineWidth = 1;
+            const startY = Math.min(lineY, lineY - deviationPx);
+            const endY = Math.max(lineY, lineY - deviationPx);
+
+            for (let i = 0; i < overlay.width; i += 20) {
+                ctx.beginPath();
+                ctx.moveTo(i, startY);
+                ctx.lineTo(i, endY);
+                ctx.stroke();
+            }
+
+            // --- Draw Text ---
+            ctx.fillStyle = currentColor;
+            ctx.font = 'bold 18px Poppins, sans-serif';
+            ctx.textAlign = 'left';
+            ctx.shadowColor = "black";
+            ctx.shadowBlur = 5;
+            ctx.fillText(`${deviation.toFixed(2)} mm`, 10, lineY - deviationPx - 10);
+            ctx.shadowBlur = 0;
+        }
+
+        animationFrameId.current = requestAnimationFrame(draw);
+    };
+
+    animationFrameId.current = requestAnimationFrame(draw);
 
     return () => {
-      observer.disconnect();
-    }
-
-  }, [deviation, isAnomaly, isCalibrating, status]);
+        if (animationFrameId.current) {
+            cancelAnimationFrame(animationFrameId.current);
+        }
+    };
+}, [deviation, isAnomaly, isCalibrating, status]);
 
 
   useEffect(() => {
@@ -874,3 +916,5 @@ function SettingsDialog({
     </Dialog>
   );
 }
+
+    
