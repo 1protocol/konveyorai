@@ -120,17 +120,17 @@ export default function LandingPage() {
                 </p>
             </div>
             <div className="mx-auto mt-12 grid max-w-5xl gap-8 md:grid-cols-3">
-              <div className="flex flex-col items-center text-center p-6 rounded-lg bg-background/20 border border-white/10">
+              <div className="flex flex-col items-center text-center p-6 rounded-lg bg-background/20 border border-white/10 transition-all hover:border-white/20 hover:-translate-y-1">
                 <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-primary bg-primary/10 text-xl font-bold text-primary">1</div>
                 <h3 className="mt-6 text-xl font-semibold">Otomatik Referans</h3>
                 <p className="mt-2 text-muted-foreground">Yazılım başlatıldığında, ilk görüntüden otomatik olarak bir referans konumu çıkarır ve sistemi kalibre eder.</p>
               </div>
-              <div className="flex flex-col items-center text-center p-6 rounded-lg bg-background/20 border border-white/10">
+              <div className="flex flex-col items-center text-center p-6 rounded-lg bg-background/20 border border-white/10 transition-all hover:border-white/20 hover:-translate-y-1">
                 <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-primary bg-primary/10 text-xl font-bold text-primary">2</div>
                 <h3 className="mt-6 text-xl font-semibold">Sürekli Analiz</h3>
                 <p className="mt-2 text-muted-foreground">Yapay zeka, bant kenarlarını sürekli takip eder ve mevcut konumu referansla milimetrik hassasiyetle karşılaştırır.</p>
               </div>
-              <div className="flex flex-col items-center text-center p-6 rounded-lg bg-background/20 border border-white/10">
+              <div className="flex flex-col items-center text-center p-6 rounded-lg bg-background/20 border border-white/10 transition-all hover:border-white/20 hover:-translate-y-1">
                 <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-primary bg-primary/10 text-xl font-bold text-primary">3</div>
                 <h3 className="mt-6 text-xl font-semibold">Anomali Tespiti ve Uyarı</h3>
                 <p className="mt-2 text-muted-foreground">Sapma, belirlenen eşiği aşarsa sistem anında görsel/sesli uyarı üretir ve olayı kaydeder.</p>

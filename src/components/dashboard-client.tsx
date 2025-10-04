@@ -438,7 +438,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
         />
       </div>
 
-      <Card className="bg-background/30 backdrop-blur-xl border border-white/10">
+      <Card className="bg-background/30 backdrop-blur-xl border border-white/10 transition-all hover:border-white/20 hover:-translate-y-1">
         <CardHeader>
             <CardTitle className="flex items-center gap-2">
                 <Video />
@@ -485,7 +485,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
         </CardContent>
       </Card>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
-        <Card className={cn("bg-background/30 backdrop-blur-xl border border-white/10", isAnomaly && "bg-red-900/50 text-white border-red-500/50")}>
+        <Card className={cn("bg-background/30 backdrop-blur-xl border border-white/10 transition-all hover:border-white/20 hover:-translate-y-1", isAnomaly && "bg-red-900/50 text-white border-red-500/50")}>
           <CardHeader>
             <CardTitle className="text-sm font-medium">Sistem Durumu</CardTitle>
             {status === "NORMAL" && (
@@ -517,7 +517,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
           </CardContent>
         </Card>
 
-        <Card className="bg-background/30 backdrop-blur-xl border border-white/10">
+        <Card className="bg-background/30 backdrop-blur-xl border border-white/10 transition-all hover:border-white/20 hover:-translate-y-1">
           <CardHeader>
             <CardTitle className="text-sm font-medium">
               Mevcut Sapma (AI)
@@ -541,7 +541,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
 
       </div>
 
-      <Card className="bg-background/30 backdrop-blur-xl border border-white/10">
+      <Card className="bg-background/30 backdrop-blur-xl border border-white/10 transition-all hover:border-white/20 hover:-translate-y-1">
         <CardHeader>
           <CardTitle>Anomali Kayıtları - {selectedStation.name}</CardTitle>
           <CardDescription>
@@ -582,7 +582,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
           </div>
         </CardContent>
       </Card>
-      <Card className="bg-background/30 backdrop-blur-xl border border-white/10">
+      <Card className="bg-background/30 backdrop-blur-xl border border-white/10 transition-all hover:border-white/20 hover:-translate-y-1">
         <CardHeader>
             <CardTitle>Tüm Bantlar İçin 8 Saatlik Eylem Raporu</CardTitle>
             <CardDescription>Son 8 saat içinde tüm bantlarda tespit edilen anomaliler.</CardDescription>
