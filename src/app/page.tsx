@@ -2,8 +2,8 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { marked } from 'marked';
-import { Loader, UserCircle, Map, Cpu, Layers, ShieldCheck, LayoutDashboard } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Loader, Map, Cpu, Layers, ShieldCheck, LayoutDashboard, Bot } from 'lucide-react';
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
 // Asenkron olarak markdown içeriğini getiren fonksiyon
@@ -39,14 +39,31 @@ export default function DocumentationPage() {
   return (
     <div className="bg-background min-h-screen font-body text-foreground">
       <main className="container mx-auto px-4 pt-12 pb-12">
+        
         <Card className="mb-12 bg-card/50 border-border/50 shadow-lg transition-all hover:shadow-xl hover:-translate-y-1">
-            <CardHeader className="flex-row items-center gap-4">
-                <UserCircle className="h-12 w-12 text-primary" />
-                <div>
-                    <p className="text-sm text-muted-foreground">HAZIRLAYAN</p>
-                    <CardTitle className="text-xl">Adınız Soyadınız</CardTitle>
+            <CardHeader>
+                <div className="flex items-center gap-4">
+                    <Bot className="h-12 w-12 text-primary" />
+                    <div>
+                        <CardTitle className="text-2xl">Konveyor AI</CardTitle>
+                        <CardDescription>Yapay Zeka Destekli Konveyör Güvenlik Sistemi</CardDescription>
+                    </div>
                 </div>
             </CardHeader>
+            <CardContent className="space-y-2 text-sm">
+                <div className="flex">
+                    <strong className="w-32 shrink-0 text-muted-foreground">Proje Adı:</strong>
+                    <span>Konveyor AI</span>
+                </div>
+                <div className="flex">
+                    <strong className="w-32 shrink-0 text-muted-foreground">Proje Amacı:</strong>
+                    <span>Endüstriyel konveyör bantlarında sapma tespiti</span>
+                </div>
+                <div className="flex">
+                    <strong className="w-32 shrink-0 text-muted-foreground">Geliştirici:</strong>
+                    <span>Adınız Soyadınız</span>
+                </div>
+            </CardContent>
         </Card>
 
         <Card className="mb-8 bg-card/50 border-border/50">
