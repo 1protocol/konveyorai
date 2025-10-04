@@ -1,230 +1,168 @@
 
 "use client";
 
-import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { LayoutDashboard, Settings, Network, FileText, Users, PlusCircle } from 'lucide-react';
-import type { Station } from '@/components/dashboard-client';
+import Link from "next/link";
+import { ArrowRight, BrainCircuit, ScanLine, SlidersHorizontal, PanelLeft } from "lucide-react";
+import { Icons } from "@/components/icons";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarHeader,
-  SidebarInset,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarProvider,
-  SidebarTrigger,
-  useSidebar
-} from '@/components/ui/sidebar';
-import { Icons } from '@/components/icons';
-import { DashboardClient } from '@/components/dashboard-client';
-import { ThemeToggle } from '@/components/theme-toggle';
-import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
-  } from "@/components/ui/accordion"
-import { Button } from '@/components/ui/button';
-import { useState, useEffect } from 'react';
-import { Skeleton } from '@/components/ui/skeleton';
+export default function LandingPage() {
+  const features = [
+    {
+      icon: <BrainCircuit className="h-8 w-8 text-primary" />,
+      title: "Otomatik Referans ve AI Analizi",
+      description: "Sistem, ilk çalıştırıldığında bandın konumunu otomatik olarak referans alır ve bu referanstan sapmaları yapay zeka ile tespit eder.",
+    },
+    {
+      icon: <ScanLine className="h-8 w-8 text-primary" />,
+      title: "Gerçek Zamanlı Görselleştirme",
+      description: "Canlı video akışı üzerine eklenen dinamik algılama çizgileri ile referans noktasını ve anlık sapmayı görsel olarak gösterir.",
+    },
+    {
+      icon: <SlidersHorizontal className="h-8 w-8 text-primary" />,
+      title: "Dinamik Yapılandırma",
+      description: "Anomali hassasiyetini, istasyonları ve uyarı ayarlarını 'Gelişmiş Ayarlar' menüsünden kolayca yönetin.",
+    },
+     {
+      icon: <PanelLeft className="h-8 w-8 text-primary" />,
+      title: "Çoklu İstasyon Desteği",
+      description: "Birden fazla konveyör bandını (istasyon) ayrı ayrı ekleyin, isimlendirin ve her birini tek bir arayüzden izleyin.",
+    },
+  ];
 
-export default function DashboardPage() {
+  const techStack = [
+    { name: "Next.js", logo: "/tech/nextjs.svg" },
+    { name: "Genkit", logo: "/tech/genkit.svg" },
+    { name: "Tailwind CSS", logo: "/tech/tailwind.svg" },
+    { name: "Shadcn UI", logo: "/tech/shadcn.svg" },
+    { name: "TypeScript", logo: "/tech/typescript.svg" },
+  ];
+
   return (
-    <SidebarProvider>
-      <PageContent />
-    </SidebarProvider>
-  );
-}
-
-
-function PageContent() {
-    const { setOpenMobile, isMobile } = useSidebar();
-    const searchParams = useSearchParams();
-    const router = useRouter();
-
-    const [stations, setStations] = useState<Station[]>([]);
-    const [isClient, setIsClient] = useState(false);
-
-    useEffect(() => {
-        setIsClient(true);
-        try {
-            const savedStations = localStorage.getItem("conveyorAIStations");
-            if (savedStations) {
-                const parsedStations = JSON.parse(savedStations);
-                if(Array.isArray(parsedStations) && parsedStations.length > 0) {
-                   setStations(parsedStations);
-                } else {
-                  // If localStorage is corrupt or empty, set a default
-                  const defaultStations: Station[] = [{ id: '1', name: 'Bant 1', source: '/conveyor-video.mp4' }];
-                  setStations(defaultStations);
-                  localStorage.setItem("conveyorAIStations", JSON.stringify(defaultStations));
-                }
-            } else {
-                const defaultStations: Station[] = [{ id: '1', name: 'Bant 1', source: '/conveyor-video.mp4' }];
-                setStations(defaultStations);
-                localStorage.setItem("conveyorAIStations", JSON.stringify(defaultStations));
-            }
-        } catch (e) {
-            console.error("Failed to load stations from localStorage", e);
-            const defaultStations: Station[] = [{ id: '1', name: 'Bant 1', source: '/conveyor-video.mp4' }];
-            setStations(defaultStations);
-        }
-    }, []);
-
-    // Listen for storage changes to update stations list dynamically
-    useEffect(() => {
-        const handleStorageChange = (event: StorageEvent) => {
-            if (event.key === 'conveyorAIStations') {
-                try {
-                    if (event.newValue) {
-                        setStations(JSON.parse(event.newValue));
-                    }
-                } catch (e) {
-                    console.error("Failed to parse stations from storage event", e);
-                }
-            }
-        };
-
-        window.addEventListener('storage', handleStorageChange);
-        return () => {
-            window.removeEventListener('storage', handleStorageChange);
-        };
-    }, []);
-    
-    // Listen for URL changes to close mobile sidebar
-    const selectedStationId = searchParams.get('station');
-    useEffect(() => {
-        if (isMobile) {
-            setOpenMobile(false);
-        }
-    }, [selectedStationId, isMobile, setOpenMobile]);
-
-
-    const handleLinkClick = (stationId: string) => {
-        // We use router.push to ensure the page re-renders with the new search param
-        router.push(`/?station=${stationId}`);
-        if(isMobile) {
-            setOpenMobile(false);
-        }
-    }
-    
-    // Determine the default station ID if none is selected
-    const currentStationId = selectedStationId || (stations.length > 0 ? stations[0].id : '1');
-
-    return (
-    <>
-      <Sidebar>
-        <SidebarHeader className="border-b p-3 justify-center">
-            <div className="flex items-center gap-2.5">
-                <Link href="/" className="flex items-center gap-2.5">
-                    <Icons.logo className="size-8 text-primary" />
-                    <span className="font-bold text-lg group-data-[state=collapsed]:hidden">
-                    ConveyorAI
-                    </span>
-                </Link>
-           </div>
-        </SidebarHeader>
-        <SidebarContent>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton href="/" isActive={!selectedStationId} tooltip="Kontrol Paneli">
-                <LayoutDashboard className="size-5" />
-                <span className="group-data-[state=collapsed]:hidden">
-                  Kontrol Paneli
-                </span>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <Accordion type="single" collapsible defaultValue="item-1" className="w-full px-2 group-data-[state=collapsed]:hidden">
-                <AccordionItem value="item-1" className="border-none">
-                    <AccordionTrigger className="hover:no-underline hover:bg-sidebar-accent rounded-md px-2 py-1.5 text-base w-full justify-start data-[state=open]:bg-sidebar-accent">
-                        <div className="flex items-center gap-2.5">
-                            <Network className="size-5" />
-                            <span>İstasyon</span>
-                        </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="pl-4 pt-1">
-                        <SidebarMenu className="p-0">
-                            {!isClient ? (
-                                <div className="space-y-2 p-2">
-                                    <Skeleton className="h-8 w-full" />
-                                    <Skeleton className="h-8 w-full" />
-                                </div>
-                            ) : stations.length > 0 ? (
-                                stations.map(station => (
-                                    <SidebarMenuItem key={station.id}>
-                                        <SidebarMenuButton 
-                                            variant="ghost" 
-                                            size="sm" 
-                                            className="w-full justify-start h-8 text-base" 
-                                            isActive={currentStationId === station.id} 
-                                            onClick={() => handleLinkClick(station.id)}>
-                                            {station.name}
-                                        </SidebarMenuButton>
-                                    </SidebarMenuItem>
-                                ))
-                            ) : (
-                                <div className="text-center text-xs text-sidebar-foreground/70 p-4">
-                                    İstasyon bulunamadı. Lütfen ayarlardan ekleyin.
-                                </div>
-                            )}
-                        </SidebarMenu>
-                    </AccordionContent>
-                </AccordionItem>
-            </Accordion>
-             <SidebarMenuItem>
-                <SidebarMenuButton href="#" tooltip="Raporlar" disabled>
-                    <FileText className="size-5" />
-                    <span className="group-data-[state=collapsed-]:hidden">Raporlar</span>
-                </SidebarMenuButton>
-            </SidebarMenuItem>
-            <Accordion type="single" collapsible className="w-full px-2 group-data-[state=collapsed]:hidden">
-                <AccordionItem value="item-1" className="border-none">
-                    <AccordionTrigger className="hover:no-underline hover:bg-sidebar-accent rounded-md px-2 py-1.5 text-base w-full justify-start data-[state=open]:bg-sidebar-accent">
-                        <div className="flex items-center gap-2.5">
-                            <Users className="size-5" />
-                            <span>Yönetim</span>
-                        </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="pl-4 pt-1">
-                        <SidebarMenu className="p-0">
-                            <SidebarMenuItem>
-                                <SidebarMenuButton href="#" variant="ghost" size="sm" className="w-full justify-start h-8 text-base" disabled>Operatörler</SidebarMenuButton>
-                            </SidebarMenuItem>
-                        </SidebarMenu>
-                    </AccordionContent>
-                </AccordionItem>
-            </Accordion>
-            <SidebarMenuItem>
-                <SidebarMenuButton href="#" tooltip="Ayarlar">
-                    <Settings className="size-5" />
-                    <span className="group-data-[state=collapsed]:hidden">Ayarlar</span>
-                </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarContent>
-      </Sidebar>
-      <SidebarInset>
-        <header className="flex h-16 items-center justify-between gap-4 border-b bg-card px-4 sm:px-6">
-           <div className="flex items-center gap-2.5">
-             <SidebarTrigger className="h-9 w-9" />
-             <Link href="/" className="flex items-center gap-2.5 md:hidden">
-                <Icons.logo className="size-8 text-primary" />
-             </Link>
-             <h1 className="font-bold text-lg hidden sm:block">ConveyorAI</h1>
-           </div>
-          <div className="flex items-center gap-4">
-            <ThemeToggle />
+    <div className="flex flex-col min-h-screen bg-background text-foreground">
+      {/* Header */}
+      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container flex h-16 items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Icons.logo className="h-8 w-8 text-primary" />
+            <span className="font-bold text-lg">ConveyorAI</span>
           </div>
-        </header>
-        <main className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8">
-          <DashboardClient stations={stations} onStationsChange={setStations} />
-        </main>
-      </SidebarInset>
-    </>
+          <nav className="flex items-center gap-4">
+             <Button asChild>
+                <Link href="/dashboard">
+                    Kontrol Paneli <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+             </Button>
+          </nav>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="flex-1">
+        {/* Hero Section */}
+        <section className="container grid place-items-center gap-8 py-20 text-center md:py-32">
+          <div className="space-y-4">
+            <h1 className="text-4xl font-extrabold tracking-tighter md:text-6xl">
+              Üretim Hattınızda Devrim Yaratın
+            </h1>
+            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
+              ConveyorAI, yapay zeka ile konveyör bantlarınızdaki kayma sorunlarını anında tespit ederek üretim verimliliğinizi ve güvenliğinizi artırır.
+            </p>
+          </div>
+          <Button size="lg" asChild>
+            <Link href="/dashboard">
+              Hemen Başlayın <ArrowRight className="ml-2 h-5 w-5" />
+            </Link>
+          </Button>
+        </section>
+
+        {/* Features Section */}
+        <section id="features" className="container space-y-12 py-16 md:py-24">
+          <div className="mx-auto flex max-w-xl flex-col items-center text-center">
+            <h2 className="text-3xl font-bold tracking-tighter md:text-4xl">Temel Yetenekler</h2>
+            <p className="mt-4 text-muted-foreground">
+              ConveyorAI'ı endüstriyel izleme için güçlü bir çözüm yapan özellikler.
+            </p>
+          </div>
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+            {features.map((feature) => (
+              <Card key={feature.title} className="text-center">
+                <CardHeader>
+                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+                    {feature.icon}
+                  </div>
+                  <CardTitle>{feature.title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">{feature.description}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
+
+        {/* How It Works Section */}
+        <section id="how-it-works" className="bg-muted py-16 md:py-24">
+          <div className="container">
+            <div className="mx-auto flex max-w-xl flex-col items-center text-center">
+                <h2 className="text-3xl font-bold tracking-tighter md:text-4xl">Nasıl Çalışır?</h2>
+                <p className="mt-4 text-muted-foreground">
+                    Sistemimiz, 3 basit adımda üretiminizi güvence altına alır.
+                </p>
+            </div>
+            <div className="mx-auto mt-12 grid max-w-5xl gap-8 md:grid-cols-3">
+              <div className="flex flex-col items-center text-center">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-primary bg-primary/10 text-xl font-bold text-primary">1</div>
+                <h3 className="mt-6 text-xl font-semibold">Otomatik Referans</h3>
+                <p className="mt-2 text-muted-foreground">Yazılım başlatıldığında, ilk görüntüden otomatik olarak bir referans konumu çıkarır ve sistemi kalibre eder.</p>
+              </div>
+              <div className="flex flex-col items-center text-center">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-primary bg-primary/10 text-xl font-bold text-primary">2</div>
+                <h3 className="mt-6 text-xl font-semibold">Sürekli Analiz</h3>
+                <p className="mt-2 text-muted-foreground">Yapay zeka, bant kenarlarını sürekli takip eder ve mevcut konumu referansla milimetrik hassasiyetle karşılaştırır.</p>
+              </div>
+              <div className="flex flex-col items-center text-center">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-primary bg-primary/10 text-xl font-bold text-primary">3</div>
+                <h3 className="mt-6 text-xl font-semibold">Anomali Tespiti ve Uyarı</h3>
+                <p className="mt-2 text-muted-foreground">Sapma, belirlenen eşiği aşarsa sistem anında görsel/sesli uyarı üretir ve olayı kaydeder.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+         {/* Tech Stack Section */}
+        <section id="tech-stack" className="py-16 md:py-24">
+            <div className="container">
+                <div className="mx-auto flex max-w-xl flex-col items-center text-center">
+                    <h2 className="text-3xl font-bold tracking-tighter md:text-4xl">Teknoloji Yığını</h2>
+                    <p className="mt-4 text-muted-foreground">
+                        ConveyorAI'ı hayata geçiren modern ve güçlü teknolojiler.
+                    </p>
+                </div>
+                <div className="mt-12 flex flex-wrap justify-center gap-8 md:gap-12">
+                    {techStack.map((tech) => (
+                        <div key={tech.name} className="flex flex-col items-center gap-2">
+                             <img src={tech.logo} alt={tech.name} className="h-12 w-12 dark:invert" />
+                             <span className="text-sm font-medium text-muted-foreground">{tech.name}</span>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </section>
+
+      </main>
+
+      {/* Footer */}
+      <footer className="border-t">
+        <div className="container flex h-16 items-center justify-center">
+          <p className="text-sm text-muted-foreground">
+            &copy; {new Date().getFullYear()} ConveyorAI. Tüm hakları saklıdır.
+          </p>
+        </div>
+      </footer>
+    </div>
   );
 }
 
-      
+    
