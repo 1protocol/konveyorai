@@ -20,7 +20,6 @@ import {
 } from '@/components/ui/sidebar';
 import { Icons } from '@/components/icons';
 import { DashboardClient } from '@/components/dashboard-client';
-import { ThemeToggle } from '@/components/theme-toggle';
 import {
     Accordion,
     AccordionContent,
@@ -216,7 +215,7 @@ function PageContent() {
              <h1 className="font-bold text-lg hidden sm:block">ConveyorAI</h1>
            </div>
           <div className="flex items-center gap-4">
-            <ThemeToggle />
+            {/* ThemeToggle has been removed */}
           </div>
         </header>
         <main className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8">
