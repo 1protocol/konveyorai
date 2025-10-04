@@ -103,7 +103,7 @@ function PageContent() {
       <SidebarInset>
         <header className="flex h-16 items-center justify-between gap-4 border-b bg-card px-4 sm:px-6">
            <div className="flex items-center gap-2.5">
-             <SidebarTrigger className="h-9 w-9 md:hidden" />
+             <SidebarTrigger className="h-9 w-9" />
              <Link href="/" className="flex items-center gap-2.5">
                 <Icons.logo className="size-8 text-primary" />
                 <h1 className="font-bold text-lg hidden sm:block">ConveyorAI</h1>
