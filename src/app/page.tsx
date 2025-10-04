@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { marked } from 'marked';
-import { Loader, Map, Cpu, Layers, ShieldCheck, LayoutDashboard, Bot, FileText } from 'lucide-react';
+import { Loader, Map, Cpu, Layers, ShieldCheck, LayoutDashboard, Bot, FileText, ArrowRight } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
@@ -41,9 +41,12 @@ export default function DocumentationPage() {
       <main className="container mx-auto px-4 pt-12 pb-12">
         
         <Link href="/dashboard" passHref>
-          <Button size="lg" className="w-full h-20 mb-8 text-2xl font-bold bg-card/50 border-border/50 shadow-lg transition-all hover:shadow-xl hover:shadow-primary/20 hover:-translate-y-1 hover:bg-card/80 text-primary">
-            <LayoutDashboard className="mr-4 h-9 w-9" />
-            Kontrol Paneli
+          <Button variant="outline" size="lg" className="w-full h-20 mb-8 text-xl font-bold bg-card/50 border-border/50 shadow-lg transition-all hover:shadow-xl hover:shadow-primary/20 hover:-translate-y-1 hover:bg-card/80 text-primary justify-between px-8 group">
+            <div className="flex items-center gap-4">
+              <LayoutDashboard className="h-9 w-9" />
+              Kontrol Paneli
+            </div>
+            <ArrowRight className="h-8 w-8 transition-transform group-hover:translate-x-2" />
           </Button>
         </Link>
 
@@ -203,3 +206,5 @@ export default function DocumentationPage() {
     </div>
   );
 }
+
+    
