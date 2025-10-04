@@ -116,7 +116,7 @@ export default function DocumentationPage() {
             </CardContent>
         </Card>
 
-        <Card className="mb-8 bg-card/50 border-border/50 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+        <Card className="mb-8 bg-card/50 border-border/50 transition-all duration-300 hover:shadow-xl hover:-translatey-1">
           <CardHeader>
             <CardTitle className="flex items-center gap-3 text-xl">
               <LayoutDashboard className="h-7 w-7 text-primary" />

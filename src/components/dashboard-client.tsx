@@ -403,7 +403,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
 
             // --- Draw Text ---
             ctx.fillStyle = currentColor;
-            ctx.font = 'bold 18px Poppins, sans-serif';
+            ctx.font = 'bold 18px var(--font-body), sans-serif';
             ctx.textAlign = 'left';
             ctx.shadowColor = "black";
             ctx.shadowBlur = 5;

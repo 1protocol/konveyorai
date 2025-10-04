@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { LayoutDashboard, Settings, Network, FileText, Users } from 'lucide-react';
+import { LayoutDashboard, Settings, Network, FileText, Users, Bot, ArrowRight, Cpu, Layers, ShieldCheck, Loader } from 'lucide-react';
 import type { Station } from '@/components/dashboard-client';
 
 import {
@@ -26,6 +26,8 @@ import {
   } from "@/components/ui/accordion"
 import { useState, useEffect } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 
 export default function DashboardPage() {
   return (
