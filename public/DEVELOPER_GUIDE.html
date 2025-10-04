@@ -7,20 +7,16 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         :root {
-            --background: hsl(224, 71%, 4%);
-            --foreground: hsl(210, 40%, 98%);
-            --card: hsl(224, 71%, 10%);
-            --accent: hsl(32, 95%, 54%);
-            --border: hsl(217, 33%, 25%);
-            --muted-foreground: hsl(215, 20%, 65%);
-        }
-
-        *, *::before, *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+            --background: #0d1117;
+            --foreground: #e6edf3;
+            --card-background: rgba(22, 27, 34, 0.7);
+            --border-color: rgba(137, 147, 158, 0.2);
+            --primary: #58a6ff;
+            --muted-foreground: #8b949e;
+            --accent: #f778ba;
         }
 
         html {
@@ -31,48 +27,30 @@
             font-family: 'Poppins', sans-serif;
             background-color: var(--background);
             color: var(--foreground);
-            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            line-height: 1.7;
+            background-image: radial-gradient(circle at 10% 20%, rgba(88, 166, 255, 0.1), transparent 30%),
+                              radial-gradient(circle at 90% 80%, rgba(247, 120, 186, 0.1), transparent 30%);
+            background-attachment: fixed;
         }
         
         .container {
-            max-width: 960px;
+            max-width: 900px;
             margin: 0 auto;
             padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
         }
 
-        h1, h2, h3 {
-            font-weight: 700;
-            line-height: 1.2;
-            margin-bottom: 1rem;
-            color: var(--foreground);
-        }
-
-        h1 { font-size: 2.5rem; letter-spacing: -1px; }
-        h2 { font-size: 2rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin-top: 2.5rem; }
-        h3 { font-size: 1.25rem; margin-top: 1.5rem; color: var(--accent); }
-
-        p {
-            margin-bottom: 1rem;
-            color: var(--muted-foreground);
-        }
-
-        a {
-            color: var(--accent);
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        a:hover {
-            color: white;
-        }
-        
         .card {
-            background-color: rgba(17, 24, 39, 0.5);
-            border: 1px solid var(--border);
+            background-color: var(--card-background);
+            border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            backdrop-filter: blur(10px);
+            padding: 2rem;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
@@ -82,160 +60,244 @@
             box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.45);
         }
 
-        .banner {
+        .banner-card {
             text-align: center;
-            padding: 3rem 1.5rem;
-            margin-bottom: 3rem;
-            background-image: radial-gradient(circle at 50% 0%, hsla(220, 70%, 50%, 0.2), transparent 40%);
+            padding: 3rem 2rem;
         }
-        
+
+        .banner-card h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin: 0 0 0.5rem 0;
+            letter-spacing: -1px;
+            background: -webkit-linear-gradient(45deg, #a0c4ff, #c2d9ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .banner-card p {
+            font-size: 1.1rem;
+            color: var(--muted-foreground);
+            max-width: 600px;
+            margin: 0 auto 1.5rem auto;
+        }
+
         .btn {
             display: inline-block;
-            background-color: var(--accent);
+            background-color: var(--primary);
             color: var(--background);
             padding: 0.75rem 1.5rem;
             border-radius: 8px;
-            font-weight: 600;
             text-decoration: none;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-            border: none;
-            cursor: pointer;
-            margin-top: 1rem;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
         }
 
         .btn:hover {
-            background-color: hsl(32, 95%, 65%);
-            color: var(--background);
-            transform: translateY(-2px);
-        }
-
-
-        .tech-stack {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 1.5rem;
-            text-align: center;
-        }
-        .tech-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-            color: var(--muted-foreground);
-        }
-        .tech-item img {
-            width: 48px;
-            height: 48px;
-            object-fit: contain;
-            filter: grayscale(0.5) brightness(1.5);
+            background-color: #79bbff;
         }
         
-        pre {
-            background-color: #0c1221;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 1rem;
-            overflow-x: auto;
-            font-family: 'SF Mono', 'Fira Code', 'monospace';
-            font-size: 0.9rem;
-            color: #d1d5db;
+        h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            color: var(--foreground);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        h2 i {
+            color: var(--primary);
+        }
+
+        h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-top: 1.5rem;
         }
 
         code {
-            font-family: inherit;
-            background-color: rgba(255, 255, 255, 0.1);
+            font-family: 'SF Mono', 'Consolas', 'Menlo', monospace;
+            background-color: rgba(137, 147, 158, 0.1);
             padding: 0.2em 0.4em;
-            border-radius: 4px;
+            border-radius: 6px;
+            font-size: 0.9em;
         }
+
+        pre {
+            background-color: #010409;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'SF Mono', 'Consolas', 'Menlo', monospace;
+            font-size: 0.9rem;
+        }
+
+        .tech-stack {
+            list-style: none;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .tech-stack li {
+            background-color: rgba(26, 36, 56, 0.6);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(100, 116, 139, 0.3);
+            font-weight: 500;
+            transition: background-color 0.3s;
+            text-align: center;
+        }
+
+        .tech-stack li:hover {
+            background-color: rgba(40, 52, 70, 0.8);
+        }
+
+        .architecture-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .step-number {
+            flex-shrink: 0;
+            background-color: var(--primary);
+            color: var(--background);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .step-content h3 {
+            margin: 0 0 0.25rem 0;
+            font-size: 1.2rem;
+            color: var(--foreground);
+        }
+
+        .step-content p {
+            margin: 0;
+            color: var(--muted-foreground);
+        }
+
     </style>
 </head>
 <body>
-    <main class="container">
-        <section class="banner card">
+    <div class="container">
+        <section class="card banner-card">
             <h1>Konveyor AI Geliştirici Kılavuzu</h1>
-            <p>Yapay zeka destekli konveyör bandı güvenlik sisteminin teknik mimarisi, kurulumu ve proje yapısı.</p>
-             <a href="/dashboard" class="btn" target="_top">Kontrol Paneline Git</a>
-        </section>
-
-        <section class="card">
-            <h2>✨ Genel Bakış ve Amaç</h2>
             <p>
-                <strong>Konveyor AI</strong>, endüstriyel üretim hatlarındaki konveyör bantlarını gerçek zamanlı olarak izleyen, yapay zeka kullanarak olası yönsel kayma (kayıklık) sorunlarını otomatik olarak tespit eden modern bir web uygulamasıdır. Sistem, üretim hattı güvenliğini artırmak ve olası arızaları proaktif olarak önceden tahmin etmek için tasarlanmıştır.
+                Endüstriyel üretim hatları için tasarlanmış, yapay zeka destekli konveyör bandı güvenlik sisteminin teknik mimarisi, kurulumu ve çalışma prensipleri.
             </p>
+             <a href="/dashboard" class="btn">Kontrol Paneline Git</a>
         </section>
 
         <section class="card">
-            <h2>🤖 Sistem Mimarisi ve Çalışma Algoritması</h2>
-            <p>
-                Konveyor AI, video akışını analiz ederek sapmaları tespit eden üç adımlı bir mimari üzerine kuruludur:
-            </p>
-            <h3>1. Başlangıç Referansı Oluşturma (Kalibrasyon)</h3>
-            <p>Kullanıcı "Kalibrasyonu Başlat" dediğinde, sistem konveyör bandının mevcut konumunu bir "sağlıklı" referans noktası olarak kaydeder. Bu, sapmaların ölçüleceği temel çizgiyi oluşturur.</p>
-
-            <h3>2. Gerçek Zamanlı AI Analizi</h3>
-            <p>Sistem, video kaynağından (webcam veya dosya) alınan görüntü karelerini periyodik olarak Google Genkit (Gemini modeli) üzerinde çalışan bir AI akışına gönderir. Yapay zeka, bandın kenarını bu referans çizgisiyle karşılaştırır ve aradaki farkı milimetre cinsinden hesaplar.</p>
-
-            <h3>3. Anomali Tespiti ve Uyarı</h3>
-            <p>Hesaplanan sapma değeri, kullanıcı tarafından belirlenen "Anomali Eşiği" ile karşılaştırılır. Eğer sapma bu eşiği aşarsa, sistem "ANOMALİ" durumuna geçer, kullanıcı arayüzünde görsel uyarılar (kırmızı renkler, animasyonlar) gösterir, sesli bir alarm çalar ve bu olayı kayıt defterine (log) ekler.</p>
-        </section>
-
-        <section class="card">
-            <h2>🚀 Teknoloji Yığını</h2>
-            <div class="tech-stack">
-                <div class="tech-item"><img src="https://static-00.iconduck.com/assets.00/next-js-icon-512x512-y563b8iq.png" alt="Next.js">Next.js 15</div>
-                <div class="tech-item"><img src="https://static-00.iconduck.com/assets.00/react-icon-512x456-t6ep60ii.png" alt="React">React</div>
-                <div class="tech-item"><img src="https://static-00.iconduck.com/assets.00/typescript-icon-512x512-b3bfv1gt.png" alt="TypeScript">TypeScript</div>
-                <div class="tech-item"><img src="https://firebase.google.com/static/images/brand-guidelines/logo-logomark.png" alt="Genkit">Google Genkit</div>
-                <div class="tech-item"><img src="https://seeklogo.com/images/T/tailwind-css-logo-5AD4175897-seeklogo.com.png" alt="Tailwind CSS">Tailwind CSS</div>
-                <div class="tech-item"><img src="https://ui.shadcn.com/favicon.ico" alt="Shadcn UI">Shadcn UI</div>
+            <h2><i class="fas fa-sitemap"></i> Sistem Mimarisi ve Çalışma Algoritması</h2>
+            <div class="architecture-steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Otomatik Referanslama (Kalibrasyon)</h3>
+                        <p>Sistem ilk kez başlatıldığında veya kullanıcı tarafından tetiklendiğinde, canlı video akışından konveyör bandının mevcut ideal konumunu analiz eder ve bunu bir "başlangıç referansı" olarak kaydeder.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Gerçek Zamanlı AI Analizi</h3>
+                        <p>Google Gemini modeliyle güçlendirilmiş Genkit akışı, video akışından periyodik olarak (her 2 saniyede bir) görüntü kareleri alır. Bu kareleri, başlangıç referansıyla karşılaştırarak bandın kenarındaki olası kaymaları milimetre cinsinden hesaplar.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Anomali Tespiti ve Görselleştirme</h3>
+                        <p>Hesaplanan sapma değeri, kullanıcı tarafından belirlenen "anomali eşiğini" aşarsa, sistem durumu "ANOMALİ" olarak değiştirilir, görsel/sesli uyarılar verilir ve bu olay kayıt defterine eklenir. Tüm veriler anlık olarak arayüzde görselleştirilir.</p>
+                    </div>
+                </div>
             </div>
         </section>
 
         <section class="card">
-            <h2>📂 Proje Yapısı ve Hiyerarşi</h2>
-            <p>Proje, Next.js App Router standartlarına uygun olarak modüler ve ölçeklenebilir bir yapıda tasarlanmıştır.</p>
+            <h2><i class="fas fa-layer-group"></i> Teknoloji Yığını</h2>
+            <ul class="tech-stack">
+                <li><span>Next.js (App Router)</span></li>
+                <li><span>TypeScript</span></li>
+                <li><span>Google Genkit (Gemini)</span></li>
+                <li><span>Shadcn UI</span></li>
+                <li><span>Tailwind CSS</span></li>
+                <li><span>Lucide React</span></li>
+            </ul>
+        </section>
+
+        <section class="card">
+            <h2><i class="fas fa-folder-tree"></i> Proje Dosya Yapısı</h2>
+            <p>Projenin temel klasör ve dosya hiyerarşisi, modüler ve ölçeklenebilir bir yapı sunar.</p>
             <pre><code>/
 ├── public/
-│   ├── conveyor-video.mp4      <span style="color: var(--muted-foreground);"># Test videosu</span>
-│   ├── alert-sound.mp3         <span style="color: var(--muted-foreground);"># Uyarı sesi</span>
-│   └── DEVELOPER_GUIDE.html    <span style="color: var(--muted-foreground);"># Bu kılavuz dosyası</span>
+│   ├── conveyor-video.mp4      # Test videosu
+│   └── alert-sound.mp3         # Uyarı sesi
+│   └── DEVELOPER_GUIDE.html    # Bu kılavuz
 │
 ├── src/
 │   ├── app/
-│   │   ├── dashboard/page.tsx  <span style="color: var(--muted-foreground);"># Ana kontrol paneli sayfası</span>
-│   │   ├── layout.tsx          <span style="color: var(--muted-foreground);"># Kök layout</span>
-│   │   └── page.tsx            <span style="color: var(--muted-foreground);"># Geliştirici kılavuzunu gösteren sayfa</span>
+│   │   ├── dashboard/page.tsx  # Ana kontrol paneli
+│   │   ├── layout.tsx          # Kök layout
+│   │   └── page.tsx            # Geliştirici kılavuzunu gösteren ana sayfa
 │   │
 │   ├── components/
-│   │   ├── ui/                 <span style="color: var(--muted-foreground);"># Shadcn UI temel bileşenleri</span>
-│   │   ├── dashboard-client.tsx  <span style="color: var(--muted-foreground);"># Panelin tüm istemci tarafı mantığı</span>
-│   │   └── icons.tsx           <span style="color: var(--muted-foreground);"># Özel uygulama ikonları</span>
+│   │   ├── ui/                 # Shadcn UI bileşenleri (Button, Card, vb.)
+│   │   ├── dashboard-client.tsx# Panelin tüm istemci tarafı mantığı
+│   │   └── icons.tsx           # Özel SVG ikonlar
 │   │
 │   ├── ai/
-│   │   ├── flows/analyze-conveyor-flow.ts <span style="color: var(--muted-foreground);"># Görüntü analizi yapan AI akışı</span>
-│   │   └── genkit.ts           <span style="color: var(--muted-foreground);"># Genkit yapılandırması</span>
+│   │   ├── flows/
+│   │   │   └── analyze-conveyor-flow.ts # Görüntü analizi yapan AI akışı
+│   │   └── genkit.ts           # Genkit yapılandırması
 │   │
-│   ├── hooks/                  <span style="color: var(--muted-foreground);"># use-toast gibi özel React hook'ları</span>
+│   ├── hooks/
+│   │   └── use-toast.ts        # Bildirim sistemi için özel hook
+│   │   └── use-mobile.ts       # Mobil cihaz tespiti için hook
 │   │
-│   ├── lib/                    <span style="color: var(--muted-foreground);"># Yardımcı fonksiyonlar ve utils</span>
+│   └── lib/
+│       └── utils.ts            # Yardımcı fonksiyonlar (cn)
 │
-├── package.json                <span style="color: var(--muted-foreground);"># Proje bağımlılıkları</span>
-└── tailwind.config.ts          <span style="color: var(--muted-foreground);"># Tailwind CSS yapılandırması</span>
+├── package.json                # Proje bağımlılıkları ve script'ler
+└── next.config.ts              # Next.js yapılandırması
 </code></pre>
         </section>
 
         <section class="card">
-            <h2>🏁 Kurulum ve Başlangıç</h2>
+            <h2><i class="fas fa-rocket"></i> Kurulum ve Başlatma</h2>
             <p>Projeyi yerel makinenizde çalıştırmak için aşağıdaki adımları izleyin.</p>
+            
             <h3>1. Bağımlılıkları Yükleyin:</h3>
             <pre><code>npm install</code></pre>
             
             <h3>2. Geliştirme Sunucusunu Başlatın:</h3>
             <pre><code>npm run dev</code></pre>
-
-            <p>Uygulama varsayılan olarak <a href="http://localhost:9002" target="_blank">http://localhost:9002</a> adresinde çalışmaya başlayacaktır. Geliştirici kılavuzu ana sayfada, kontrol paneli ise <code>/dashboard</code> yolunda bulunur.</p>
+            
+            <p>Uygulama varsayılan olarak <code>http://localhost:9002</code> adresinde çalışmaya başlayacaktır.</p>
         </section>
-    </main>
+    </div>
 </body>
 </html>
