@@ -2,7 +2,7 @@ import type { SVGProps } from 'react';
 import { cn } from '@/lib/utils';
 
 export const Icons = {
-  logo: ({ className, ...props }: SVGProps<SVGSVGElement> & { status?: 'NORMAL' | 'ANOMALİ' | 'KALİBRE EDİLİYOR' }) => {
+  logo: ({ className, ...props }: SVGProps<SVGSVGElement>) => {
     return (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -17,11 +17,12 @@ export const Icons = {
         className={cn('text-primary', className)}
         {...props}
       >
-        <path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6c-1 1-2.5 1-3.4 0l-2.6-2.6c-1-1-1-2.5 0-3.4l2.6-2.6c1-1 2.5-1 3.4 0l2.6 2.6Z" />
-        <path d="m14.3 11.3 2.6 2.6" />
-        <path d="M21.3 1.3a2.4 2.4 0 0 1 0 3.4l-8 8" />
-        <path d="m3.3 12.7 8-8" />
-        <path d="m12.7 21.7 8-8" />
+        {/* Triangle Ruler (Set Square) Icon */}
+        <path d="M21.7 3.3a1 1 0 0 0-1.4 0L3.3 20.3a1 1 0 0 0 0 1.4l.4.4a1 1 0 0 0 1.4 0L21.7 4.7a1 1 0 0 0 0-1.4l-.4-.4Z" />
+        <path d="M16 9h-2" />
+        <path d="M13 12H9" />
+        <path d="M10 15H8" />
+        <path d="M7 18H5" />
       </svg>
     );
   },
