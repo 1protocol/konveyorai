@@ -85,13 +85,6 @@ const defaultSettings: AppSettings = {
   isSoundAlertEnabled: true,
 };
 
-const defaultStations: Station[] = [
-    { id: '1', name: 'Bant 1', source: '/conveyor-video.mp4' },
-    { id: '2', name: 'Bant 2', source: 'webcam' },
-    { id: '3', name: 'Bant 3', source: '/conveyor-video.mp4' },
-    { id: '4', name: 'Bant 4', source: '/conveyor-video.mp4' },
-];
-
 export function DashboardClient({ stations, onStationsChange }: { stations: Station[], onStationsChange: (stations: Station[]) => void }) {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -458,7 +451,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
                 ? `Kayma ${settings.anomalyThreshold}mm eşiğini aşıyor.`
                 : status === "NORMAL"
                 ? "Konveyör bantları parametreler dahilinde çalışıyor."
-                : "Referans değerler oluşturuluyor."}
+                : "Başlangıç referansı oluşturuluyor..."}
             </p>
           </CardContent>
         </Card>
@@ -685,12 +678,12 @@ function SettingsDialog({
                 </div>
                 <div className="space-y-4 rounded-lg border p-4">
                     <Label className="text-base">
-                        AI Kalibrasyonu
+                        AI Kalibrasyonu (Başlangıç Referansı)
                     </Label>
                      <p className="text-sm text-muted-foreground pb-2">
                         {isCalibrating
-                            ? "AI modeli, konveyör bandının mevcut durumunu referans olarak ayarlıyor..."
-                            : "Sistemin doğru çalışması için başlangıçta veya bantta fiziksel bir değişiklik yapıldığında AI'ı yeniden kalibre edin."}
+                            ? "AI modeli, konveyör bandının mevcut durumunu yeni referans olarak ayarlıyor..."
+                            : "Sistemin sapmaları doğru tespit etmesi için, ilk çalıştırmada veya bantta fiziksel bir değişiklik yapıldığında AI'ı yeniden kalibre ederek başlangıç referansını oluşturun."}
                     </p>
                     {isCalibrating ? (
                     <Progress value={calibrationProgress} className="w-full" />
@@ -711,14 +704,14 @@ function SettingsDialog({
              <div className="space-y-4 rounded-lg border p-4">
                 <div className="flex justify-between items-center mb-4">
                     <div>
-                        <Label className="text-base">
+                        <h3 className="text-base font-medium">
                             İstasyon Yapılandırması
-                        </Label>
+                        </h3>
                         <p className="text-sm text-muted-foreground">
-                            İstasyonları (konveyör bantları) ekleyin, silin veya video kaynaklarını düzenleyin.
+                            Her bir konveyör bandı için video kaynağı tanımlayın.
                         </p>
                     </div>
-                    <Button variant="outline" onClick={handleScanNetwork} disabled>
+                    <Button variant="outline" onClick={handleScanNetwork}>
                         <Scan className="mr-2 h-4 w-4" />
                         Ağdaki Kameraları Tara
                     </Button>
@@ -819,5 +812,3 @@ function SettingsDialog({
     </Dialog>
   );
 }
-
-      

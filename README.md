@@ -1,16 +1,18 @@
 # ConveyorAI - Yapay Zeka Destekli Konveyör Bandı Güvenlik Sistemi
 
-ConveyorAI, endüstriyel üretim hatlarındaki konveyör bantlarını gerçek zamanlı olarak izleyen ve yapay zeka kullanarak olası sapmaları tespit eden modern bir web uygulamasıdır. Bu sistem, üretim hattı güvenliğini artırmak ve olası arızaları önceden tahmin etmek için geliştirilmiştir.
+ConveyorAI, endüstriyel üretim hatlarındaki konveyör bantlarını gerçek zamanlı olarak izleyen ve yapay zeka kullanarak olası yönsel kayma (kayıklık) sorunlarını otomatik olarak tespit eden modern bir web uygulamasıdır. Bu sistem, harici bir veri seti olmaksızın, çalışmaya başladığında kendi referansını oluşturarak üretim hattı güvenliğini artırmak ve olası arızaları önceden tahmin etmek için geliştirilmiştir.
 
 ## ✨ Temel Özellikler
 
-- **🤖 Yapay Zeka Destekli Analiz:** Canlı video akışını analiz ederek konveyör bandının kenarlarındaki hizalama bozukluklarını ve sapmaları milimetre cinsinden tespit eder.
-- **📹 Gerçek Zamanlı İzleme:** Konveyör bandının anlık durumunu gösteren bir canlı izleme paneli sunar.
-- **⚠️ Anomali Tespiti ve Uyarı:** Belirlenen eşik değeri aşıldığında (örneğin, 2mm'den fazla sapma) anında "Anomali" durumu oluşturur ve kullanıcıyı uyarır.
-- **🔧 Ayarlanabilir Hassasiyet:** Kullanıcılar, anomali olarak kabul edilecek sapma eşiğini gelişmiş ayarlar menüsünden dinamik olarak değiştirebilir.
-- **🔊 Sesli Uyarılar:** Anomali tespit edildiğinde, operatörleri bilgilendirmek için sesli bir uyarı sistemi bulunur. Bu özellik ayarlardan kapatılabilir.
-- **📈 Anomali Kayıtları:** Tespit edilen tüm anormal sapmalar, zaman damgası ve sapma değeriyle birlikte bir kayıt defterine eklenir.
-- **🔄 AI Kalibrasyonu:** Yapay zeka modelinin referans noktalarını yeniden ayarlamak için tek tıklamayla kalibrasyon işlemi başlatılabilir.
+- **🤖 Otomatik Referans ve AI Destekli Analiz:** Sistem ilk çalıştırıldığında, bantın mevcut konumunu otomatik olarak bir başlangıç referansı olarak kaydeder. Canlı video akışını sürekli analiz ederek konveyör bandının bu referanstan sapmalarını milimetre cinsinden tespit eder.
+- **📹 Gerçek Zamanlı İzleme ve Çoklu İstasyon:** Birden fazla konveyör bandını (istasyon) ayrı ayrı izleme ve yönetme imkanı sunar. Her istasyonun anlık durumunu gösteren bir canlı izleme paneli bulunur.
+- **⚠️ Anomali Tespiti ve Uyarı:** Kullanıcı tarafından belirlenen sapma eşik değeri (örn: 2mm) aşıldığında anında "Anomali" durumu oluşturur ve sesli/görsel uyarılar verir.
+- **🔧 Dinamik Yapılandırma:** Kullanıcılar, "Gelişmiş Ayarlar" menüsünden aşağıdaki parametreleri dinamik olarak yönetebilir:
+    - **İstasyon Yönetimi:** Yeni konveyör bantları (istasyonlar) ekleme, isimlendirme ve video kaynağını (webcam veya dosya) atama.
+    - **Hassasiyet Ayarı:** Anomali olarak kabul edilecek sapma eşiğini (mm cinsinden) ayarlama.
+    - **AI Kalibrasyonu:** Tek tıklamayla yapay zeka modelinin başlangıç referans noktasını yeniden oluşturma.
+    - **Sesli Uyarılar:** Anomali uyarı sesini açıp kapatma.
+- **📈 Anomali Kayıtları:** Tespit edilen tüm anormal sapmalar, istasyon bilgisi, zaman damgası ve sapma değeriyle birlikte bir kayıt defterine eklenir.
 - **🌓 Açık ve Koyu Tema:** Kullanıcı tercihine göre aydınlık ve karanlık mod arasında geçiş yapılabilir.
 
 ## 🚀 Kullanılan Teknolojiler
@@ -31,28 +33,24 @@ Projenin temel dosya ve klasör yapısı aşağıda açıklanmıştır:
 ├── src
 │   ├── app/                # Next.js App Router sayfaları ve ana layout
 │   │   ├── layout.tsx
-│   │   └── page.tsx        # Ana kontrol paneli sayfası
+│   │   └── page.tsx        # Ana kontrol paneli sayfası ve kenar çubuğu
 │   │
 │   ├── components/         # Tekrar kullanılabilir React bileşenleri
 │   │   ├── ui/             # Shadcn UI temel bileşenleri
 │   │   ├── dashboard-client.tsx # Panelin ana istemci tarafı mantığı
-│   │   ├── theme-toggle.tsx     # Açık/Koyu tema değiştirici
-│   │   └── user-nav.tsx         # Kullanıcı menüsü
+│   │   └── theme-toggle.tsx     # Açık/Koyu tema değiştirici
 │   │
 │   ├── ai/                 # Genkit ve yapay zeka ile ilgili kodlar
 │   │   ├── flows/
 │   │   │   └── analyze-conveyor-flow.ts # Görüntü analizi yapan AI akışı
 │   │   └── genkit.ts       # Genkit yapılandırması
 │   │
-│   ├── hooks/              # Özel React hook'ları
-│   │   ├── use-toast.ts    # Bildirim (toast) sistemi
-│   │   └── use-mobile.ts   # Mobil cihaz tespiti
+│   ├── hooks/              # Özel React hook'ları (örn: use-toast)
 │   │
-│   ├── lib/                # Yardımcı fonksiyonlar ve statik veriler
-│   │   └── utils.ts        # Genel yardımcı fonksiyonlar (örn: cn)
+│   ├── lib/                # Yardımcı fonksiyonlar (örn: cn)
 │
-├── public/                 # Statik varlıklar (resimler, videolar, sesler)
-│   ├── conveyor-video.mp4  # Test için kullanılan konveyör videosu
+├── public/                 # Statik varlıklar (video, ses dosyaları)
+│   ├── conveyor-video.mp4  # Varsayılan test videosu
 │   └── alert-sound.mp3     # Anomali uyarı sesi
 │
 ├── package.json            # Proje bağımlılıkları ve script'ler
