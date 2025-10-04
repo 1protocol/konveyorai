@@ -515,7 +515,7 @@ function SettingsDialog({
             <TabsTrigger value="ai-settings"><BrainCircuit className="mr-2"/>Yapay Zeka</TabsTrigger>
             <TabsTrigger value="cameras"><Camera className="mr-2"/>Kameralar</TabsTrigger>
             <TabsTrigger value="notifications"><Bell className="mr-2"/>Bildirimler</TabsTrigger>
-            <TabsTrigger value="operators" disabled><Users className="mr-2"/>Operatörler</TabsTrigger>
+            <TabsTrigger value="operators"><Users className="mr-2"/>Operatörler</TabsTrigger>
           </TabsList>
           <TabsContent value="ai-settings" className="py-4">
             <div className="space-y-6">
@@ -621,6 +621,20 @@ function SettingsDialog({
               </div>
               <Switch
                 id="email-alert"
+                disabled
+              />
+            </div>
+            <div className="flex items-center justify-between rounded-lg border p-4 opacity-50">
+              <div className="space-y-0.5">
+                <Label htmlFor="sms-alert" className="text-base">
+                  SMS & WhatsApp Bildirimi (Yakında)
+                </Label>
+                <p className="text-sm text-muted-foreground">
+                  Acil durumlarda operatörlere anlık bildirim gönder.
+                </p>
+              </div>
+              <Switch
+                id="sms-alert"
                 disabled
               />
             </div>
