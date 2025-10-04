@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { marked } from 'marked';
-import { Loader, UserCircle, Map } from 'lucide-react';
+import { Loader, UserCircle, Map, Cpu } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
@@ -66,6 +66,20 @@ export default function DocumentationPage() {
             </CardContent>
         </Card>
 
+        <Card className="mb-8 bg-card/50 border-border/50">
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                    <Cpu className="h-5 w-5 text-accent"/>
+                    Donanım Opsiyonları ve Operasyonel Etki
+                </CardTitle>
+            </CardHeader>
+            <CardContent>
+                <p className="text-muted-foreground">
+                    Konveyor AI, farklı donanım konfigürasyonlarına esnek bir şekilde uyum sağlar. Sistem, standart bir web kamerasından endüstriyel IP kameralara kadar geniş bir yelpazede görüntü kaynaklarıyla çalışabilir. Benzer şekilde, analiz işlemleri bulut tabanlı güçlü GPU'larda veya Edge cihazlarda (örn: NVIDIA Jetson, Raspberry Pi) yerel olarak çalıştırılabilir. Bu esneklik, projenin bütçe, gecikme süresi (latency) ve mevcut altyapı gibi operasyonel gereksinimlere göre optimize edilmesine olanak tanır.
+                </p>
+            </CardContent>
+        </Card>
+
 
         {isLoading && (
           <div className="flex flex-col items-center justify-center text-center mt-20">
@@ -81,7 +95,7 @@ export default function DocumentationPage() {
                        prose-a:text-accent prose-a:transition-colors hover:prose-a:text-accent/80
                        prose-strong:text-foreground
                        prose-blockquote:border-l-accent prose-blockquote:text-muted-foreground
-                       prose-code:bg-secondary prose-code:rounded-md prose-code:px-1.5 prose-code:py-1 prose-code:font-mono prose-code:text-sm
+                       prose-code:bg-secondary prose-code:rounded-md prose-code:px-1.5 prose-code:py-1 prose-code:text-sm
                        prose-pre:bg-secondary prose-pre:p-4 prose-pre:rounded-lg
                        prose-img:rounded-lg prose-img:border prose-img:border-border
                        prose-table:border prose-table:border-border/50
