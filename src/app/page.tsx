@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { marked } from 'marked';
-import { Loader, UserCircle, Map, Cpu } from 'lucide-react';
+import { Loader, UserCircle, Map, Cpu, Layers } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
@@ -76,6 +76,20 @@ export default function DocumentationPage() {
             <CardContent>
                 <p className="text-muted-foreground">
                     Konveyor AI, farklı donanım konfigürasyonlarına esnek bir şekilde uyum sağlar. Sistem, standart bir web kamerasından endüstriyel IP kameralara kadar geniş bir yelpazede görüntü kaynaklarıyla çalışabilir. Benzer şekilde, analiz işlemleri bulut tabanlı güçlü GPU'larda veya Edge cihazlarda (örn: NVIDIA Jetson, Raspberry Pi) yerel olarak çalıştırılabilir. Bu esneklik, projenin bütçe, gecikme süresi (latency) ve mevcut altyapı gibi operasyonel gereksinimlere göre optimize edilmesine olanak tanır.
+                </p>
+            </CardContent>
+        </Card>
+
+        <Card className="mb-8 bg-card/50 border-border/50">
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                    <Layers className="h-5 w-5 text-accent"/>
+                    Endüstri 4.0 Standartlarına Uyum
+                </CardTitle>
+            </CardHeader>
+            <CardContent>
+                <p className="text-muted-foreground">
+                    Konveyor AI, Endüstri 4.0'ın temel taşları olan siber-fiziksel sistemler konseptiyle tam uyum içinde çalışır. Gerçek zamanlı veri toplama, yapay zeka ile bu veriyi anlık olarak işleme ve otonom uyarı mekanizmaları oluşturma yeteneği, onu akıllı fabrikaların modüler bir bileşeni haline getirir. Sistem, üretim hattından topladığı verilerle şeffaflık sağlar ve merkezi olmayan karar alma süreçlerini destekleyerek operasyonel verimliliği artırır.
                 </p>
             </CardContent>
         </Card>
