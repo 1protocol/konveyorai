@@ -76,7 +76,7 @@ export default function DocumentationPage() {
         <Card className="mb-8 bg-card/50 border-border/50">
             <CardHeader>
                 <CardTitle className="flex items-center gap-3 text-xl">
-                    <Cpu className="h-7 w-7 text-accent"/>
+                    <Cpu className="h-7 w-7 text-primary"/>
                     Donanım Opsiyonları ve Operasyonel Etki
                 </CardTitle>
             </CardHeader>
@@ -90,7 +90,7 @@ export default function DocumentationPage() {
         <Card className="mb-8 bg-card/50 border-border/50">
             <CardHeader>
                 <CardTitle className="flex items-center gap-3 text-xl">
-                    <Layers className="h-7 w-7 text-accent"/>
+                    <Layers className="h-7 w-7 text-primary"/>
                     Endüstri 4.0 Standartlarına Uyum
                 </CardTitle>
             </CardHeader>
@@ -104,7 +104,7 @@ export default function DocumentationPage() {
         <Card className="mb-8 bg-card/50 border-border/50">
             <CardHeader>
                 <CardTitle className="flex items-center gap-3 text-xl">
-                    <ShieldCheck className="h-7 w-7 text-accent"/>
+                    <ShieldCheck className="h-7 w-7 text-primary"/>
                     Kalite ve Risk Yönetimi
                 </CardTitle>
             </CardHeader>
@@ -118,7 +118,7 @@ export default function DocumentationPage() {
         <Card className="mb-8 bg-card/50 border-border/50">
           <CardHeader>
             <CardTitle className="flex items-center gap-3 text-xl">
-              <LayoutDashboard className="h-7 w-7 text-accent" />
+              <LayoutDashboard className="h-7 w-7 text-primary" />
               İstasyon Tespit, Modelleme ve Raporlama
             </CardTitle>
           </CardHeader>
@@ -132,7 +132,7 @@ export default function DocumentationPage() {
         <Card className="mb-8 bg-card/50 border-border/50">
           <CardHeader>
             <CardTitle className="flex items-center gap-3 text-xl">
-              <FileText className="h-7 w-7 text-accent" />
+              <FileText className="h-7 w-7 text-primary" />
               Geliştirici Kılavuzu
             </CardTitle>
           </CardHeader>
