@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { marked } from 'marked';
-import { Loader, Map, Cpu, Layers, ShieldCheck, LayoutDashboard, Bot, FileText, ArrowRight } from 'lucide-react';
+import { Loader, Cpu, Layers, ShieldCheck, LayoutDashboard, Bot, FileText, ArrowRight } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
@@ -42,9 +42,9 @@ export default function DocumentationPage() {
       <main className="container mx-auto px-4 pt-12 pb-12">
         
         <Link href="/dashboard" passHref>
-          <Button variant="outline" size="lg" className="w-full h-20 mb-8 text-xl font-bold bg-card/50 border-border/50 shadow-lg text-primary justify-between px-8 group hover:bg-card/50 hover:text-primary">
+          <Button variant="outline" size="lg" className="w-full h-20 mb-8 text-xl font-bold bg-card/50 border-border/50 shadow-lg hover:bg-card/70 text-primary justify-between px-8 group transition-all duration-300 ease-in-out hover:shadow-xl hover:shadow-primary/20">
             Kontrol Paneli
-            <ArrowRight className="h-8 w-8" />
+            <ArrowRight className="h-8 w-8 transition-transform duration-300 group-hover:translate-x-2" />
           </Button>
         </Link>
 
@@ -65,7 +65,7 @@ export default function DocumentationPage() {
                 </div>
                 <div className="flex">
                     <strong className="w-32 shrink-0 text-muted-foreground">Proje Amacı:</strong>
-                    <span>Endüstriyel konveyör bant sapmalarını yapay zeka ile proaktif olarak tespit etmek, anormal durumları anında bildirerek riskleri yönetmek ve üretim süreçlerinde sürdürülebilir verimlilik sağlamak.</span>
+                    <span>Endüstriyel konveyör bant sapmalarını yapay zeka ile proaktif olarak tespit ederek, anormal durumları anında bildirmek, riskleri yönetmek ve üretim süreçlerinde sürdürülebilir verimlilik sağlamak.</span>
                 </div>
                 <div className="flex">
                     <strong className="w-32 shrink-0 text-muted-foreground">Geliştirici:</strong>
@@ -74,7 +74,7 @@ export default function DocumentationPage() {
             </CardContent>
         </Card>
 
-        <Card className="mb-8 bg-card/50 border-border/50">
+        <Card className="mb-8 bg-card/50 border-border/50 transition-all hover:shadow-xl hover:-translate-y-1">
             <CardHeader>
                 <CardTitle className="flex items-center gap-3 text-xl">
                     <Cpu className="h-7 w-7 text-primary"/>
@@ -88,7 +88,7 @@ export default function DocumentationPage() {
             </CardContent>
         </Card>
 
-        <Card className="mb-8 bg-card/50 border-border/50">
+        <Card className="mb-8 bg-card/50 border-border/50 transition-all hover:shadow-xl hover:-translate-y-1">
             <CardHeader>
                 <CardTitle className="flex items-center gap-3 text-xl">
                     <Layers className="h-7 w-7 text-primary"/>
@@ -102,7 +102,7 @@ export default function DocumentationPage() {
             </CardContent>
         </Card>
 
-        <Card className="mb-8 bg-card/50 border-border/50">
+        <Card className="mb-8 bg-card/50 border-border/50 transition-all hover:shadow-xl hover:-translate-y-1">
             <CardHeader>
                 <CardTitle className="flex items-center gap-3 text-xl">
                     <ShieldCheck className="h-7 w-7 text-primary"/>
@@ -116,7 +116,7 @@ export default function DocumentationPage() {
             </CardContent>
         </Card>
 
-        <Card className="mb-8 bg-card/50 border-border/50">
+        <Card className="mb-8 bg-card/50 border-border/50 transition-all hover:shadow-xl hover:-translate-y-1">
           <CardHeader>
             <CardTitle className="flex items-center gap-3 text-xl">
               <LayoutDashboard className="h-7 w-7 text-primary" />
@@ -130,7 +130,7 @@ export default function DocumentationPage() {
           </CardContent>
         </Card>
 
-        <Card className="mb-8 bg-card/50 border-border/50">
+        <Card className="mb-8 bg-card/50 border-border/50 transition-all hover:shadow-xl hover:-translate-y-1">
           <CardHeader>
             <CardTitle className="flex items-center gap-3 text-xl">
               <FileText className="h-7 w-7 text-primary" />
@@ -204,3 +204,5 @@ export default function DocumentationPage() {
     </div>
   );
 }
+
+    

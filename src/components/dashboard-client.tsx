@@ -72,7 +72,6 @@ import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "./ui/input";
-import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 
 type AnomalyLog = {
   timestamp: string;
@@ -455,10 +454,8 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
   };
   
   const handleStationSelect = (stationId: string) => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set('station', stationId);
-    window.history.pushState(null, '', `${pathname}?${params.toString()}`);
-    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+    const newPath = `${pathname}?station=${stationId}`;
+    router.push(newPath);
   };
   
   const filteredLogs = selectedStationId ? logs.filter(log => log.stationId === selectedStationId) : [];
@@ -485,9 +482,9 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
                        <ChevronDown className="h-5 w-5" />
                     </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-64 text-base p-2 bg-background backdrop-blur-xl border-white/10 shadow-2xl">
+                <DropdownMenuContent className="w-64 text-base p-2 bg-background/80 backdrop-blur-xl border-white/10 shadow-2xl">
                     {stations.map(station => (
-                         <DropdownMenuItem key={station.id} onSelect={() => handleStationSelect(station.id)} className="p-2">
+                         <DropdownMenuItem key={station.id} onSelect={() => handleStationSelect(station.id)} className="p-2 cursor-pointer">
                            <Network className="mr-2 h-5 w-5" />
                             <span className="flex-grow">{station.name}</span>
                             {station.id === selectedStationId && <Check className="h-5 w-5" />}
@@ -511,7 +508,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
         {/* Left Column */}
         <div className="lg:col-span-3 space-y-6">
-          <Card className="transition-all hover:-translate-y-1 bg-background/30 backdrop-blur-xl border border-white/10 hover:border-white/20">
+          <Card className="transition-all bg-background/30 backdrop-blur-xl border border-white/10 hover:border-white/20">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                     <Video />
@@ -642,7 +639,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
       </div>
 
 
-      <Card className="transition-all hover:-translate-y-1 bg-background/30 backdrop-blur-xl border border-white/10 hover:border-white/20">
+      <Card className="transition-all bg-background/30 backdrop-blur-xl border border-white/10 hover:border-white/20">
         <CardHeader>
           <CardTitle>Anomali Kayıtları - {selectedStation.name}</CardTitle>
           <CardDescription>
@@ -708,14 +705,14 @@ function SettingsDialog({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [currentSettings, setCurrentSettings] = useState(settings);
-  const [currentStations, setCurrentStations] = useState(stations);
+  const [currentStations, setCurrentStations]_ = useState(stations);
   const { toast } = useToast();
 
 
   useEffect(() => {
     if (isOpen) {
       setCurrentSettings(settings);
-      setCurrentStations(stations);
+      setCurrentStations_(stations);
     }
   }, [settings, stations, isOpen]);
 
@@ -741,7 +738,7 @@ function SettingsDialog({
   };
 
   const handleStationFieldChange = (id: string, field: 'name' | 'source', value: string) => {
-    setCurrentStations(prev => 
+    setCurrentStations_(prev => 
       prev.map(station => station.id === id ? {...station, [field]: value} : station)
     );
   };
@@ -753,7 +750,7 @@ function SettingsDialog({
         name: `Yeni İstasyon ${currentStations.length + 1}`,
         source: '/conveyor-video.mp4'
     };
-    setCurrentStations(prev => [...prev, newStation]);
+    setCurrentStations_(prev => [...prev, newStation]);
   };
 
   const handleRemoveStation = (id: string) => {
@@ -765,7 +762,7 @@ function SettingsDialog({
         });
         return;
     }
-    setCurrentStations(prev => prev.filter(station => station.id !== id));
+    setCurrentStations_(prev => prev.filter(station => station.id !== id));
   };
   
   const handleScanNetwork = () => {
@@ -778,7 +775,7 @@ function SettingsDialog({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="lg" className="bg-background/80 backdrop-blur-xl border-white/10 hover:bg-background/90 text-base">
+        <Button variant="outline" size="lg" className="text-base bg-background/80 backdrop-blur-xl border-white/10 hover:bg-background/90">
           <Settings className="mr-2 h-5 w-5" />
           Gelişmiş Ayarlar
         </Button>
@@ -960,15 +957,5 @@ function SettingsDialog({
     </Dialog>
   );
 }
-
-    
-
-    
-
-
-
-    
-
-
 
     

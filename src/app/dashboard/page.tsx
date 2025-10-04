@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { LayoutDashboard, Settings, Network, FileText, Users, PlusCircle } from 'lucide-react';
+import { LayoutDashboard, Settings, Network, FileText, Users } from 'lucide-react';
 import type { Station } from '@/components/dashboard-client';
 
 import {
@@ -15,8 +15,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarProvider,
-  SidebarTrigger,
-  useSidebar
 } from '@/components/ui/sidebar';
 import { Icons } from '@/components/icons';
 import { DashboardClient } from '@/components/dashboard-client';
@@ -26,7 +24,6 @@ import {
     AccordionItem,
     AccordionTrigger,
   } from "@/components/ui/accordion"
-import { Button } from '@/components/ui/button';
 import { useState, useEffect } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -40,7 +37,6 @@ export default function DashboardPage() {
 
 
 function PageContent() {
-    const { setOpenMobile, isMobile } = useSidebar();
     const searchParams = useSearchParams();
     const router = useRouter();
 
@@ -93,25 +89,8 @@ function PageContent() {
         };
     }, []);
     
-    // Listen for URL changes to close mobile sidebar
-    const selectedStationId = searchParams.get('station');
-    useEffect(() => {
-        if (isMobile) {
-            setOpenMobile(false);
-        }
-    }, [selectedStationId, isMobile, setOpenMobile]);
-
-
-    const handleLinkClick = (stationId: string) => {
-        // We use router.push to ensure the page re-renders with the new search param
-        router.push(`/dashboard?station=${stationId}`);
-        if(isMobile) {
-            setOpenMobile(false);
-        }
-    }
-    
     // Determine the default station ID if none is selected
-    const currentStationId = selectedStationId || (stations.length > 0 ? stations[0].id : '1');
+    const currentStationId = searchParams.get('station') || (stations.length > 0 ? stations[0].id : '1');
 
     return (
     <>
@@ -121,10 +100,9 @@ function PageContent() {
              <Link href="/" className="flex items-center gap-2.5 md:hidden">
                 <Icons.logo className="size-8 text-primary" />
              </Link>
-             <h1 className="font-bold text-lg hidden sm:block">Konveyor AI</h1>
+             <h1 className="hidden font-bold text-lg sm:block">Konveyor AI</h1>
            </div>
           <div className="flex items-center gap-4">
-             {/* <SidebarTrigger className="h-10 w-10" /> */}
           </div>
         </header>
         <main className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8">
@@ -145,7 +123,7 @@ function PageContent() {
         <SidebarContent>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/dashboard" isActive={!selectedStationId || selectedStationId === (stations.length > 0 ? stations[0].id : '')} tooltip="Kontrol Paneli">
+              <SidebarMenuButton href="/dashboard" isActive={!searchParams.get('station') || searchParams.get('station') === (stations.length > 0 ? stations[0].id : '')} tooltip="Kontrol Paneli">
                 <LayoutDashboard className="size-5" />
                 <span className="group-data-[state=collapsed]:hidden">
                   Kontrol Paneli
@@ -171,12 +149,13 @@ function PageContent() {
                                 stations.map(station => (
                                     <SidebarMenuItem key={station.id}>
                                         <SidebarMenuButton 
+                                            asChild
                                             variant="ghost" 
                                             size="sm" 
                                             className="w-full justify-start h-8 text-base" 
                                             isActive={currentStationId === station.id} 
-                                            onClick={() => handleLinkClick(station.id)}>
-                                            {station.name}
+                                            >
+                                            <Link href={`/dashboard?station=${station.id}`}>{station.name}</Link>
                                         </SidebarMenuButton>
                                     </SidebarMenuItem>
                                 ))
@@ -224,3 +203,5 @@ function PageContent() {
     </>
   );
 }
+
+    
