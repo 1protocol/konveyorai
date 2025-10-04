@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Konveyor AI - Geliştirici Yol Haritası</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --dark-blue: #0A192F;
+            --dark-red: #A31F34;
+            --light-slate: #ccd6f6;
+            --slate: #8892b0;
+            --accent: #FF8C00; /* Daha canlı bir turuncu */
+            --glass-bg: rgba(23, 42, 69, 0.6);
+            --border-color: rgba(136, 146, 176, 0.2);
+            --font-sans: 'Poppins', sans-serif;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--dark-blue);
+            color: var(--slate);
+            font-family: var(--font-sans);
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        header h1 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            color: var(--light-slate);
+            font-weight: 700;
+            margin: 0;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            color: var(--accent);
+            max-width: 600px;
+            margin: 10px auto 0;
+        }
+        
+        .map-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .category-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .category-icon {
+            width: 40px;
+            height: 40px;
+            background-color: var(--accent);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dark-blue);
+            font-weight: 600;
+        }
+
+        .category-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--light-slate);
+            margin: 0;
+        }
+        
+        .category-description {
+            color: var(--slate);
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        .file-tree {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .file-tree li {
+            position: relative;
+            padding: 8px 0 8px 25px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .file-tree li:hover {
+            color: var(--accent);
+        }
+        
+        .file-tree li::before {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 15px;
+            width: 8px;
+            height: 8px;
+            background-color: var(--border-color);
+            border-radius: 50%;
+            transition: background-color 0.2s ease;
+        }
+        
+        .file-tree li:hover::before {
+            background-color: var(--accent);
+        }
+        
+        .file-tree li.important::before {
+             background-color: var(--dark-red);
+        }
+
+        .file-tree span {
+            font-weight: 600;
+            color: var(--light-slate);
+        }
+
+        .file-tree .tooltip {
+            visibility: hidden;
+            width: 250px;
+            background-color: var(--dark-blue);
+            color: var(--light-slate);
+            text-align: left;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -125px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            border: 1px solid var(--border-color);
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        .file-tree li:hover .tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Konveyor AI Geliştirici Yol Haritası</h1>
+            <p>Projenin mimarisini, ana bileşenlerini ve potansiyel geliştirme alanlarını keşfedin.</p>
+        </header>
+
+        <div class="map-container">
+            <!-- Frontend & UI -->
+            <div class="category-card">
+                <div class="category-header">
+                    <div class="category-icon">UI</div>
+                    <h2 class="category-title">Frontend & Arayüz</h2>
+                </div>
+                <p class="category-description">Uygulamanın görsel katmanı ve kullanıcı etkileşim mantığı. Next.js, React ve Shadcn UI ile oluşturulmuştur.</p>
+                <ul class="file-tree">
+                    <li class="important"><span>src/app/dashboard/page.tsx</span> - Ana kontrol panelinin yerleşimi ve state yönetimi.
+                        <div class="tooltip">Sistemin kalbi. Tüm ana bileşenleri bir araya getirir, istasyonlar arası geçişi yönetir ve verileri `DashboardClient`'a aktarır.</div>
+                    </li>
+                    <li class="important"><span>src/components/dashboard-client.tsx</span> - Panelin tüm istemci tarafı mantığı.
+                        <div class="tooltip">Video işleme, AI analizi tetikleme, grafik çizimi, anomali tespiti ve ayarlar diyaloglarının yönetimi burada gerçekleşir. Gerçek zamanlı operasyonların merkezidir.</div>
+                    </li>
+                    <li><span>src/app/page.tsx</span> - Proje tanıtım sayfası.
+                        <div class="tooltip">Uygulamanın yeteneklerini, teknik altyapısını ve vizyonunu sergileyen giriş sayfası. Bu haritaya da buradan erişilir.</div>
+                    </li>
+                    <li><span>src/components/ui/</span> - Shadcn UI temel bileşenleri (Button, Card vb.).
+                        <div class="tooltip">Uygulamanın görsel tutarlılığını sağlayan, yeniden kullanılabilir ve özelleştirilmiş arayüz elemanları.</div>
+                    </li>
+                     <li><span>src/app/globals.css</span> - Global CSS ve tema değişkenleri.
+                        <div class="tooltip">Tüm uygulamanın renk paletini, fontlarını ve temel stil kurallarını tanımlayan merkezi stil dosyası. Karanlık mod ve "glassmorphism" estetiği buradan yönetilir.</div>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- AI & Genkit -->
+            <div class="category-card">
+                <div class="category-header">
+                    <div class="category-icon">AI</div>
+                    <h2 class="category-title">Yapay Zeka (Genkit)</h2>
+                </div>
+                <p class="category-description">Google Gemini modelini kullanarak görüntü analizi yapan ve sapma tespiti gerçekleştiren AI akışları.</p>
+                <ul class="file-tree">
+                    <li class="important"><span>src/ai/flows/analyze-conveyor-flow.ts</span> - Görüntü analizi AI akışı.
+                        <div class="tooltip">Verilen video karesini analiz ederek konveyör bandındaki sapmayı milimetre cinsinden hesaplayan Genkit flow'u. Sistemin zekası burada bulunur.</div>
+                    </li>
+                    <li><span>src/ai/genkit.ts</span> - Genkit yapılandırması ve model seçimi.
+                        <div class="tooltip">Genkit'i başlatan, Google AI plugin'ini entegre eden ve kullanılacak varsayılan AI modelini (örn: Gemini 2.5 Flash) tanımlayan yapılandırma dosyası.</div>
+                    </li>
+                    <li><span>src/ai/dev.ts</span> - Geliştirme ortamı için Genkit akışlarını yükler.
+                         <div class="tooltip">Geliştirme sırasında Genkit UI'da akışların görünmesini ve test edilebilmesini sağlamak için ilgili flow dosyalarını import eden yardımcı script.</div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Configuration & Backend -->
+            <div class="category-card">
+                <div class="category-header">
+                    <div class="category-icon">CFG</div>
+                    <h2 class="category-title">Yapılandırma & Altyapı</h2>
+                </div>
+                <p class="category-description">Projenin yapılandırması, bağımlılıkları ve sunucu ortamı ayarları.</p>
+                <ul class="file-tree">
+                    <li><span>next.config.ts</span> - Next.js yapılandırması.
+                        <div class="tooltip">Sunucu ayarları, build optimizasyonları ve diğer Next.js'e özgü yapılandırmaları içerir.</div>
+                    </li>
+                    <li><span>package.json</span> - Proje bağımlılıkları ve script'ler.
+                        <div class="tooltip">`next`, `react`, `genkit`, `tailwindcss` gibi tüm kütüphanelerin listesi ve `npm run dev` gibi komutların tanımlandığı dosya.</div>
+                    </li>
+                     <li><span>apphosting.yaml</span> - Firebase App Hosting yapılandırması.
+                        <div class="tooltip">Uygulamanın bulutta ne kadar kaynak kullanacağını (örn: instance sayısı) belirleyen sunucu altyapısı yapılandırma dosyası.</div>
+                    </li>
+                    <li><span>tailwind.config.ts</span> - Tailwind CSS yapılandırması.
+                        <div class="tooltip">`globals.css`deki tema değişkenlerini kullanan ve projenin tasarım sistemini (spacing, fontlar vb.) genişleten stil yapılandırması.</div>
+                    </li>
+                </ul>
+            </div>
+            
+             <!-- Public Assets & Future -->
+            <div class="category-card">
+                <div class="category-header">
+                    <div class="category-icon" style="background-color: var(--dark-red); color: var(--light-slate)">→</div>
+                    <h2 class="category-title">Varlıklar & Gelecek</h2>
+                </div>
+                <p class="category-description">Statik dosyalar, potansiyel entegrasyonlar ve geliştirme bekleyen modüller.</p>
+                <ul class="file-tree">
+                    <li><span>public/</span> - Statik varlıklar (video, ses dosyaları).
+                        <div class="tooltip">Uygulama tarafından kullanılan ve sunucudan doğrudan erişilebilen test videoları, uyarı sesleri gibi dosyaların bulunduğu klasör.</div>
+                    </li>
+                    <li class="important"><span>Firebase Entegrasyonu (Beklemede)</span>
+                        <div class="tooltip">`docs/backend.json` ve `firestore.rules` gibi dosyalarla kullanıcı verileri, istasyon ayarları ve anomali kayıtlarının bulutta kalıcı olarak saklanması için altyapı oluşturulabilir.</div>
+                    </li>
+                    <li><span>Raporlama & Yönetim (Geliştirilecek)</span>
+                        <div class="tooltip">Tespit edilen anomalilerden ve istasyon performansından yola çıkarak detaylı PDF/Excel raporları üreten ve operatör yönetimi sağlayan modüller eklenebilir.</div>
+                    </li>
+                </ul>
+            </div>
+            
+        </div>
+    </div>
+</body>
+</html>
