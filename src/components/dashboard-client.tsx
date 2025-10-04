@@ -23,6 +23,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  ReferenceLine,
+} from 'recharts';
+import {
   SlidersHorizontal,
   AlertTriangle,
   CheckCircle,
@@ -38,6 +47,7 @@ import {
   PlusCircle,
   Trash2,
   ChevronDown,
+  AreaChart,
 } from "lucide-react";
 import { analyzeConveyorBelt } from "@/ai/flows/analyze-conveyor-flow";
 import {
@@ -58,7 +68,6 @@ import {
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
-import { SvgIcons } from "./ui/svg-icons";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "./ui/input";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
@@ -68,6 +77,11 @@ type AnomalyLog = {
   deviation: number;
   stationId: string;
 };
+
+type DeviationData = {
+    time: string;
+    deviation: number;
+}
 
 export type AppSettings = {
   anomalyThreshold: number;
@@ -100,6 +114,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
     "NORMAL"
   );
   const [logs, setLogs] = useState<AnomalyLog[]>([]);
+  const [deviationData, setDeviationData] = useState<DeviationData[]>([]);
   const [isCalibrating, setIsCalibrating] = useState(false);
   const [calibrationProgress, setCalibrationProgress] = useState(0);
   const { toast } = useToast();
@@ -193,6 +208,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
     setIsCalibrating(false);
     setCalibrationProgress(0);
     setHasCameraPermission(null);
+    setDeviationData([]);
     stopCameraStream(); // Stop any previous stream
 
     const videoElement = videoRef.current;
@@ -266,13 +282,18 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
           const newDeviation = result.deviation;
           setDeviation(newDeviation);
     
+          const now = new Date();
+          const newTime = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+          setDeviationData(prevData => [...prevData, { time: newTime, deviation: newDeviation }].slice(-30)); // Keep last 30 data points
+
+
           if (newDeviation >= settings.anomalyThreshold) {
             if (status !== "ANOMALİ") {
               playAlertSound();
             }
             setStatus("ANOMALİ");
             const newLog: AnomalyLog = { 
-                timestamp: new Date().toISOString(), 
+                timestamp: now.toISOString(), 
                 deviation: newDeviation,
                 stationId: selectedStation.id
             };
@@ -415,6 +436,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
     setIsCalibrating(true);
     setStatus("KALİBRE EDİLİYOR");
     setCalibrationProgress(0);
+    setDeviationData([]);
 
     const progressInterval = setInterval(() => {
       setCalibrationProgress((prev) => {
@@ -480,108 +502,139 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
         />
       </div>
 
-      <Card className="bg-background/30 backdrop-blur-xl border border-white/10 transition-all hover:border-white/20 hover:-translate-y-1">
-        <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-                <Video />
-                Canlı İzleme - {selectedStation.name}
-                {isProcessing && <Scan className="h-5 w-5 text-primary animate-pulse" />}
-            </CardTitle>
-            <CardDescription>
-                Yapay zeka, konveyör bandını kenar sapmaları için gerçek zamanlı olarak analiz eder.
-            </CardDescription>
-        </CardHeader>
-        <CardContent>
-            <div className="relative aspect-video w-full rounded-md bg-black/50 overflow-hidden border border-white/10">
-                <video 
-                  ref={videoRef} 
-                  className="w-full h-full object-cover" 
-                  autoPlay 
-                  muted 
-                  playsInline 
-                  loop={!isWebcam}
-                  crossOrigin="anonymous"
-                  key={videoSource + selectedStation.id}
-                />
-                <canvas ref={captureCanvasRef} className="hidden" />
-                <canvas ref={overlayCanvasRef} className="absolute inset-0 w-full h-full pointer-events-none" />
-                
-                {isWebcam && hasCameraPermission === false && (
-                    <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center text-center text-white p-4">
-                        <VideoOff className="h-16 w-16 mb-4" />
-                        <h3 className="text-xl font-semibold">Kamera Erişimi Gerekli</h3>
-                        <p className="text-muted-foreground text-white/80">
-                           Canlı görüntüyü başlatmak için lütfen tarayıcınızın ayarlarından kamera izni verin.
-                        </p>
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+        {/* Left Column */}
+        <div className="lg:col-span-3 space-y-6">
+          <Card className="bg-background/30 backdrop-blur-xl border border-white/10 transition-all hover:border-white/20 hover:-translate-y-1">
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                    <Video />
+                    Canlı İzleme - {selectedStation.name}
+                    {isProcessing && <Scan className="h-5 w-5 text-primary animate-pulse" />}
+                </CardTitle>
+            </CardHeader>
+            <CardContent>
+                <div className="relative aspect-video w-full rounded-md bg-black/50 overflow-hidden border border-white/10">
+                    <video 
+                      ref={videoRef} 
+                      className="w-full h-full object-cover" 
+                      autoPlay 
+                      muted 
+                      playsInline 
+                      loop={!isWebcam}
+                      crossOrigin="anonymous"
+                      key={videoSource + selectedStation.id}
+                    />
+                    <canvas ref={captureCanvasRef} className="hidden" />
+                    <canvas ref={overlayCanvasRef} className="absolute inset-0 w-full h-full pointer-events-none" />
+                    
+                    {isWebcam && hasCameraPermission === false && (
+                        <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center text-center text-white p-4">
+                            <VideoOff className="h-16 w-16 mb-4" />
+                            <h3 className="text-xl font-semibold">Kamera Erişimi Gerekli</h3>
+                            <p className="text-muted-foreground text-white/80">
+                               Canlı görüntüyü başlatmak için lütfen tarayıcınızın ayarlarından kamera izni verin.
+                            </p>
+                        </div>
+                    )}
+
+                    {isProcessing && !isCalibrating && (
+                      <div className="absolute top-2 left-2 bg-black/50 text-white text-xs font-medium rounded-md px-2 py-1 flex items-center gap-1">
+                        <Loader className="w-3 h-3 animate-spin"/>
+                        <span>Analiz ediliyor...</span>
+                      </div>
+                    )}
+                     <audio ref={audioRef} src="/alert-sound.mp3" preload="auto"></audio>
+                </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Right Column */}
+        <div className="lg:col-span-2 space-y-6">
+            <Card className="bg-background/30 backdrop-blur-xl border border-white/10">
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-base">
+                        <AreaChart />
+                        Gerçek Zamanlı Sapma Grafiği (mm)
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className="h-48">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <LineChart data={deviationData} margin={{ top: 5, right: 20, left: -20, bottom: 5 }}>
+                            <XAxis dataKey="time" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
+                            <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
+                            <Tooltip
+                                contentStyle={{
+                                    backgroundColor: 'hsl(var(--background) / 0.8)',
+                                    borderColor: 'hsl(var(--border))',
+                                    backdropFilter: 'blur(4px)',
+                                }}
+                                labelStyle={{color: 'hsl(var(--foreground))'}}
+                            />
+                            <Line 
+                                type="monotone" 
+                                dataKey="deviation" 
+                                stroke={isAnomaly ? "hsl(var(--destructive))" : "hsl(var(--accent))"}
+                                strokeWidth={2} 
+                                dot={false}
+                                isAnimationActive={false}
+                            />
+                            <ReferenceLine y={settings.anomalyThreshold} label={{ value: 'Eşik', position: 'insideTopLeft', fill: 'hsl(var(--muted-foreground))' }} stroke="hsl(var(--destructive))" strokeDasharray="3 3" />
+                        </LineChart>
+                    </ResponsiveContainer>
+                </CardContent>
+            </Card>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <Card className={cn("bg-background/30 backdrop-blur-xl border border-white/10 transition-colors", isAnomaly && "bg-destructive/30 text-white border-red-500/50")}>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium flex items-center justify-between">
+                      Sistem Durumu
+                      {status === "NORMAL" && <CheckCircle className="h-5 w-5 text-green-400" />}
+                      {status === "ANOMALİ" && <AlertTriangle className="h-5 w-5 text-red-400 animate-pulse" />}
+                      {status === "KALİBRE EDİLİYOR" && <SlidersHorizontal className="h-5 w-5 text-accent" />}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">
+                       {status}
                     </div>
-                )}
+                    <p className={cn("text-xs", isAnomaly ? "text-red-200" : "text-muted-foreground")}>
+                      {isAnomaly
+                        ? `Sapma eşiği aşıldı.`
+                        : status === "NORMAL"
+                        ? "Parametreler dahilinde."
+                        : "Referans oluşturuluyor..."}
+                    </p>
+                  </CardContent>
+                </Card>
 
-                {isProcessing && !isCalibrating && (
-                  <div className="absolute top-2 left-2 bg-black/50 text-white text-xs font-medium rounded-md px-2 py-1 flex items-center gap-1">
-                    <Loader className="w-3 h-3 animate-spin"/>
-                    <span>Analiz ediliyor...</span>
-                  </div>
-                )}
-                 <audio ref={audioRef} src="/alert-sound.mp3" preload="auto"></audio>
+                <Card className="bg-background/30 backdrop-blur-xl border border-white/10">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium flex items-center justify-between">
+                      Mevcut Sapma
+                      <span className="text-muted-foreground">(AI)</span>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div
+                      className={cn(
+                        "text-2xl font-bold",
+                        deviation >= settings.anomalyThreshold && "text-red-400"
+                      )}
+                    >
+                      {deviation.toFixed(2)} mm
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Gerçek zamanlı ölçüm
+                    </p>
+                  </CardContent>
+                </Card>
             </div>
-        </CardContent>
-      </Card>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
-        <Card className={cn("bg-background/30 backdrop-blur-xl border border-white/10 transition-all hover:border-white/20 hover:-translate-y-1", isAnomaly && "bg-red-900/50 text-white border-red-500/50")}>
-          <CardHeader>
-            <CardTitle className="text-sm font-medium">Sistem Durumu</CardTitle>
-            {status === "NORMAL" && (
-              <CheckCircle className="h-6 w-6 text-green-400" />
-            )}
-            {status === "ANOMALİ" && (
-              <AlertTriangle className="h-6 w-6 text-red-400 animate-pulse" />
-            )}
-            {status === "KALİBRE EDİLİYOR" && (
-              <SlidersHorizontal className="h-6 w-6 text-accent" />
-            )}
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {isAnomaly ? "Anomali Tespit Edildi" : status}
-            </div>
-            <p
-              className={cn(
-                "text-xs",
-                isAnomaly ? "text-red-200" : "text-muted-foreground"
-              )}
-            >
-              {isAnomaly
-                ? `Kayma ${settings.anomalyThreshold}mm eşiğini aşıyor.`
-                : status === "NORMAL"
-                ? "Konveyör bantları parametreler dahilinde çalışıyor."
-                : "Başlangıç referansı oluşturuluyor..."}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-background/30 backdrop-blur-xl border border-white/10 transition-all hover:border-white/20 hover:-translate-y-1">
-          <CardHeader>
-            <CardTitle className="text-sm font-medium">
-              Mevcut Sapma (AI)
-            </CardTitle>
-            <SvgIcons.ConveyorMovement className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div
-              className={cn(
-                "text-2xl font-bold",
-                deviation >= settings.anomalyThreshold && "text-red-400"
-              )}
-            >
-              {deviation.toFixed(2)} mm
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Yapay zeka destekli gerçek zamanlı ölçüm
-            </p>
-          </CardContent>
-        </Card>
-
+        </div>
       </div>
+
 
       <Card className="bg-background/30 backdrop-blur-xl border border-white/10 transition-all hover:border-white/20 hover:-translate-y-1">
         <CardHeader>
@@ -591,7 +644,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="relative max-h-96 overflow-y-auto">
+          <div className="relative max-h-60 overflow-y-auto">
             <Table>
               <TableHeader className="sticky top-0 bg-card/80 backdrop-blur-sm">
                 <TableRow>
@@ -622,21 +675,6 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
               </TableBody>
             </Table>
           </div>
-        </CardContent>
-      </Card>
-      <Card className="bg-background/30 backdrop-blur-xl border border-white/10 transition-all hover:border-white/20 hover:-translate-y-1">
-        <CardHeader>
-            <CardTitle>Tüm Bantlar İçin 8 Saatlik Eylem Raporu</CardTitle>
-            <CardDescription>Son 8 saat içinde tüm bantlarda tespit edilen anomaliler.</CardDescription>
-        </CardHeader>
-        <CardContent>
-            <Alert variant="default" className="bg-blue-900/30 border-blue-500/30">
-                <Users className="h-4 w-4" />
-                <AlertTitle>Gelecek Özellik</AlertTitle>
-                <AlertDescription>
-                    Bu bölümde, operatör atamaları ve veritabanı entegrasyonu tamamlandığında son 8 saatlik detaylı anomali raporları gösterilecektir.
-                </AlertDescription>
-            </Alert>
         </CardContent>
       </Card>
     </div>
