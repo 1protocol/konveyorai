@@ -105,13 +105,15 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
   const { toast } = useToast();
 
   const videoRef = useRef<HTMLVideoElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const captureCanvasRef = useRef<HTMLCanvasElement>(null);
+  const overlayCanvasRef = useRef<HTMLCanvasElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
   
   const videoSource = selectedStation?.source || '/conveyor-video.mp4';
   const isWebcam = videoSource === 'webcam';
+  const isAnomaly = status === "ANOMALİ";
 
   // --- Data Persistence Effects ---
   useEffect(() => {
@@ -234,7 +236,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
 
   useEffect(() => {
     const analyzeFrame = async () => {
-      if (isCalibrating || isProcessing || !videoRef.current || !canvasRef.current || !selectedStation) return;
+      if (isCalibrating || isProcessing || !videoRef.current || !captureCanvasRef.current || !selectedStation) return;
   
       setIsProcessing(true);
   
@@ -249,7 +251,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
         return;
       }
 
-      const canvas = canvasRef.current;
+      const canvas = captureCanvasRef.current;
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
       const context = canvas.getContext('2d');
@@ -297,6 +299,58 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
     return () => clearInterval(interval);
   }, [isCalibrating, isProcessing, toast, settings.anomalyThreshold, status, playAlertSound, selectedStation, logs, saveLogs, isWebcam, hasCameraPermission]);
 
+  // Effect to draw detection lines
+  useEffect(() => {
+    const overlay = overlayCanvasRef.current;
+    const video = videoRef.current;
+    if (!overlay || !video) return;
+
+    const ctx = overlay.getContext('2d');
+    if (!ctx) return;
+    
+    // Match canvas size to video element size
+    overlay.width = video.clientWidth;
+    overlay.height = video.clientHeight;
+
+    ctx.clearRect(0, 0, overlay.width, overlay.height);
+
+    if (isCalibrating || status === "KALİBRE EDİLİYOR" ) return;
+    
+    // Settings for the lines
+    const lineX = overlay.width / 2;
+    const deviationScale = 20; // How much 1mm deviation moves the line in pixels
+    const deviationPx = deviation * deviationScale;
+
+    // Draw Reference Line (center)
+    ctx.strokeStyle = 'rgba(0, 255, 0, 0.7)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 5]);
+    ctx.beginPath();
+    ctx.moveTo(lineX, 0);
+    ctx.lineTo(lineX, overlay.height);
+    ctx.stroke();
+
+    // Draw Deviation Line
+    ctx.strokeStyle = isAnomaly ? 'rgba(255, 0, 0, 1)' : 'rgba(255, 165, 0, 1)';
+    ctx.lineWidth = 3;
+    ctx.setLineDash([]);
+    ctx.beginPath();
+    ctx.moveTo(lineX + deviationPx, 0);
+    ctx.lineTo(lineX + deviationPx, overlay.height);
+    ctx.stroke();
+
+    // Draw Text
+    if (deviation > 0.1) {
+        ctx.fillStyle = isAnomaly ? 'rgba(255, 0, 0, 1)' : 'rgba(255, 165, 0, 1)';
+        ctx.font = 'bold 16px sans-serif';
+        ctx.textAlign = deviationPx > 0 ? 'left' : 'right';
+        const textX = lineX + deviationPx + (deviationPx > 0 ? 5 : -5);
+        ctx.fillText(`${deviation.toFixed(2)} mm`, textX, 20);
+    }
+
+  }, [deviation, isAnomaly, isCalibrating, status]);
+
+
   useEffect(() => {
     if (isCalibrating && calibrationProgress === 100) {
       toast({
@@ -334,7 +388,6 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
   };
   
   const filteredLogs = selectedStationId ? logs.filter(log => log.stationId === selectedStationId) : [];
-  const isAnomaly = status === "ANOMALİ";
 
   if (!isClient || !selectedStation) {
       return (
@@ -382,6 +435,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
             <CardTitle className="flex items-center gap-2">
                 <Video />
                 Canlı İzleme - {selectedStation.name}
+                {isProcessing && <Scan className="h-5 w-5 text-primary animate-pulse" />}
             </CardTitle>
             <CardDescription>
                 Yapay zeka, konveyör bandını kenar sapmaları için gerçek zamanlı olarak analiz eder.
@@ -399,7 +453,8 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
                   crossOrigin="anonymous"
                   key={videoSource + selectedStation.id}
                 />
-                <canvas ref={canvasRef} className="hidden" />
+                <canvas ref={captureCanvasRef} className="hidden" />
+                <canvas ref={overlayCanvasRef} className="absolute inset-0 w-full h-full pointer-events-none" />
                 
                 {isWebcam && hasCameraPermission === false && (
                     <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center text-center text-white p-4">
@@ -412,11 +467,9 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
                 )}
 
                 {isProcessing && !isCalibrating && (
-                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                    <div className="flex items-center gap-2 text-white font-medium">
-                        <Loader className="w-4 h-4 animate-spin"/>
-                        <span>Yapay Zeka Analiz Ediyor...</span>
-                    </div>
+                  <div className="absolute top-2 left-2 bg-black/50 text-white text-xs font-medium rounded-md px-2 py-1 flex items-center gap-1">
+                    <Loader className="w-3 h-3 animate-spin"/>
+                    <span>Analiz ediliyor...</span>
                   </div>
                 )}
                  <audio ref={audioRef} src="/alert-sound.mp3" preload="auto"></audio>
@@ -812,3 +865,5 @@ function SettingsDialog({
     </Dialog>
   );
 }
+
+    
