@@ -33,6 +33,7 @@ import {
   Camera,
   Loader,
   VideoOff,
+  Scan,
 } from "lucide-react";
 import { analyzeConveyorBelt } from "@/ai/flows/analyze-conveyor-flow";
 import {
@@ -530,6 +531,7 @@ function SettingsDialog({
   const [isOpen, setIsOpen] = useState(false);
   const [currentSettings, setCurrentSettings] = useState(settings);
   const [currentCameraConfig, setCurrentCameraConfig] = useState(cameraConfig);
+  const { toast } = useToast();
 
 
   useEffect(() => {
@@ -556,6 +558,13 @@ function SettingsDialog({
 
   const handleCameraConfigFieldChange = (bant: string, value: string) => {
     setCurrentCameraConfig(prev => ({...prev, [bant]: value}));
+  }
+  
+  const handleScanNetwork = () => {
+    toast({
+        title: "Özellik Yakında",
+        description: "Ağdaki kameraları otomatik bulma özelliği geliştirme aşamasındadır.",
+    });
   }
 
   return (
@@ -632,12 +641,25 @@ function SettingsDialog({
           </TabsContent>
           <TabsContent value="cameras" className="py-4">
              <div className="space-y-4 rounded-lg border p-4">
-                <Label className="text-base">
-                    Kamera Yapılandırması
-                </Label>
-                <p className="text-sm text-muted-foreground">
-                    Her bir konveyör bandı için video kaynağı tanımlayın. Cihazın kamerasını kullanmak için 'webcam' yazın.
+                <div className="flex justify-between items-center mb-4">
+                    <div>
+                        <Label className="text-base">
+                            Kamera Yapılandırması
+                        </Label>
+                        <p className="text-sm text-muted-foreground">
+                            Her bir konveyör bandı için video kaynağı tanımlayın.
+                        </p>
+                    </div>
+                    <Button variant="outline" onClick={handleScanNetwork}>
+                        <Scan className="mr-2 h-4 w-4" />
+                        Ağdaki Kameraları Tara
+                    </Button>
+                </div>
+                
+                <p className="text-sm text-muted-foreground pt-2">
+                    Video dosyası için yolu (örn: `/video.mp4`), cihaz kamerası için `webcam` anahtar kelimesini girin.
                 </p>
+
                 <div className="space-y-4 pt-2">
                     {Object.keys(currentCameraConfig).map((bant) => (
                          <div key={bant} className="grid grid-cols-4 items-center gap-4">
