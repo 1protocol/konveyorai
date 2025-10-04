@@ -9,18 +9,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --background: #0d101b;
-            --text-color: #e0e0e0;
+            --background: #0d1117;
+            --foreground: #e6edf3;
             --card-bg: rgba(20, 22, 36, 0.7);
             --border-color: rgba(255, 255, 255, 0.1);
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
             background-color: var(--background);
-            background-image: radial-gradient(circle at 15% 50%, hsla(220, 40%, 15%, 0.3), transparent 30%),
-                              radial-gradient(circle at 85% 30%, hsla(280, 40%, 12%, 0.2), transparent 40%);
-            color: var(--text-color);
+            color: var(--foreground);
+            font-family: 'Poppins', sans-serif;
             margin: 0;
             line-height: 1.7;
             -webkit-font-smoothing: antialiased;
@@ -28,26 +26,68 @@
         }
 
         .container {
+            width: 100%;
             max-width: 1200px;
             margin: 0 auto;
             padding: 2rem;
+            box-sizing: border-box;
         }
 
         .banner {
             text-align: center;
-            padding: 4rem 2rem;
-            border-radius: 20px;
+            padding: 3rem 2rem;
             margin-bottom: 3rem;
             position: relative;
             overflow: hidden;
+            border-radius: 20px;
+        }
+
+        .banner h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin: 0 0 0.5rem 0;
+            letter-spacing: -1px;
+        }
+
+        .banner p {
+            font-size: 1.1rem;
+            color: rgba(230, 237, 243, 0.7);
+            max-width: 700px;
+            margin: 0 auto 1.5rem auto;
         }
         
-        .banner::after, .card::after {
+        main {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem;
+        }
+
+        .card, .banner {
+            background: transparent;
+            padding: 2px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px;
+        }
+
+        .card::after, .banner::after {
             content: '';
             position: absolute;
-            top: -50%; 
+            top: -50%;
             left: -50%;
-            width: 200%; 
+            width: 200%;
             height: 200%;
             background: conic-gradient(
                 from 180deg at 50% 50%,
@@ -72,99 +112,60 @@
             overflow: hidden;
             z-index: 2;
             padding: 30px;
-            border: 1px solid var(--border-color);
-        }
-        
-        .banner .card-inner {
-             padding: 40px;
+            box-sizing: border-box;
         }
 
-        .banner h1 {
-            font-size: 2.8rem;
-            font-weight: 800;
-            margin: 0 0 1rem 0;
-            color: #fff;
-            text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
-        }
-
-        .banner p {
-            font-size: 1.2rem;
-            max-width: 700px;
-            margin: 0 auto 2rem auto;
-            color: rgba(224, 224, 224, 0.8);
-        }
-
-        .btn {
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.1);
-            color: #fff;
-            padding: 14px 32px;
-            border-radius: 10px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-
-        .btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            border-color: rgba(255, 255, 255, 0.3);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-        }
-
-        h2 {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-top: 0;
-            margin-bottom: 2rem;
-            color: #fff;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 1rem;
-        }
-
-        .card {
-            margin-bottom: 2rem;
-            position: relative;
-            overflow: hidden;
-            border-radius: 20px;
-            padding: 2px;
-        }
-
-        ul {
+        .card ul {
             padding-left: 20px;
+            margin: 0;
         }
-        li {
-            margin-bottom: 0.8rem;
+
+        .card li {
+            margin-bottom: 0.75rem;
         }
 
         code {
             background-color: rgba(0, 0, 0, 0.3);
             padding: 0.2em 0.4em;
             border-radius: 4px;
-            font-family: 'SF Mono', 'Consolas', 'Menlo', monospace;
-            font-size: 0.9em;
-            color: #f0a0a0;
+            font-family: 'Courier New', Courier, monospace;
         }
-        
-        .signature-card {
-            text-align: center;
+
+        .signature {
+            text-align: right;
+            margin-top: 2rem;
         }
-        
-        .signature-card p {
+
+        .signature p {
             margin: 0;
             font-size: 1.1rem;
-            font-weight: 500;
-            color: rgba(224, 224, 224, 0.8);
+            font-weight: 600;
+        }
+
+        .signature span {
+            font-size: 0.9rem;
+            color: rgba(230, 237, 243, 0.6);
+            display: block;
         }
         
-        .signature-card .name {
-            font-size: 1.5rem;
-            font-weight: 700;
+        .btn {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.1);
             color: #fff;
-            margin-top: 0.5rem;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
         }
 
         @keyframes border-glow {
@@ -172,9 +173,20 @@
             100% { transform: rotate(360deg); }
         }
 
+        /* Duyarlı Tasarım Ayarları */
+        @media (max-width: 992px) {
+            main {
+                grid-template-columns: 1fr;
+            }
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 1.5rem;
+            }
+            .banner {
+                padding: 2.5rem 1.5rem;
+                margin-bottom: 2rem;
             }
             .banner h1 {
                 font-size: 2rem;
@@ -185,100 +197,89 @@
             h2 {
                 font-size: 1.5rem;
             }
-            .card-inner, .banner .card-inner {
+            .card-inner {
                 padding: 20px;
             }
             .btn {
-                padding: 12px 24px;
+                padding: 10px 20px;
+                font-size: 0.9rem;
             }
         }
+
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="banner">
-            <div class="card-inner">
-                <h1>Konveyor AI Geliştirici Kılavuzu</h1>
-                <p>Yapay zeka destekli konveyör bandı güvenlik sisteminin teknik detayları, kurulumu ve en iyi kullanım yöntemleri.</p>
-                <a href="/dashboard" class="btn">Operasyon Paneli'ne Git</a>
+        <header>
+            <div class="banner">
+                <div class="card-inner">
+                    <h1>Konveyor AI - Geliştirici Kılavuzu</h1>
+                    <p>Yapay zeka destekli konveyör bandı güvenlik sisteminin kurulumu, yapılandırılması ve en iyi kullanım pratikleri hakkında kapsamlı rehber.</p>
+                    <a href="/dashboard" class="btn">Operasyon Paneline Git</a>
+                </div>
             </div>
-        </div>
+        </header>
 
-        <div class="card" id="features">
-            <div class="card-inner">
-                <h2>Kullanım Özellikleri ve En İyi Sonuçlar</h2>
-                <p>Konveyor AI, esnek bir donanım altyapısı üzerinde çalışacak şekilde tasarlanmıştır. Ancak sistemden en yüksek verimi ve doğruluğu almak için bazı donanım ve ortam koşulları kritik öneme sahiptir.</p>
-                <ul>
-                    <li><strong>Kamera ve Sensör Seçimi:</strong> Yüksek çözünürlüklü ve yeterli FPS (Frame Per Second) değerine sahip endüstriyel kameralar, yapay zeka modelinin daha hassas analiz yapmasını sağlar. Özellikle düşük ışık koşullarında iyi performans gösteren sensörler tercih edilmelidir.</li>
-                    <li><strong>Aydınlatma:</strong> Konveyör bandının yüzeyi, gölgelerden ve değişken ışık yansımalarından arındırılmış, homojen bir şekilde aydınlatılmalıdır. Bu, modelin bant kenarlarını net bir şekilde ayırt etmesi için en önemli faktörlerden biridir.</li>
-                    <li><strong>Referans Konumun Sabitliği:</strong> Kameranın montajı, titreşimden etkilenmeyecek sağlam bir yapıya yapılmalıdır. Referans noktasının (kameranın bakış açısının) sabit kalması, sapma ölçümlerinin doğruluğu için hayati önem taşır.</li>
-                    <li><strong>Lens Seçimi:</strong> Bant genişliğini tamamen ve distorsiyonsuz (bozulmasız) bir şekilde kapsayacak doğru açılı lens seçimi yapılmalıdır. Geniş açılı lensler kenarlarda bükülmelere neden olabilir, bu nedenle analiz alanı için optimize edilmiş bir lens kullanılmalıdır.</li>
-                    <li><strong>Geliştirici Kartları ve Performans:</strong> Sistem, standart bilgisayarlar üzerinde çalışabilse de, gerçek zamanlı ve yüksek hassasiyetli analizler için <strong>NVIDIA Jetson Xavier NX/Orin</strong> gibi gömülü yapay zeka geliştirici kartları önerilir. Bu kartlar, modeli GPU üzerinde çok daha hızlı çalıştırarak, saniyede daha fazla kare analiz etme ve anlık sapmaları kaçırmama imkanı tanır. Bu, özellikle yüksek hızlı üretim hatlarında kritik bir avantaj sağlar.</li>
-                    <li><strong>Kontrol Üniteleri Entegrasyonu:</strong> Tespit edilen anomali verileri (sapma değeri, zaman damgası), endüstriyel otomasyon sistemleriyle (örn: PLC) haberleşebilir. Belirlenen eşik aşıldığında sistem, konveyör motorunu durdurmak veya bir alarm sistemini tetiklemek için bir sinyal üretebilir.</li>
-                </ul>
+        <main>
+            <div class="card">
+                <div class="card-inner">
+                    <h2>Teknik Gereksinimler</h2>
+                    <ul>
+                        <li><strong>Node.js:</strong> v18.x veya daha üzeri</li>
+                        <li><strong>Paket Yöneticisi:</strong> npm veya yarn</li>
+                        <li><strong>Tarayıcı:</strong> Google Chrome, Firefox, Safari, Edge (Son Sürümler)</li>
+                        <li><strong>Donanım (Öneri):</strong> Canlı video işleme için en az 8GB RAM ve modern bir işlemci. Yüksek performans için NVIDIA Jetson serisi gibi kenar bilişim cihazları önerilir.</li>
+                    </ul>
+                </div>
             </div>
-        </div>
 
-        <div class="card">
-            <div class="card-inner">
-                <h2>Teknik Gereksinimler</h2>
-                <p>Projeyi yerel makinenizde sorunsuz bir şekilde çalıştırmak için aşağıdaki araçların ve sürümlerin yüklü olduğundan emin olun:</p>
-                <ul>
-                    <li><strong>Node.js:</strong> v20.x veya üzeri</li>
-                    <li><strong>npm:</strong> v10.x veya üzeri</li>
-                    <li><strong>Tarayıcı:</strong> Google Chrome, Firefox, veya Edge'in güncel sürümleri. (Kamera erişimi için gereklidir)</li>
-                    <li><strong>İşletim Sistemi:</strong> Windows, macOS, veya Linux.</li>
-                </ul>
+            <div class="card">
+                <div class="card-inner">
+                    <h2>Kurulum ve Başlatma</h2>
+                    <p>Projeyi yerel makinenizde çalıştırmak için aşağıdaki adımları izleyin:</p>
+                    <ol>
+                        <li><strong>Bağımlılıkları Yükleyin:</strong><br><code>npm install</code></li>
+                        <li><strong>Geliştirme Sunucusunu Başlatın:</strong><br><code>npm run dev</code></li>
+                    </ol>
+                    <p>Uygulama varsayılan olarak <code>http://localhost:9002</code> adresinde çalışmaya başlayacaktır.</p>
+                </div>
             </div>
-        </div>
 
-        <div class="card">
-            <div class="card-inner">
-                <h2>Kurulum ve Başlatma</h2>
-                <p>Projeyi ayağa kaldırmak için aşağıdaki komutları terminalde sırasıyla çalıştırın:</p>
-                <ol>
-                    <li><strong>Bağımlılıkları Yükleyin:</strong> Bu komut, `package.json` dosyasında listelenen tüm gerekli kütüphaneleri projenize indirir.
-                        <br><code>npm install</code>
-                    </li>
-                    <li><strong>Geliştirme Sunucusunu Başlatın:</strong> Bu komut, Next.js geliştirme sunucusunu başlatır ve projeyi yerel ağınızda erişilebilir hale getirir.
-                        <br><code>npm run dev</code>
-                    </li>
-                </ol>
-                <p>Uygulama varsayılan olarak <code>http://localhost:9002</code> adresinde çalışmaya başlayacaktır.</p>
+            <div class="card full-width">
+                <div class="card-inner">
+                    <h2>Proje Yapısı ve Hiyerarşi</h2>
+                    <p>Projenin temel dosya ve klasör yapısı, modüler ve ölçeklenebilir bir mimari üzerine kurulmuştur:</p>
+                    <ul>
+                        <li><code>/src/app</code>: Next.js App Router kullanılır. Sayfa yönlendirmeleri ve ana layout dosyaları burada bulunur. <code>/dashboard</code> ana operasyon panelidir.</li>
+                        <li><code>/src/components</code>: Tekrar kullanılabilir React bileşenleri yer alır. <code>/ui</code> altında Shadcn UI temel bileşenleri bulunur.</li>
+                        <li><code>/src/ai</code>: Google Genkit ile ilgili tüm yapay zeka akışları (flows) ve yapılandırma dosyaları bu dizindedir.</li>
+                        <li><code>/public</code>: Videolar, ses dosyaları gibi statik varlıklar burada barındırılır.</li>
+                        <li><code>/Efektler.md</code>: Bu kılavuzda kullanılan arayüz efektlerinin teknik dökümantasyonu.</li>
+                    </ul>
+                </div>
             </div>
-        </div>
 
-        <div class="card">
-            <div class="card-inner">
-                <h2>Temel Teknolojiler</h2>
-                <ul>
-                    <li><strong>Next.js (App Router):</strong> Modern React özellikleri, sunucu tarafı render ve dosya tabanlı yönlendirme için kullanılır.</li>
-                    <li><strong>Google Genkit (Gemini):</strong> Görüntü analizi ve sapma tespiti için kullanılan yapay zeka altyapısıdır.</li>
-                    <li><strong>Shadcn UI & Tailwind CSS:</strong> Hızlı, modern ve tamamen özelleştirilebilir bir kullanıcı arayüzü oluşturmak için kullanılır.</li>
-                    <li><strong>TypeScript:</strong> Kod kalitesini ve sürdürülebilirliği artırmak için projede statik tip denetimi sağlar.</li>
-                </ul>
+            <div class="card full-width">
+                <div class="card-inner">
+                    <h2>Temel Teknolojiler</h2>
+                    <p>Konveyor AI, modern ve güçlü teknolojiler üzerine inşa edilmiştir:</p>
+                    <ul>
+                        <li><strong>Next.js (App Router):</strong> Hızlı, sunucu tarafı render yetenekleri ve modern React özellikleri için kullanılır.</li>
+                        <li><strong>Google Genkit (Gemini):</strong> Görüntü analizi ve sapma tespiti için kullanılan yapay zeka altyapısıdır.</li>
+                        <li><strong>Shadcn UI & Tailwind CSS:</strong> Hızlı, esnek ve modern bir kullanıcı arayüzü oluşturmak için kullanılır. Tasarım sistemi, tutarlı ve estetik bir deneyim sunar.</li>
+                        <li><strong>TypeScript:</strong> Kod kalitesini artırmak ve geliştirme sürecinde hataları en aza indirmek için projenin tamamında kullanılır.</li>
+                    </ul>
+                </div>
             </div>
-        </div>
-        
-        <div class="card">
-            <div class="card-inner">
-                <h2>Proje Yapısı ve Hiyerarşi</h2>
-                <p>Projenin ana klasör yapısı, modülerliği ve okunabilirliği artırmak üzerine kurulmuştur:</p>
-                <ul>
-                    <li><code>/src/app</code>: Uygulamanın ana sayfalarını ve yönlendirme mantığını içerir.</li>
-                    <li><code>/src/components</code>: Arayüzde kullanılan tekrar edilebilir React bileşenlerini barındırır.</li>
-                    <li><code>/src/ai</code>: Google Genkit ile ilgili tüm yapay zeka akışlarını ve yapılandırmalarını içerir.</li>
-                    <li><code>/public</code>: Videolar, resimler ve ses dosyaları gibi statik varlıkların bulunduğu klasördür.</li>
-                </ul>
+            <div class="card full-width">
+                <div class="card-inner">
+                    <div class="signature">
+                        <p>Mustafa USLU</p>
+                        <span>Geliştirme Sorumlusu</span>
+                    </div>
+                </div>
             </div>
-        </div>
-        
-        <div class="card signature-card">
-             <div class="card-inner">
-                <p>Geliştirme Sorumlusu</p>
-                <div class="name">Mustafa USLU</div>
-             </div>
-        </div>
+        </main>
     </div>
 </body>
 </html>
