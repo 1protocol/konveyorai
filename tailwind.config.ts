@@ -11,6 +11,7 @@ export default {
     extend: {
       fontFamily: {
         body: ['Poppins', 'sans-serif'],
+        heading: ['Orbitron', 'sans-serif'],
       },
       colors: {
         background: 'hsl(var(--background))',

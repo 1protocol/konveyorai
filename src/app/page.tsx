@@ -39,10 +39,10 @@ export default function DocumentationPage() {
          <div className="flex items-center gap-3">
           <Icons.logo className="h-8 w-8 text-primary" />
           <div className="flex flex-col">
-            <h1 className="text-xl font-bold text-primary">
+            <h1 className="text-3xl font-bold text-primary font-heading">
               Konveyor AI: Proje Sunumu
             </h1>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-base text-muted-foreground">
                 Yapay Zeka Destekli Endüstriyel Anomali Tespiti
             </p>
           </div>
@@ -65,6 +65,7 @@ export default function DocumentationPage() {
         {!isLoading && !error && (
           <article
             className="prose prose-invert prose-lg max-w-none 
+                       prose-h1:font-heading prose-h2:font-heading prose-h3:font-heading
                        prose-headings:text-primary prose-headings:font-bold prose-headings:border-b prose-headings:border-border/50 prose-headings:pb-2
                        prose-a:text-accent prose-a:transition-colors hover:prose-a:text-accent/80
                        prose-strong:text-foreground
