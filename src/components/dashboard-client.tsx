@@ -477,7 +477,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
         <div className="flex items-center gap-4">
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="lg" className="min-w-56 justify-between text-base bg-white/5 backdrop-blur-sm border-white/10 hover:bg-white/10">
+                    <Button variant="outline" size="lg" className="min-w-56 justify-between text-base bg-background/80 backdrop-blur-xl border-white/10 hover:bg-background/90">
                        <span className="flex items-center gap-2">
                          <Network className="h-5 w-5 text-muted-foreground" />
                          {selectedStation.name}
@@ -495,17 +495,17 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
                     ))}
                 </DropdownMenuContent>
             </DropdownMenu>
+            <SettingsDialog 
+              settings={settings} 
+              onSettingsChange={saveSettings} 
+              stations={stations}
+              onStationsChange={saveStations}
+              audioRef={audioRef} 
+              isCalibrating={isCalibrating}
+              calibrationProgress={calibrationProgress}
+              onCalibrate={handleCalibrate}
+            />
         </div>
-        <SettingsDialog 
-          settings={settings} 
-          onSettingsChange={saveSettings} 
-          stations={stations}
-          onStationsChange={saveStations}
-          audioRef={audioRef} 
-          isCalibrating={isCalibrating}
-          calibrationProgress={calibrationProgress}
-          onCalibrate={handleCalibrate}
-        />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
@@ -778,8 +778,8 @@ function SettingsDialog({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="bg-transparent backdrop-blur-sm">
-          <Settings className="mr-2 h-4 w-4" />
+        <Button variant="outline" size="lg" className="bg-background/80 backdrop-blur-xl border-white/10 hover:bg-background/90 text-base">
+          <Settings className="mr-2 h-5 w-5" />
           Gelişmiş Ayarlar
         </Button>
       </DialogTrigger>
