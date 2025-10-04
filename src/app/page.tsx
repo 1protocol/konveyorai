@@ -10,12 +10,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 export default function LandingPage() {
   const features = [
     {
-      icon: <BrainCircuit className="h-8 w-8 text-primary animate-bounce" />,
+      icon: <BrainCircuit className="h-8 w-8 text-primary" />,
       title: "Otomatik Referans ve AI Analizi",
       description: "Sistem, ilk çalıştırıldığında bandın konumunu otomatik olarak referans alır ve bu referanstan sapmaları yapay zeka ile tespit eder.",
     },
     {
-      icon: <ScanLine className="h-8 w-8 text-primary animate-pulse" />,
+      icon: <ScanLine className="h-8 w-8 text-primary" />,
       title: "Gerçek Zamanlı Görselleştirme",
       description: "Canlı video akışı üzerine eklenen dinamik algılama çizgileri ile referans noktasını ve anlık sapmayı görsel olarak gösterir.",
     },
@@ -94,11 +94,11 @@ export default function LandingPage() {
               Sistemin fonksiyonel gereksinimleri karşılayan temel özellikleri.
             </p>
           </div>
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4" style={{ perspective: '1000px' }}>
             {features.map((feature) => (
-              <Card key={feature.title} className="magic-card text-center bg-background/30 backdrop-blur-xl border border-white/10 shadow-lg hover:border-white/20 transition-all hover:-translate-y-1">
+              <Card key={feature.title} className="card-3d text-center bg-background/30 backdrop-blur-xl border border-white/10 shadow-lg">
                 <CardHeader>
-                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 card-icon">
                     {feature.icon}
                   </div>
                   <CardTitle>{feature.title}</CardTitle>

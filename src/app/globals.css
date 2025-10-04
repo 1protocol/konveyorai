@@ -127,4 +127,22 @@
     .magic-card:hover::before {
         opacity: 1;
     }
+
+    /* 3D Card styles */
+    .card-3d {
+      transform-style: preserve-3d;
+      transition: all 0.3s ease-in-out;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2), 0 6px 6px rgba(0,0,0,0.23);
+    }
+    .card-3d:hover {
+      transform: rotateY(15deg) rotateX(10deg) scale(1.05);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3), 0 12px 12px rgba(0,0,0,0.28);
+    }
+    .card-3d > * {
+      transform: translateZ(20px); /* Move content forward */
+    }
+    .card-3d .card-icon {
+      transform: translateZ(50px); /* Move icon even more forward */
+      filter: drop-shadow(0 5px 15px rgba(var(--primary-rgb), 0.4));
+    }
 }
