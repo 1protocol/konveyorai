@@ -3,69 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Konveyor AI - Geliştirici Kılavuzu</title>
+    <title>Geliştirici Kılavuzu: Konveyor AI</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --background: 224 71% 4%;
-            --foreground: 210 40% 98%;
-            --card-background: rgba(20, 22, 36, 0.7);
-            --border-color: rgba(255, 255, 255, 0.1);
-            --accent-glow-1: hsla(220, 70%, 60%, 0.8);
-            --accent-glow-2: hsla(0, 0%, 100%, 0.8);
-            --accent-glow-3: hsla(0, 70%, 60%, 0.8);
+            --background: hsl(224, 71%, 4%);
+            --foreground: hsl(210, 40%, 98%);
+            --card-background: hsla(224, 71%, 10%, 0.5);
+            --card-inner-background: rgba(20, 22, 36, 0.7);
+            --border: hsl(217, 33%, 17%);
+            --accent: hsl(32, 95%, 54%);
             --text-muted: hsl(215, 20%, 65%);
-            --accent-blue: hsla(190, 100%, 75%, 0.8);
-            --accent-pink: hsla(300, 100%, 80%, 0.7);
         }
 
         body {
-            background-color: hsl(var(--background));
-            color: hsl(var(--foreground));
+            background-color: var(--background);
+            color: var(--foreground);
             font-family: 'Poppins', sans-serif;
             margin: 0;
-            padding: 3rem 2rem;
-            min-height: 100vh;
+            padding: 2rem;
+            overflow-x: hidden;
         }
 
         .container {
-            max-width: 1600px;
+            max-width: 1400px;
             margin: 0 auto;
+            padding: 2rem;
         }
 
-        h1 {
+        .banner {
             text-align: center;
-            font-size: 2.5rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-            margin-bottom: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .banner h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, #ffffff, #a3b8d5, #ffffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            animation: text-shine 5s linear infinite;
+            background-size: 200% auto;
         }
         
+        @keyframes text-shine {
+            to {
+                background-position: 200% center;
+            }
+        }
+
+        .banner p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 800px;
+            margin: 0 auto 2rem auto;
+        }
+
         .grid-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
             gap: 2rem;
-            max-width: 1400px; /* Geniş ekranlar için maksimum genişlik */
-            margin: 0 auto; /* Ortalamak için */
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
         }
 
         .card {
             position: relative;
-            background: var(--card-background);
-            border-radius: 20px;
             overflow: hidden;
+            background: transparent;
             padding: 2px;
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid var(--border-color);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border-radius: 20px;
         }
 
         .card::after {
@@ -77,71 +85,68 @@
             height: 200%;
             background: conic-gradient(
                 from 180deg at 50% 50%,
-                var(--accent-glow-1),
+                hsla(0, 70%, 60%, 0.8),
                 transparent,
-                var(--accent-glow-2),
+                hsla(0, 0%, 100%, 0.8),
                 transparent,
-                var(--accent-glow-3)
+                hsla(220, 70%, 60%, 0.8)
             );
             animation: border-glow 8s linear infinite;
             z-index: 1;
         }
+        
+        @keyframes border-glow {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
 
         .card-inner {
             position: relative;
-            background: var(--card-background);
-            border-radius: 18px;
-            padding: 30px;
-            z-index: 2;
+            width: 100%;
             height: 100%;
-            box-sizing: border-box;
+            background: var(--card-inner-background);
+            backdrop-filter: blur(15px);
+            border-radius: 18px;
+            overflow: hidden;
+            z-index: 2;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
         }
-
+        
         .card h2 {
             font-size: 1.5rem;
             font-weight: 600;
-            color: hsl(var(--foreground));
-            margin-top: 0;
-            border-bottom: 2px solid var(--accent-glow-1);
+            color: var(--accent);
+            border-bottom: 2px solid var(--border);
             padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+            margin-top: 0;
+        }
+
+        .card p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text-muted);
             margin-bottom: 1rem;
         }
 
-        .card p, .card li {
-            font-size: 0.95rem;
-            line-height: 1.7;
-            color: var(--text-muted);
-        }
-
-        .card ul {
-            padding-left: 20px;
-        }
-
         .card strong {
-            color: hsl(var(--foreground));
+            color: var(--foreground);
             font-weight: 500;
         }
 
-        .card code {
-            font-family: 'Roboto Mono', monospace;
-            background-color: rgba(0, 0, 0, 0.3);
-            padding: 0.2em 0.4em;
-            border-radius: 4px;
-            font-size: 0.9em;
-        }
-
-        /* --- İmza Kartı Özel Stilleri --- */
+        /* İmza Kartı Özel Stilleri */
         .signature-card {
-            grid-column: 1 / -1; /* Tüm sütunları kapla */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-            min-height: 300px;
+            grid-column: 1 / -1;
+            margin-bottom: 2rem;
             perspective: 1000px;
             transition: transform 0.5s ease, box-shadow 0.5s ease;
+            background: var(--card-background);
+            border-radius: 18px;
+            border: 1px solid var(--border);
         }
-
+        
         .signature-card:hover {
             transform: translateY(-10px) rotateY(-8deg) rotateX(8deg);
             box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
@@ -150,59 +155,21 @@
         .signature-card-content {
             display: flex;
             align-items: center;
-            gap: 2.5rem;
-            z-index: 2;
-            width: 100%;
             justify-content: center;
-        }
-        
-        .signature-card .text-content {
-            text-align: left;
-        }
-
-        .text-content h4 {
-            font-size: 1.1rem;
-            font-weight: 400;
-            color: var(--text-muted);
-            margin: 0 0 0.2rem 0;
+            gap: 2.5rem;
+            padding: 2.5rem;
+            min-height: 180px;
         }
 
-        .text-content h3 {
-            font-size: 2.2rem;
-            font-weight: 600;
-            margin: 0;
-            letter-spacing: 0.5px;
-            color: hsl(var(--foreground));
-        }
-        
-        .project-info p {
-            margin: 0.3rem 0;
-            font-size: 1rem;
-            color: var(--text-muted);
-        }
-
-        .project-info strong {
-            color: hsl(var(--foreground));
-            font-weight: 500;
-        }
-
-        .text-content .role {
-            font-size: 1.2rem;
-            font-weight: 400;
-            color: var(--accent-glow-1);
-            margin: 0.5rem 0 0 0;
-        }
-
-
-        /* --- Küp Animasyonu --- */
         .cube-container {
             width: 60px;
             height: 60px;
             position: relative;
             transform-style: preserve-3d;
             animation: rotate-cube 15s linear infinite;
+            flex-shrink: 0;
         }
-
+        
         .inner-cube {
             width: 30px;
             height: 30px;
@@ -215,25 +182,23 @@
 
         .face {
             position: absolute;
-            background: transparent; /* Tel kafes görünümü için */
-            box-sizing: border-box;
+            background: transparent;
         }
-
+        
         .cube-container > .face {
             width: 60px;
             height: 60px;
-            border: 1.5px solid var(--accent-blue);
-            box-shadow: 0 0 10px var(--accent-blue), inset 0 0 10px var(--accent-blue);
+            border: 1.5px solid hsla(190, 100%, 75%, 0.8);
+            box-shadow: 0 0 15px hsla(190, 100%, 75%, 0.5);
         }
         
         .inner-cube > .face {
             width: 30px;
             height: 30px;
-            border: 1px solid var(--accent-pink);
-            box-shadow: 0 0 8px var(--accent-pink), inset 0 0 8px var(--accent-pink);
+            border: 1px solid hsla(300, 100%, 80%, 0.7);
+             box-shadow: 0 0 10px hsla(300, 100%, 80%, 0.5);
         }
-        
-        /* Dış Küp Yüzey Konumlandırması */
+
         .cube-container > .front  { transform: translateZ(30px); }
         .cube-container > .back   { transform: rotateY(180deg) translateZ(30px); }
         .cube-container > .right  { transform: rotateY(90deg) translateZ(30px); }
@@ -241,111 +206,121 @@
         .cube-container > .top    { transform: rotateX(90deg) translateZ(30px); }
         .cube-container > .bottom { transform: rotateX(-90deg) translateZ(30px); }
         
-        /* İç Küp Yüzey Konumlandırması */
         .inner-cube > .front  { transform: translateZ(15px); }
         .inner-cube > .back   { transform: rotateY(180deg) translateZ(15px); }
         .inner-cube > .right  { transform: rotateY(90deg) translateZ(15px); }
         .inner-cube > .left   { transform: rotateY(-90deg) translateZ(15px); }
         .inner-cube > .top    { transform: rotateX(90deg) translateZ(15px); }
         .inner-cube > .bottom { transform: rotateX(-90deg) translateZ(15px); }
-
-        @keyframes border-glow {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
+        
         @keyframes rotate-cube {
-            0%   { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
-            100% { transform: rotateX(360deg) rotateY(480deg) rotateZ(240deg); }
+          0%   { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+          100% { transform: rotateX(360deg) rotateY(480deg) rotateZ(240deg); }
         }
 
         @keyframes rotate-inner-cube {
-            0%   { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
-            100% { transform: rotateX(480deg) rotateY(-360deg) rotateZ(360deg); }
+          0%   { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+          100% { transform: rotateX(480deg) rotateY(-360deg) rotateZ(360deg); }
         }
 
-        /* --- Duyarlılık Ayarları (Responsive) --- */
+        .text-content {
+            text-align: left;
+        }
+
+        .project-info {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .project-info span {
+            font-weight: 600;
+            color: var(--foreground);
+        }
+        
+        .text-content h4 {
+            font-size: 1rem;
+            font-weight: 400;
+            color: var(--text-muted);
+            opacity: 0.7;
+            margin: 0 0 0.2rem 0;
+        }
+
+        .text-content h3 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin: 0;
+            background: linear-gradient(90deg, #e0e0e0, #c3d3e6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .text-content p {
+            font-size: 1.1rem;
+            color: var(--accent);
+            margin: 0.3rem 0 0 0;
+            font-weight: 500;
+        }
+        
+        /* Duyarlılık Ayarları */
         @media (max-width: 768px) {
-            body {
-                padding: 1.5rem 1rem;
+            body, .container {
+                padding: 1rem;
             }
-            h1 {
-                font-size: 1.8rem;
-                margin-bottom: 1.5rem;
+            .banner h1 {
+                font-size: 2.5rem;
             }
-            .grid-container {
-                gap: 1.5rem;
-            }
-
-            .signature-card-content {
-                flex-direction: column;
-                text-align: center;
-                gap: 1.5rem;
-            }
-
-            .signature-card .text-content {
-                text-align: center;
-            }
-            .text-content h3 {
-                font-size: 1.8rem;
-            }
-            .text-content .role {
+            .banner p {
                 font-size: 1rem;
             }
-            .project-info p {
-                font-size: 0.9rem;
+            .signature-card-content {
+                flex-direction: column;
+                gap: 2rem;
+                text-align: center;
             }
-             .card h2 {
+            .text-content {
+                text-align: center;
+            }
+            .card h2 {
                 font-size: 1.3rem;
             }
-            .card p, .card li {
-                font-size: 0.9rem;
+            .card p {
+                font-size: 0.95rem;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-
-        <div class="card signature-card">
-            <div class="signature-card-content">
-                <div class="cube-container">
-                    <!-- Dış Küp -->
-                    <div class="face front"></div>
-                    <div class="face back"></div>
-                    <div class="face right"></div>
-                    <div class="face left"></div>
-                    <div class="face top"></div>
-                    <div class="face bottom"></div>
-
-                    <!-- İç Küp -->
-                    <div class="inner-cube">
-                        <div class="face front"></div>
-                        <div class="face back"></div>
-                        <div class="face right"></div>
-                        <div class="face left"></div>
-                        <div class="face top"></div>
-                        <div class="face bottom"></div>
-                    </div>
-                </div>
-                <div class="text-content">
-                    <div class="project-info">
-                        <p><strong>Proje Adı:</strong> Konveyor AI</p>
-                        <p><strong>Konusu:</strong> Yapay Zeka Destekli Bant Güvenlik Sistemi</p>
-                    </div>
-                     <h4>Hazırlayan:</h4>
-                    <h3>Mustafa USLU</h3>
-                    <p class="role">Proje Geliştirici</p>
-                </div>
-            </div>
+        <div class="banner">
+            <h1>Geliştirici Kılavuzu</h1>
+            <p>Konveyor AI sisteminin teknik mimarisi, entegrasyon yetenekleri ve gelecek vizyonu üzerine analitik bir inceleme.</p>
         </div>
 
         <div class="grid-container">
+            <div class="signature-card">
+                 <div class="signature-card-content">
+                    <div class="cube-container">
+                        <div class="face front"></div><div class="face back"></div><div class="face right"></div><div class="face left"></div><div class="face top"></div><div class="face bottom"></div>
+                        <div class="inner-cube">
+                           <div class="face front"></div><div class="face back"></div><div class="face right"></div><div class="face left"></div><div class="face top"></div><div class="face bottom"></div>
+                        </div>
+                    </div>
+                    <div class="text-content">
+                        <div class="project-info">Proje Adı: <span>Konveyor AI</span></div>
+                        <div class="project-info">Konusu: <span>Yapay Zeka Destekli Bant Güvenlik Sistemi</span></div>
+                        <h4>Hazırlayan:</h4>
+                        <h3>Mustafa USLU</h3>
+                        <p>Proje Geliştirici</p>
+                    </div>
+                </div>
+            </div>
+
             <div class="card">
                 <div class="card-inner">
                     <h2>Projenin Tanımı ve Kapsamı</h2>
                     <p>
-                        <strong>Konveyor AI</strong>, endüstriyel üretim hatlarında verimliliği ve iş güvenliğini artırmak amacıyla tasarlanmış, yapay zeka tabanlı bir <strong>gerçek zamanlı anomali tespit sistemidir.</strong> Projenin temel amacı, konveyör bantlarında meydana gelen ve üretimi durdurma riski taşıyan <strong>yönsel kayma (hizalama bozukluğu)</strong> sorunlarını, henüz başlangıç aşamasındayken otonom olarak saptamaktır. Sistem, harici bir veri setine ihtiyaç duymadan, ilk çalıştığı anda kendi "normal" referansını oluşturur ve bu referansa göre sapmaları anlık olarak analiz eder.
+                        <strong>Konveyor AI</strong>, endüstriyel otomasyon sistemlerinde kritik bir bileşen olan konveyör bantlarının yönsel bütünlüğünü, <strong>yapay zeka destekli görüntü işleme</strong> teknikleriyle gerçek zamanlı olarak denetleyen bir platformdur. Projenin temel amacı, milimetrik düzeydeki kayma (kayıklık) anomalilerini anında tespit ederek üretim verimliliğini artırmak, bakım maliyetlerini düşürmek ve iş güvenliğini en üst düzeye çıkarmaktır. Sistem, harici bir veri setine ihtiyaç duymadan, operasyonun başlangıcında kendi dinamik referans noktasını oluşturarak (sıfır noktası kalibrasyonu) çalışır.
                     </p>
                 </div>
             </div>
@@ -354,30 +329,31 @@
                 <div class="card-inner">
                     <h2>Sistem Mimarisi ve Teknolojik Entegrasyon</h2>
                     <p>
-                        Proje, modern ve ölçeklenebilir bir mimari üzerine inşa edilmiştir. Arayüz, <strong>Next.js (App Router)</strong> ile sunucu ve istemci bileşenlerini hibrit kullanarak performans optimizasyonu sağlar. Yapay zeka mantığı, <strong>Google Genkit</strong> ve <strong>Gemini</strong> modeli aracılığıyla yönetilir. Bu yapı, sistemin görüntü işleme taleplerini bir "flow" olarak işlemesini ve yapılandırılmış JSON formatında (örn: <code>{"deviation": 1.2}</code>) net çıktılar üretmesini sağlar. Bu, donanım ve yazılım katmanları arasında deterministik bir iletişim katmanı oluşturur.
-                    </p>
-                </div>
-            </div>
-            
-            <div class="card">
-                <div class="card-inner">
-                    <h2>Donanım Uyumluluğu ve Seçimi</h2>
-                    <p>
-                        Sistemin esnek yapısı, çeşitli donanım konfigürasyonlarını destekler:
-                        <ul>
-                            <li><strong>Temel Seviye:</strong> Standart USB web kameraları ile düşük maliyetli ve hızlı kurulum imkanı.</li>
-                            <li><strong>Endüstriyel Seviye:</strong> IP kameralar, endüstriyel görüntüleme sensörleri ve <strong>PLC (Programmable Logic Controller)</strong> sistemleri ile entegrasyon. Anomali tespiti, PLC üzerinden doğrudan bir sinyal (örn: alarm, durdurma komutu) tetikleyebilir.</li>
-                            <li><strong>Kenar Bilişim (Edge AI):</strong> <strong>NVIDIA Jetson</strong> gibi GPU destekli geliştirme kartları üzerinde çalışarak, görüntü verisini buluta göndermeden yerel olarak işleyebilir. Bu, gecikmeyi minimize eder ve veri güvenliğini artırır.</li>
-                        </ul>
+                        Proje, modern web ve yapay zeka teknolojilerini hibrit bir yapıda birleştirir.
+                        <strong>Frontend (Arayüz):</strong> Sunucu tarafı render (SSR) ve istemci tarafı yetenekleri için <strong>Next.js App Router</strong> kullanılmıştır. Bu sayede hem performanslı bir ilk yükleme sağlanır hem de dinamik, gerçek zamanlı bir kullanıcı deneyimi sunulur.
+                        <strong>Backend (Yapay Zeka):</strong> Görüntü analizi, <strong>Google Genkit</strong> framework'ü üzerinde çalışan <strong>Gemini</strong> modeli ile gerçekleştirilir. Genkit, AI akışlarının (flows) modüler ve yönetilebilir olmasını sağlar. Model, kendisine gönderilen görüntüdeki sapmayı analiz ederek yapılandırılmış bir JSON çıktısı (örn: `{"deviation": 2.5}`) üretir. Bu çıktı, arayüzde doğrudan işlenir.
                     </p>
                 </div>
             </div>
 
             <div class="card">
                 <div class="card-inner">
+                    <h2>Donanım Uyumluluğu ve Seçimi</h2>
+                    <p>
+                        Sistemin en büyük avantajlarından biri, donanım agnostik yapısıdır.
+                        <strong>Temel Seviye:</strong> Herhangi bir standart <strong>web kamerası</strong> ile anında çalışabilir.
+                        <strong>Endüstriyel Seviye:</strong> IP tabanlı endüstriyel kameralar veya RTSP akışları, sisteme kolayca entegre edilebilir.
+                        <strong>Gelişmiş Entegrasyon:</strong> Proje, <strong>PLC (Programmable Logic Controller)</strong> sistemleriyle haberleşebilir. Örneğin, AI tarafından bir anomali tespit edildiğinde, PLC'ye bir sinyal gönderilerek hattın yavaşlatılması veya durdurulması gibi otomasyon senaryoları kurgulanabilir.
+                        <strong>Kenar Bilişim (Edge AI):</strong> Daha yüksek performans ve daha düşük gecikme için, AI modelleri <strong>NVIDIA Jetson</strong> gibi kenar bilişim cihazları üzerinde çalıştırılarak bulut bağımlılığı azaltılabilir.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-inner">
                     <h2>Performans Analizi ve Model Karşılaştırması</h2>
                     <p>
-                        Bu projede <strong>Google Gemini</strong> modelinin tercih edilmesinin temel nedeni, çok modlu (multimodal) yetenekleri ve özellikle istenen formatta (JSON şeması ile) çıktı üretmedeki üstün performansıdır. Diğer dil modelleri serbest metin üretmeye yatkınken, Gemini'nin bu yapısal veri üretme kabiliyeti, analiz sonucunun ek bir ayrıştırma (parsing) işlemi gerektirmeden doğrudan kullanılmasını sağlar. Bu, sistemin genel yanıt süresini (latency) düşürür ve entegrasyon sürecini basitleştirerek geliştirme verimliliğini artırır.
+                        <strong>Google Gemini</strong> modelinin bu projede seçilmesinin temel nedeni, <strong>yapılandırılmış veri çıkarma (structured data extraction)</strong> yeteneğidir. Rakip modeller genellikle metin tabanlı serbest cevaplar üretirken, Gemini'ye bir Zod şeması (`output: {schema: ...}`) tanımlanarak, çıktının her zaman beklenen formatta (JSON) ve veri tipinde (sayısal) olması garanti altına alınır. Bu, ek bir metin işleme katmanına olan ihtiyacı ortadan kaldırır, sistemin güvenilirliğini artırır ve gecikmeyi (latency) düşürür. Model, nadir fakat kritik anomali durumlarını simüle etme yeteneğiyle de sistemin test edilebilirliğini sağlamaktadır.
                     </p>
                 </div>
             </div>
@@ -386,13 +362,11 @@
                 <div class="card-inner">
                     <h2>Opsiyonel Geliştirme ve Gelecek Vizyonu</h2>
                     <p>
-                        Konveyor AI, modüler yapısı sayesinde gelecekteki geliştirmelere açıktır:
-                        <ul>
-                            <li><strong>Merkezi Kontrol Paneli:</strong> Birden fazla fabrika veya üretim hattının tek bir merkezden izlenmesi.</li>
-                            <li><strong>Öngörücü Bakım:</strong> Toplanan sapma verilerinin zaman içinde analiz edilerek, potansiyel arızaların önceden tahmin edilmesi.</li>
-                            <li><strong>Gelişmiş Anomali Tanımı:</strong> Sadece kayma değil, aynı zamanda bant üzerindeki yırtık, yabancı cisim gibi diğer anomalileri de tespit etme.</li>
-                            <li><strong>Operatör Yönetimi:</strong> Farklı yetki seviyelerine sahip kullanıcılar tanımlama ve bildirim atamaları yapma.</li>
-                        </ul>
+                        Konveyor AI, modüler yapısı sayesinde gelecekte birçok yeni özellikle zenginleştirilebilir:
+                        <strong>Operatör Yönetimi:</strong> Farklı yetki seviyelerine sahip kullanıcılar (yönetici, operatör) tanımlanarak, bildirim ve ayar atamaları yapılabilir.
+                        <strong>Merkezi İzleme:</strong> Birden fazla fabrika veya üretim hattının tek bir merkezi kontrol panelinden izlenmesi.
+                        <strong>Gelişmiş Raporlama:</strong> Anomali sıklığı, ortalama sapma değerleri gibi verilerin görselleştirildiği periyodik performans raporları.
+                        <strong>Bulut Veri Analitiği:</strong> Toplanan anomali verilerinin, kestirimci bakım (predictive maintenance) modellerini eğitmek üzere bulut platformlarında (örn: Google Cloud Vertex AI) depolanması ve analiz edilmesi.
                     </p>
                 </div>
             </div>
@@ -401,10 +375,11 @@
                 <div class="card-inner">
                     <h2>Sonuç ve Değerlendirme</h2>
                     <p>
-                        Sonuç olarak, <strong>Konveyor AI</strong> projesi, endüstri 4.0 prensipleri doğrultusunda, yapay zeka ve modern web teknolojilerini birleştirerek endüstriyel otomasyon alanında somut bir çözüm sunmaktadır. Sistem, sadece bir anomali tespit aracı olmanın ötesinde, esnek donanım entegrasyonu ve ölçeklenebilir mimarisi ile üretim süreçlerinde proaktif bir güvenlik ve verimlilik katmanı oluşturma potansiyeline sahiptir. Geliştirme süreci, özellikle Gemini modelinin yapısal veri üretme yeteneği sayesinde, konsept aşamasından prototip aşamasına hızlı ve verimli bir geçişin mümkün olduğunu göstermiştir.
+                        Sonuç olarak, <strong>Konveyor AI</strong> projesi, modern yapay zeka ve web teknolojilerini bir araya getirerek, endüstriyel otomasyon alanında somut bir soruna yenilikçi bir çözüm sunmaktadır. Donanım esnekliği, yapılandırılmış AI çıktıları sayesinde elde edilen güvenilirlik ve geleceğe yönelik genişleme potansiyeli, projenin sadece bir prototip olmanın ötesinde, ticari bir ürün olarak ölçeklenebilirliğinin de bir kanıtıdır. Bu kılavuz, projenin mevcut teknik temelini ve gelecek potansiyelini ortaya koymak amacıyla hazırlanmıştır.
                     </p>
                 </div>
             </div>
+
         </div>
     </div>
 </body>
