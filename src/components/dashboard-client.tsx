@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import {
@@ -37,6 +37,7 @@ import {
   Scan,
   PlusCircle,
   Trash2,
+  ChevronDown,
 } from "lucide-react";
 import { analyzeConveyorBelt } from "@/ai/flows/analyze-conveyor-flow";
 import {
@@ -48,6 +49,12 @@ import {
   DialogTrigger,
   DialogFooter,
 } from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
@@ -87,6 +94,8 @@ const defaultStations: Station[] = [
 
 export function DashboardClient({ stations, onStationsChange }: { stations: Station[], onStationsChange: (stations: Station[]) => void }) {
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
   const selectedStationId = searchParams.get('station') || (stations.length > 0 ? stations[0].id : null);
   
   const selectedStation = stations.find(s => s.id === selectedStationId) || (stations.length > 0 ? stations[0] : null);
@@ -323,6 +332,14 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
     }, 300);
   };
   
+  const handleStationSelect = (stationId: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('station', stationId);
+    window.history.pushState(null, '', `${pathname}?${params.toString()}`);
+    // Manually trigger a re-render or state update if needed, e.g., by using router
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  };
+  
   const filteredLogs = selectedStationId ? logs.filter(log => log.stationId === selectedStationId) : [];
   const isAnomaly = status === "ANOMALİ";
 
@@ -336,8 +353,25 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
 
   return (
     <div className="space-y-8">
-       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold tracking-tight">Genel Bakış - {selectedStation.name}</h1>
+       <div className="flex justify-between items-start sm:items-center flex-col sm:flex-row gap-4">
+        <div className="flex items-center gap-4">
+            <h1 className="text-2xl font-bold tracking-tight">Genel Bakış</h1>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="min-w-48 justify-between">
+                       {selectedStation.name}
+                       <ChevronDown className="h-4 w-4" />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56">
+                    {stations.map(station => (
+                         <DropdownMenuItem key={station.id} onSelect={() => handleStationSelect(station.id)}>
+                            {station.name}
+                         </DropdownMenuItem>
+                    ))}
+                </DropdownMenuContent>
+            </DropdownMenu>
+        </div>
         <SettingsDialog 
           settings={settings} 
           onSettingsChange={saveSettings} 
@@ -785,3 +819,5 @@ function SettingsDialog({
     </Dialog>
   );
 }
+
+      

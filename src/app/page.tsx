@@ -2,7 +2,7 @@
 "use client";
 
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { LayoutDashboard, Settings, Network, FileText, Users, PlusCircle } from 'lucide-react';
 import type { Station } from '@/components/dashboard-client';
 
@@ -43,7 +43,7 @@ export default function DashboardPage() {
 function PageContent() {
     const { setOpenMobile, isMobile } = useSidebar();
     const searchParams = useSearchParams();
-    const selectedStationId = searchParams.get('station') || null;
+    const router = useRouter();
 
     const [stations, setStations] = useState<Station[]>([]);
     const [isClient, setIsClient] = useState(false);
@@ -93,9 +93,19 @@ function PageContent() {
             window.removeEventListener('storage', handleStorageChange);
         };
     }, []);
+    
+    // Listen for URL changes to close mobile sidebar
+    const selectedStationId = searchParams.get('station');
+    useEffect(() => {
+        if (isMobile) {
+            setOpenMobile(false);
+        }
+    }, [selectedStationId, isMobile, setOpenMobile]);
 
 
-    const handleLinkClick = () => {
+    const handleLinkClick = (stationId: string) => {
+        // We use router.push to ensure the page re-renders with the new search param
+        router.push(`/?station=${stationId}`);
         if(isMobile) {
             setOpenMobile(false);
         }
@@ -146,12 +156,11 @@ function PageContent() {
                                 stations.map(station => (
                                     <SidebarMenuItem key={station.id}>
                                         <SidebarMenuButton 
-                                            href={`/?station=${station.id}`} 
                                             variant="ghost" 
                                             size="sm" 
                                             className="w-full justify-start h-8 text-base" 
                                             isActive={currentStationId === station.id} 
-                                            onClick={handleLinkClick}>
+                                            onClick={() => handleLinkClick(station.id)}>
                                             {station.name}
                                         </SidebarMenuButton>
                                     </SidebarMenuItem>
@@ -217,3 +226,5 @@ function PageContent() {
     </>
   );
 }
+
+      
