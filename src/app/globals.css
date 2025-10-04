@@ -85,7 +85,46 @@
 
 @layer utilities {
     @keyframes opacity-pulse {
-      '0%, 100%' = { opacity: 0.1 }
+      '0%, 100%' = { opacity: 0.2 }
       '50%' = { opacity: 1 }
+    }
+    @keyframes animation-delay-3000 {
+        '0%' = { animation-delay: 0s; }
+        '100%' = { animation-delay: 3s; }
+    }
+
+    @keyframes move-glow {
+      0% {
+        background-position: -50% -50%;
+      }
+      100% {
+        background-position: 250% 250%;
+      }
+    }
+    
+    .magic-card {
+        @apply relative overflow-hidden;
+    }
+    
+    .magic-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: 
+          radial-gradient(circle at 10% 10%, hsla(240, 70%, 60%, 0.4), transparent 30%),
+          radial-gradient(circle at 90% 80%, hsla(300, 70%, 60%, 0.4), transparent 30%);
+        background-size: 300% 300%;
+        animation: move-glow 8s linear infinite;
+        z-index: -1;
+        will-change: background-position;
+        transition: opacity 0.3s ease-in-out;
+        opacity: 0;
+    }
+    
+    .magic-card:hover::before {
+        opacity: 1;
     }
 }

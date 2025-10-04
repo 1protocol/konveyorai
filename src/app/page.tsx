@@ -96,7 +96,7 @@ export default function LandingPage() {
           </div>
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {features.map((feature) => (
-              <Card key={feature.title} className="text-center bg-background/30 backdrop-blur-xl border border-white/10 shadow-lg hover:border-white/20 transition-all hover:-translate-y-1">
+              <Card key={feature.title} className="magic-card text-center bg-background/30 backdrop-blur-xl border border-white/10 shadow-lg hover:border-white/20 transition-all hover:-translate-y-1">
                 <CardHeader>
                   <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
                     {feature.icon}

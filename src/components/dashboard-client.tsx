@@ -505,7 +505,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
         {/* Left Column */}
         <div className="lg:col-span-3 space-y-6">
-          <Card className="bg-background/30 backdrop-blur-xl border border-white/10 transition-all hover:border-white/20 hover:-translate-y-1">
+          <Card className="magic-card bg-background/30 backdrop-blur-xl border border-white/10 transition-all hover:border-white/20 hover:-translate-y-1">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                     <Video />
@@ -552,7 +552,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
 
         {/* Right Column */}
         <div className="lg:col-span-2 space-y-6">
-            <Card className="bg-background/30 backdrop-blur-xl border border-white/10">
+            <Card className="magic-card bg-background/30 backdrop-blur-xl border border-white/10">
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-base">
                         <AreaChart />
@@ -587,7 +587,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
             </Card>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <Card className={cn("bg-background/30 backdrop-blur-xl border border-white/10 transition-colors", isAnomaly && "bg-destructive/30 text-white border-red-500/50")}>
+                <Card className={cn("magic-card bg-background/30 backdrop-blur-xl border border-white/10 transition-colors", isAnomaly && "bg-destructive/30 text-white border-red-500/50")}>
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm font-medium flex items-center justify-between">
                       Sistem Durumu
@@ -610,7 +610,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
                   </CardContent>
                 </Card>
 
-                <Card className="bg-background/30 backdrop-blur-xl border border-white/10">
+                <Card className="magic-card bg-background/30 backdrop-blur-xl border border-white/10">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm font-medium flex items-center justify-between">
                       Mevcut Sapma
@@ -636,7 +636,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
       </div>
 
 
-      <Card className="bg-background/30 backdrop-blur-xl border border-white/10 transition-all hover:border-white/20 hover:-translate-y-1">
+      <Card className="magic-card bg-background/30 backdrop-blur-xl border border-white/10 transition-all hover:border-white/20 hover:-translate-y-1">
         <CardHeader>
           <CardTitle>Anomali Kayıtları - {selectedStation.name}</CardTitle>
           <CardDescription>
