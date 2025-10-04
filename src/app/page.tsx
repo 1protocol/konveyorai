@@ -43,7 +43,7 @@ export default function DocumentationPage() {
               Konveyor AI: Proje Sunumu
             </h1>
             <p className="text-sm text-muted-foreground">
-                Endüstri 4.0 Standartlarında Yapay Zeka Destekli Anomali Tespiti
+                Yapay Zeka Destekli Endüstriyel Anomali Tespiti
             </p>
           </div>
          </div>
