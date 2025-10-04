@@ -16,12 +16,6 @@ export default function DeveloperGuidePage() {
             >
               Geliştirici Kılavuzu
             </Link>
-            <Link
-              href="/DEVELOPER_GUIDE.html#features"
-              className="text-muted-foreground transition-colors hover:text-foreground"
-            >
-              Kullanım Özellikleri
-            </Link>
           </nav>
           <Button asChild variant="default">
             <Link href="/dashboard">
