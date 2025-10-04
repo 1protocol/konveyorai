@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geliştirici Haritası</title>
+    <style>
+        /* Temel CSS Sıfırlama */
+        body, h1, p {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f4f4f9;
+            color: #333;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: auto;
+            background: #fff;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #0056b3;
+            margin-bottom: 1rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        #message {
+            font-weight: bold;
+            color: #d9534f;
+            padding: 1rem;
+            background-color: #f2dede;
+            border: 1px solid #ebccd1;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Geliştirici Haritası Sayfası</h1>
+        <p>Bu, bağımsız bir HTML5 sayfasıdır.</p>
+        <div id="message">
+            <!-- JavaScript bu alanı güncelleyecek -->
+        </div>
+    </div>
+
+    <script>
+        // Sayfa yüklendiğinde çalışacak basit bir JavaScript kodu
+        document.addEventListener('DOMContentLoaded', function() {
+            const messageElement = document.getElementById('message');
+            if (messageElement) {
+                messageElement.textContent = 'JavaScript başarıyla yüklendi ve çalıştırıldı!';
+            }
+        });
+    </script>
+</body>
+</html>
