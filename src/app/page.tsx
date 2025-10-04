@@ -70,7 +70,7 @@ export default function LandingPage() {
         <section className="container grid place-items-center gap-8 py-20 text-center md:py-32">
           <div className="space-y-4">
             <h1 className="text-4xl font-extrabold tracking-tighter md:text-6xl">
-              Proaktif Üretim Güvenliği Yönetimi
+              Proaktif Üretim Yönetimi
             </h1>
             <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
               Bu proje, endüstriyel konveyör bantlarındaki yönsel kayma sorunlarını, harici bir veri seti olmadan, kendi kendine referanslama yaparak tespit eden bir yapay zeka yazılımıdır.
