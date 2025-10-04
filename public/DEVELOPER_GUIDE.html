@@ -1,303 +1,297 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Konveyor AI - Geliştirici Kılavuzu</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg-color: #0c0e1a;
-      --card-bg-color: rgba(20, 22, 36, 0.7);
-      --text-color: #e0e1e6;
-      --primary-color: #fca311;
-      --muted-color: #8c8f9b;
-      --border-color: rgba(255, 255, 255, 0.1);
-    }
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    body {
-      font-family: 'Poppins', sans-serif;
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      line-height: 1.7;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      background-image:
-        radial-gradient(circle at 15% 50%, rgba(100, 116, 139, 0.1), transparent 25%),
-        radial-gradient(circle at 85% 30%, rgba(100, 116, 139, 0.08), transparent 25%);
-    }
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 2rem;
-    }
-    .banner {
-      text-align: center;
-      margin-bottom: 4rem;
-      position: relative;
-      border-radius: 12px;
-      padding: 2px;
-      overflow: hidden;
-      z-index: 1;
-    }
-    .banner::after {
-        content: '';
-        position: absolute;
-        top: -50%; left: -50%;
-        width: 200%; height: 200%;
-        background: conic-gradient(
-            from 180deg at 50% 50%,
-            #ff0000, #ffffff, #0000ff, #ff0000
-        );
-        animation: border-glow 8s linear infinite;
-        z-index: -1;
-        opacity: 0.6;
-    }
-    .banner .card-inner {
-      padding: 3rem 2rem;
-    }
-    .banner h1 {
-      font-size: 2.8rem;
-      font-weight: 800;
-      margin-bottom: 1rem;
-      letter-spacing: -1px;
-      background: linear-gradient(90deg, #e0e1e6, #b0b2c3);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .banner p {
-      font-size: 1.1rem;
-      color: var(--muted-color);
-      max-width: 700px;
-      margin: 0 auto 1.5rem auto;
-    }
-    .btn {
-      display: inline-block;
-      background-color: var(--primary-color);
-      color: #0c0e1a;
-      padding: 12px 28px;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 1rem;
-      border: none;
-      cursor: pointer;
-      transition: background-color 0.3s ease, transform 0.2s ease;
-    }
-    .btn:hover {
-      background-color: #ffb74d;
-      transform: translateY(-2px);
-    }
-    h2 {
-      font-size: 2rem;
-      font-weight: 700;
-      margin-bottom: 2rem;
-      border-bottom: 1px solid var(--border-color);
-      padding-bottom: 0.75rem;
-    }
-    p, li {
-      color: var(--muted-color);
-      margin-bottom: 1rem;
-    }
-    ul {
-      list-style-position: inside;
-      padding-left: 0;
-    }
-    .card {
-      margin-bottom: 40px;
-      position: relative;
-      border-radius: 12px;
-      padding: 2px;
-      overflow: hidden;
-      z-index: 1;
-    }
-    .card::after {
-        content: '';
-        position: absolute;
-        top: -50%; left: -50%;
-        width: 200%; height: 200%;
-        background: conic-gradient(
-            from 180deg at 50% 50%,
-            #ff0000, #ffffff, #0000ff, #ff0000
-        );
-        animation: border-glow 8s linear infinite;
-        z-index: -2;
-        opacity: 0.6;
-    }
-    .card-inner {
-      background: rgba(20, 22, 36, 0.7);
-      backdrop-filter: blur(15px);
-      -webkit-backdrop-filter: blur(15px);
-      padding: 30px;
-      border-radius: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      position: relative;
-      z-index: 2;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Konveyor AI - Geliştirici Kılavuzu</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --background-color: #0d1117;
+            --card-bg-color: rgba(20, 22, 36, 0.7);
+            --text-color: #c9d1d9;
+            --header-color: #ffffff;
+            --muted-color: #8b949e;
+            --accent-color: #f7b733;
+            --accent-hover-color: #f8c45a;
+        }
 
-    .tech-stack {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 1.5rem;
-    }
-    .tech-stack li {
-      background: rgba(255, 255, 255, 0.05);
-      padding: 1rem;
-      border-radius: 8px;
-      text-align: center;
-      font-weight: 500;
-      color: var(--text-color);
-      margin-bottom: 0;
-    }
-    code {
-      background-color: rgba(0,0,0,0.3);
-      padding: 0.2em 0.4em;
-      border-radius: 3px;
-      font-family: 'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', monospace;
-      font-size: 0.9em;
-    }
-    
-    @keyframes border-glow {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            line-height: 1.7;
+            background-image: radial-gradient(circle at 1% 1%, hsl(240, 60%, 12%) 0%, transparent 25%), radial-gradient(circle at 99% 99%, hsl(280, 50%, 15%) 0%, transparent 20%);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
 
-    /* Responsive Design */
-    @media (max-width: 768px) {
-      .container {
-        padding: 1.5rem;
-      }
-      .banner h1 {
-        font-size: 2.2rem;
-      }
-      .banner p {
-        font-size: 1rem;
-      }
-      h2 {
-        font-size: 1.8rem;
-      }
-      .card-inner {
-        padding: 20px;
-      }
-      .btn {
-        padding: 10px 22px;
-        font-size: 0.9rem;
-      }
-    }
-  </style>
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        h1, h2 {
+            color: var(--header-color);
+            font-weight: 700;
+        }
+
+        h2 {
+            margin-top: 40px;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
+        }
+
+        p {
+            font-size: 1rem;
+            color: var(--muted-color);
+        }
+
+        code {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+        
+        li {
+            margin-bottom: 10px;
+        }
+
+        .banner {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .banner h1 {
+            font-size: 2.8rem;
+            margin-bottom: 20px;
+        }
+
+        .banner p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 30px auto;
+        }
+
+        .card, .banner {
+            transform-style: preserve-3d;
+            background: transparent;
+            border: 0;
+            border-radius: 12px;
+            margin-bottom: 40px;
+            padding: 2px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::after, .banner::after {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: conic-gradient(
+                from 180deg at 50% 50%,
+                rgba(255, 0, 0, 0.6),
+                rgba(255, 255, 255, 0.8),
+                rgba(0, 0, 255, 0.7),
+                rgba(255, 0, 0, 0.6) /* Loop back to start smoothly */
+            );
+            animation: border-glow 8s linear infinite;
+            z-index: 1;
+            opacity: 0.8;
+            filter: blur(5px);
+        }
+
+        .card-inner, .banner-inner {
+            background: var(--card-bg-color);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 10px;
+            padding: 30px;
+            position: relative;
+            z-index: 2;
+            height: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+        
+        .tech-stack ul {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            list-style: none;
+            padding: 0;
+            text-align: center;
+        }
+
+        .tech-stack li {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 8px;
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+
+        .tech-stack li:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .tech-stack span {
+            font-weight: 600;
+            color: var(--header-color);
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--accent-color);
+            color: #111;
+            padding: 14px 28px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: var(--accent-hover-color);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(247, 183, 51, 0.2);
+        }
+
+        @keyframes border-glow {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            .banner h1 {
+                font-size: 2.2rem;
+            }
+
+            .banner p {
+                font-size: 1rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            p {
+                font-size: 0.95rem;
+            }
+            
+            .card-inner, .banner-inner {
+                padding: 20px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <main>
-    <div class="container">
-      <div class="banner">
-        <div class="card-inner">
-          <h1>Konveyor AI Geliştirici Kılavuzu</h1>
-          <p>
-            Yapay zeka destekli konveyör bandı güvenlik sisteminin kurulumu, yapılandırılması ve en iyi şekilde kullanılması için kapsamlı rehberiniz.
-          </p>
-          <a href="/dashboard" class="btn">Operasyon Paneline Git</a>
-        </div>
-      </div>
 
-      <section id="introduction">
-        <div class="card">
-          <div class="card-inner">
-            <h2>✨ Projeye Genel Bakış</h2>
-            <p>
-              Konveyor AI, endüstriyel üretim hatlarındaki konveyör bantlarını gerçek zamanlı olarak izleyen ve yapay zeka kullanarak olası hizalama sorunlarını (kayıklık) otomatik olarak tespit eden modern bir web uygulamasıdır. Bu sistem, üretim hattı güvenliğini artırmak, bakım maliyetlerini düşürmek ve olası arızaları önceden tahmin etmek için tasarlanmıştır. Sistem, ilk çalıştırıldığında bandın mevcut durumunu referans alır ve bu referansa göre sapmaları analiz eder.
-            </p>
-          </div>
+    <main class="container">
+        <div class="banner">
+            <div class="banner-inner">
+                <h1>Konveyor AI Geliştirici Kılavuzu</h1>
+                <p>Yapay zeka destekli konveyör bandı güvenlik sisteminin kurulumu, yapılandırılması ve en iyi şekilde kullanılması için kapsamlı rehberiniz.</p>
+                <a href="/dashboard" class="btn">Operasyon Paneline Git</a>
+            </div>
         </div>
-      </section>
-      
-      <section id="features">
-        <div class="card">
-          <div class="card-inner">
-              <h2>⚙️ Kullanım ve Donanım Özellikleri</h2>
-              <p>
-                  Konveyor AI sisteminden en yüksek verimi alabilmek için donanım seçimi ve ortam koşullarının optimize edilmesi kritik öneme sahiptir. Aşağıdaki kılavuz, en iyi sonuç odaklı çalışma prensiplerini özetlemektedir.
-              </p>
-              <ul>
-                  <li>
-                      <strong>Kamera ve Sensör Seçimi:</strong> Yüksek çözünürlüklü ve yeterli FPS (saniyedeki kare sayısı) değerine sahip endüstriyel kameralar (örn: Basler, Flir, Hikvision) tercih edilmelidir. Görüntünün netliği, AI modelinin sapmayı milimetrik hassasiyetle ölçebilmesi için temel gerekliliktir. Düşük ışık koşulları için yüksek hassasiyetli (Low-Light) sensörlere sahip kameralar önerilir.
-                  </li>
-                  <li>
-                      <strong>Lens Seçimi:</strong> Konveyör bandının genişliğini ve kameranın konumlandırılacağı mesafeyi tamamen kapsayacak doğru odak uzaklığına sahip bir lens seçilmelidir. Görüntüde distorsiyon (bükülme) olmaması, ölçüm doğruluğunu doğrudan etkiler. Sabit odak uzaklığına sahip (prime) lensler genellikle daha net görüntüler sunar.
-                  </li>
-                  <li>
-                      <strong>Aydınlatma:</strong> İzlenen alanın homojen ve sabit bir şekilde aydınlatılması çok önemlidir. Işıkta meydana gelen anlık değişimler (gölge düşmesi, parlama vb.) yapay zekanın yanlış alarmlar üretmesine neden olabilir. Bu nedenle, harici ve sabit bir LED aydınlatma kaynağı kullanmak, sistemin kararlılığını büyük ölçüde artırır.
-                  </li>
-                  <li>
-                      <strong>Referans Konumun Sabitliği:</strong> Kameranın ve konveyör bandının fiziksel konumlarının sabit olması gerekir. Kameranın titreşmesi veya bandın yapısında meydana gelen oynamalar, yanlış sapma ölçümlerine yol açar. Kamera, titreşimden etkilenmeyecek sağlam bir montaj ayağına sabitlenmelidir.
-                  </li>
-                  <li>
-                      <strong>Kontrol Birimleri ve Otomasyon Entegrasyonu:</strong> Tespit edilen anomali verileri, bir PLC (Programmable Logic Controller) veya başka bir endüstriyel kontrol ünitesine aktarılabilir. Bu sayede, belirlenen sapma eşiği aşıldığında üretim hattının otomatik olarak durdurulması, bir uyarı sireninin çalması veya ilgili personele bildirim gönderilmesi gibi otomasyon senaryoları hayata geçirilebilir.
-                  </li>
-                  <li>
-                      <strong>Geliştirici Kartları ve Performans:</strong> Sistemin gerçek zamanlı ve yüksek performanslı çalışması için <strong>NVIDIA Jetson Xavier NX</strong> veya <strong>Orin</strong> serisi gibi güçlü geliştirici kartları kullanılması tavsiye edilir. Bu kartlar, yapay zeka modelini doğrudan cihaz üzerinde (edge computing) çalıştırarak bulut tabanlı sistemlere kıyasla çok daha düşük gecikme süresi (latency) sunar. Bu, özellikle yüksek hızlı üretim hatlarında anlık müdahaleler için hayati önem taşır. Alternatif olarak, benzer işlem gücüne sahip diğer AI hızlandırıcılı geliştirici kartları da sistemin performansını olumlu yönde etkileyecektir.
-                  </li>
-              </ul>
-          </div>
-        </div>
-      </section>
 
-      <section id="tech-stack">
-        <div class="card">
-          <div class="card-inner">
-            <h2>🚀 Teknoloji Yığını</h2>
-            <ul class="tech-stack">
-              <li><span>Next.js</span></li>
-              <li><span>TypeScript</span></li>
-              <li><span>Google Genkit</span></li>
-              <li><span>Shadcn UI</span></li>
-              <li><span>Tailwind CSS</span></li>
-              <li><span>Lucide React</span></li>
-            </ul>
-          </div>
+        <div class="card tech-stack">
+             <div class="card-inner">
+                <h2>Teknoloji Yığını</h2>
+                <ul>
+                    <li><span>Next.js</span></li>
+                    <li><span>TypeScript</span></li>
+                    <li><span>Google Genkit (Gemini)</span></li>
+                    <li><span>Shadcn UI</span></li>
+                    <li><span>Tailwind CSS</span></li>
+                    <li><span>Lucide React</span></li>
+                </ul>
+            </div>
         </div>
-      </section>
+        
+        <section id="features">
+            <div class="card">
+                <div class="card-inner">
+                    <h2>Kullanım Özellikleri ve Donanım Optimizasyonu</h2>
+                    <p>Konveyor AI sisteminden en yüksek verimi alabilmek için donanım seçimi ve ortam koşulları kritik öneme sahiptir. İşte en iyi sonuçları elde etmek için dikkat edilmesi gerekenler:</p>
+                    
+                    <h3>Sensör ve Kamera Seçimi</h3>
+                    <ul>
+                        <li><strong>Çözünürlük:</strong> Yüksek çözünürlüklü kameralar (tercihen 1080p ve üzeri), yapay zekanın daha hassas ölçümler yapmasını sağlar. Düşük ışık performansı yüksek olan sensörler, endüstriyel ortamlardaki değişken ışık koşullarında daha stabil sonuçlar verir.</li>
+                        <li><strong>Lens Seçimi:</strong> Konveyör bandının genişliğini ve kameranın konumlandırılacağı mesafeyi göz önünde bulundurarak doğru odak uzaklığına sahip bir lens seçilmelidir. Görüntüde distorsiyon (bozulma) yaratmayan, kaliteli lensler tercih edilmelidir.</li>
+                    </ul>
 
-      <section id="structure">
-        <div class="card">
-          <div class="card-inner">
-            <h2>📂 Proje Yapısı</h2>
-            <p>Projenin temel dosya ve klasör yapısı aşağıda açıklanmıştır:</p>
-            <pre><code>.
-├── src
-│   ├── app/
-│   │   ├── dashboard/
-│   │   │   └── page.tsx
-│   │   ├── layout.tsx
-│   │   └── page.tsx
-│   │
-│   ├── components/
-│   │   ├── ui/
-│   │   ├── dashboard-client.tsx
-│   │   └── icons.tsx
-│   │
-│   ├── ai/
-│   │   ├── flows/
-│   │   └── genkit.ts
-│   │
-│   ├── hooks/
-│   │
-│   └── lib/
-│
-├── public/
-│
-├── package.json
-└── tailwind.config.ts
-</code></pre>
-          </div>
-        </div>
-      </section>
-    </div>
-  </main>
+                    <h3>Referans Konumun Sabitliği</h3>
+                    <p>Yapay zeka, ilk kalibrasyon sırasında bandın kenarını bir referans olarak alır. Bu nedenle, kameranın fiziksel konumunun kesinlikle sabitlenmesi gerekir. Kamera veya montaj ekipmanındaki en ufak bir titreşim veya yerinden oynama, hatalı sapma ölçümlerine neden olabilir. Kamerayı titreşimsiz, sağlam bir yapıya monte etmek esastır.</p>
+
+                    <h3>Aydınlatma Koşulları</h3>
+                    <p>Yapay zekanın bandın kenarlarını net bir şekilde görebilmesi için homojen ve sabit bir aydınlatma sağlanmalıdır. Gölgeler, parlamalar veya ani ışık değişiklikleri, analiz performansını olumsuz etkileyebilir. Mümkünse, konveyör bandı üzerine odaklanmış, yönü değiştirilemeyen LED aydınlatma sistemleri kullanılmalıdır.</p>
+                    
+                    <h3>Kontrol ve Otomasyon Entegrasyonu</h3>
+                    <p>Konveyor AI, tespit ettiği anomali verilerini endüstriyel otomasyon sistemlerine entegre edebilir. Örneğin, belirlenen eşik değeri aşıldığında sistem, bir PLC (Programmable Logic Controller) ünitesine sinyal göndererek bandı durdurabilir, bir uyarı lambasını yakabilir veya ilgili personele bildirim gönderebilir. Bu entegrasyon, insan müdahalesine gerek kalmadan otomatik güvenlik önlemleri alınmasını sağlar.</p>
+
+                    <h3>Performans ve Geliştirici Kartları (Nvidia Jetson Serisi)</h3>
+                    <p>Sistem, standart bilgisayarlarda çalışabilse de, gerçek zamanlı ve yüksek performanslı analizler için <strong>NVIDIA Jetson Xavier NX</strong> veya <strong>NVIDIA Jetson Orin</strong> gibi AI odaklı geliştirici kartları kullanılması şiddetle tavsiye edilir. Bu kartlar, yapay zeka modelinin çok daha hızlı çalışmasını, video akışını anlık olarak işlemesini ve birden fazla istasyonu aynı anda minimum gecikmeyle analiz etmesini sağlar. Jetson kartları, düşük güç tüketimiyle yüksek işlem gücü sunarak endüstriyel ortamlar için ideal bir çözüm oluşturur.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="design-details">
+            <div class="card">
+                <div class="card-inner">
+                    <h2>Tasarım Felsefesi ve Teknik Detaylar</h2>
+                    <p>Bu kılavuzun arayüzü, modern web teknolojilerini kullanarak fütüristik ve dinamik bir "VR Cam" estetiği sunmak üzere tasarlanmıştır. İşte bu görünümü elde etmek için kullandığımız temel CSS teknikleri:</p>
+                    
+                    <h3>1. Katmanlı HTML Yapısı</h3>
+                    <p>Her kart, iki ana katmandan oluşur. Dış katman <code>.card</code> animasyonlu çerçeve görevi görürken, iç katman <code>.card-inner</code> asıl içeriği barındıran cam paneli oluşturur.</p>
+                    <pre><code>&lt;div class="card"&gt;
+  &lt;div class="card-inner"&gt;
+    &lt;!-- İçerik buraya gelir --&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+
+                    <h3>2. Hareketli Kenarlık (Border Glow) Animasyonu</h3>
+                    <p>Kartların en dikkat çekici özelliği, kenarlarında dönen çok renkli parlama efektidir. Bu efekti, dış katmanın <code>::after</code> pseudo-element'ini kullanarak oluşturduk:</p>
+                    <ul>
+                        <li><strong>Conic Gradient:</strong> <code>background: conic-gradient(...)</code> ile kırmızı, beyaz ve mavi tonlarında dairesel bir renk geçişi oluşturuldu.</li>
+                        <li><strong>Animasyon:</strong> <code>@keyframes border-glow</code> ile bu renkli gradyanın 360 derece dönmesi sağlandı. Bu, sürekli hareket eden bir ışık hüzmesi yanılsaması yaratır.</li>
+                        <li><strong>Konumlandırma:</strong> Pseudo-element, kartın iki katı boyutunda (<code>width: 200%, height: 200%</code>) ve merkezden kaydırılarak (<code>top: -50%, left: -50%</code>) konumlandırıldı. Bu sayede, döndüğünde sadece kenarları görünür hale gelir.</li>
+                    </ul>
+
+                    <h3>3. Glassmorphism (Cam Efekti)</h3>
+                    <p>İç katman olan <code>.card-inner</code>, modern bir cam efekti sunar. Bu görünüm birkaç CSS özelliği ile elde edilir:</p>
+                    <ul>
+                        <li><code>background: rgba(20, 22, 36, 0.7)</code>: Koyu, yarı saydam bir arka plan rengi.</li>
+                        <li><code>backdrop-filter: blur(15px)</code>: Arkasındaki her şeyi (bu durumda animasyonlu kenarlığı) bulanıklaştırarak "buzlu cam" efekti verir.</li>
+                        <li><code>border: 1px solid rgba(255, 255, 255, 0.1)</code>: Cam panelin sınırlarını belli eden ince, parlak bir kenarlık.</li>
+                        <li><code>box-shadow</code>: Karta hafif bir derinlik katar.</li>
+                    </ul>
+                    <p>Bu tekniklerin birleşimi, projenin yenilikçi ruhunu yansıtan, hem estetik olarak çekici hem de teknik olarak sofistike bir kullanıcı arayüzü oluşturur.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
 </body>
 </html>
