@@ -2,7 +2,7 @@
 "use client";
 
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { LayoutDashboard, Settings, Network, FileText, Users } from 'lucide-react';
 import type { Station } from '@/components/dashboard-client';
 
@@ -38,7 +38,6 @@ export default function DashboardPage() {
 
 function PageContent() {
     const searchParams = useSearchParams();
-    const router = useRouter();
 
     const [stations, setStations] = useState<Station[]>([]);
     const [isClient, setIsClient] = useState(false);

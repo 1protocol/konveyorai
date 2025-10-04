@@ -42,13 +42,13 @@ export default function DocumentationPage() {
       <main className="container mx-auto px-4 pt-12 pb-12">
         
         <Link href="/dashboard" passHref>
-          <Button variant="outline" size="lg" className="w-full h-20 mb-8 text-xl font-bold bg-card/50 border-border/50 shadow-lg hover:bg-card/70 text-primary justify-between px-8 group transition-all duration-300 ease-in-out hover:shadow-xl hover:shadow-primary/20">
+          <Button variant="outline" size="lg" className="w-full h-20 mb-8 text-xl font-bold bg-card/50 border-border/50 shadow-lg transition-all duration-300 ease-in-out hover:shadow-xl hover:shadow-primary/20 hover:scale-[1.01] hover:bg-card/70 text-primary justify-between px-8 group">
             Kontrol Paneli
             <ArrowRight className="h-8 w-8 transition-transform duration-300 group-hover:translate-x-2" />
           </Button>
         </Link>
 
-        <Card className="mb-12 bg-card/50 border-border/50 shadow-lg transition-all hover:shadow-xl hover:-translate-y-1">
+        <Card className="mb-12 bg-card/50 border-border/50 shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
             <CardHeader>
                 <div className="flex items-center gap-4">
                     <Bot className="h-12 w-12 text-primary" />
@@ -74,7 +74,7 @@ export default function DocumentationPage() {
             </CardContent>
         </Card>
 
-        <Card className="mb-8 bg-card/50 border-border/50 transition-all hover:shadow-xl hover:-translate-y-1">
+        <Card className="mb-8 bg-card/50 border-border/50 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
             <CardHeader>
                 <CardTitle className="flex items-center gap-3 text-xl">
                     <Cpu className="h-7 w-7 text-primary"/>
@@ -88,7 +88,7 @@ export default function DocumentationPage() {
             </CardContent>
         </Card>
 
-        <Card className="mb-8 bg-card/50 border-border/50 transition-all hover:shadow-xl hover:-translate-y-1">
+        <Card className="mb-8 bg-card/50 border-border/50 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
             <CardHeader>
                 <CardTitle className="flex items-center gap-3 text-xl">
                     <Layers className="h-7 w-7 text-primary"/>
@@ -102,7 +102,7 @@ export default function DocumentationPage() {
             </CardContent>
         </Card>
 
-        <Card className="mb-8 bg-card/50 border-border/50 transition-all hover:shadow-xl hover:-translate-y-1">
+        <Card className="mb-8 bg-card/50 border-border/50 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
             <CardHeader>
                 <CardTitle className="flex items-center gap-3 text-xl">
                     <ShieldCheck className="h-7 w-7 text-primary"/>
@@ -116,7 +116,7 @@ export default function DocumentationPage() {
             </CardContent>
         </Card>
 
-        <Card className="mb-8 bg-card/50 border-border/50 transition-all hover:shadow-xl hover:-translate-y-1">
+        <Card className="mb-8 bg-card/50 border-border/50 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
           <CardHeader>
             <CardTitle className="flex items-center gap-3 text-xl">
               <LayoutDashboard className="h-7 w-7 text-primary" />
@@ -130,7 +130,7 @@ export default function DocumentationPage() {
           </CardContent>
         </Card>
 
-        <Card className="mb-8 bg-card/50 border-border/50 transition-all hover:shadow-xl hover:-translate-y-1">
+        <Card className="mb-8 bg-card/50 border-border/50 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
           <CardHeader>
             <CardTitle className="flex items-center gap-3 text-xl">
               <FileText className="h-7 w-7 text-primary" />

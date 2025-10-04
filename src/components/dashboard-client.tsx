@@ -469,12 +469,12 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 lg:space-y-8">
        <div className="flex justify-between items-start sm:items-center flex-col sm:flex-row gap-4">
         <div className="flex items-center gap-4">
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="lg" className="min-w-56 justify-between text-base bg-background/80 backdrop-blur-xl border-white/10 hover:bg-background/90">
+                    <Button variant="outline" size="lg" className="min-w-56 justify-between text-base bg-background/80 backdrop-blur-xl border-white/10 hover:bg-background/90 transition-all duration-300">
                        <span className="flex items-center gap-2">
                          <Network className="h-5 w-5 text-muted-foreground" />
                          {selectedStation.name}
@@ -482,7 +482,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
                        <ChevronDown className="h-5 w-5" />
                     </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-64 text-base p-2 bg-background/80 backdrop-blur-xl border-white/10 shadow-2xl">
+                <DropdownMenuContent className="w-64 text-base p-2 bg-background/80 backdrop-blur-xl border-white/10 shadow-2xl transition-all duration-300">
                     {stations.map(station => (
                          <DropdownMenuItem key={station.id} onSelect={() => handleStationSelect(station.id)} className="p-2 cursor-pointer">
                            <Network className="mr-2 h-5 w-5" />
@@ -508,7 +508,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
         {/* Left Column */}
         <div className="lg:col-span-3 space-y-6">
-          <Card className="transition-all bg-background/30 backdrop-blur-xl border border-white/10 hover:border-white/20">
+          <Card className="transition-all duration-300 bg-background/30 backdrop-blur-xl border border-white/10 hover:border-white/20">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                     <Video />
@@ -555,7 +555,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
 
         {/* Right Column */}
         <div className="lg:col-span-2 space-y-6">
-            <Card className="bg-background/30 backdrop-blur-xl border border-white/10">
+            <Card className="bg-background/30 backdrop-blur-xl border border-white/10 transition-all duration-300">
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-base">
                         <AreaChart />
@@ -590,7 +590,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
             </Card>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <Card className={cn("transition-colors bg-background/30 backdrop-blur-xl border border-white/10", isAnomaly && "bg-destructive/30 text-white border-red-500/50")}>
+                <Card className={cn("transition-all duration-300 bg-background/30 backdrop-blur-xl border border-white/10", isAnomaly && "bg-destructive/30 text-white border-red-500/50")}>
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm font-medium flex items-center justify-between">
                       Sistem Durumu
@@ -613,7 +613,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
                   </CardContent>
                 </Card>
 
-                <Card className="bg-background/30 backdrop-blur-xl border border-white/10">
+                <Card className="bg-background/30 backdrop-blur-xl border border-white/10 transition-all duration-300">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm font-medium flex items-center justify-between">
                       Mevcut Sapma
@@ -639,7 +639,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
       </div>
 
 
-      <Card className="transition-all bg-background/30 backdrop-blur-xl border border-white/10 hover:border-white/20">
+      <Card className="transition-all duration-300 bg-background/30 backdrop-blur-xl border border-white/10 hover:border-white/20">
         <CardHeader>
           <CardTitle>Anomali Kayıtları - {selectedStation.name}</CardTitle>
           <CardDescription>
@@ -775,7 +775,7 @@ function SettingsDialog({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="lg" className="text-base bg-background/80 backdrop-blur-xl border-white/10 hover:bg-background/90">
+        <Button variant="outline" size="lg" className="text-base bg-background/80 backdrop-blur-xl border-white/10 hover:bg-background/90 transition-all duration-300">
           <Settings className="mr-2 h-5 w-5" />
           Gelişmiş Ayarlar
         </Button>
