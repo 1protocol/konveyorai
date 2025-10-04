@@ -68,8 +68,8 @@ export default function DocumentationPage() {
 
         <Card className="mb-8 bg-card/50 border-border/50">
             <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                    <Cpu className="h-5 w-5 text-accent"/>
+                <CardTitle className="flex items-center gap-3 text-lg">
+                    <Cpu className="h-6 w-6 text-accent"/>
                     Donanım Opsiyonları ve Operasyonel Etki
                 </CardTitle>
             </CardHeader>
@@ -82,8 +82,8 @@ export default function DocumentationPage() {
 
         <Card className="mb-8 bg-card/50 border-border/50">
             <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                    <Layers className="h-5 w-5 text-accent"/>
+                <CardTitle className="flex items-center gap-3 text-lg">
+                    <Layers className="h-6 w-6 text-accent"/>
                     Endüstri 4.0 Standartlarına Uyum
                 </CardTitle>
             </CardHeader>
@@ -96,8 +96,8 @@ export default function DocumentationPage() {
 
         <Card className="mb-8 bg-card/50 border-border/50">
             <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                    <ShieldCheck className="h-5 w-5 text-accent"/>
+                <CardTitle className="flex items-center gap-3 text-lg">
+                    <ShieldCheck className="h-6 w-6 text-accent"/>
                     Kalite ve Risk Yönetimi
                 </CardTitle>
             </CardHeader>
@@ -110,8 +110,8 @@ export default function DocumentationPage() {
 
         <Card className="mb-8 bg-card/50 border-border/50">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <LayoutDashboard className="h-5 w-5 text-accent" />
+            <CardTitle className="flex items-center gap-3 text-lg">
+              <LayoutDashboard className="h-6 w-6 text-accent" />
               İstasyon Tespit, Modelleme ve Raporlama
             </CardTitle>
           </CardHeader>
@@ -124,8 +124,8 @@ export default function DocumentationPage() {
 
         <Card className="mb-8 bg-card/50 border-border/50">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FileText className="h-5 w-5 text-accent" />
+            <CardTitle className="flex items-center gap-3 text-lg">
+              <FileText className="h-6 w-6 text-accent" />
               Geliştirici Kılavuzu
             </CardTitle>
           </CardHeader>
