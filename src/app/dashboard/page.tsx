@@ -119,10 +119,10 @@ function PageContent() {
       <Sidebar>
         <SidebarHeader className="border-b p-3 justify-center">
             <div className="flex items-center gap-2.5">
-                <Link href="/" className="flex flex-col items-center text-center">
+                <Link href="/" className="flex items-center gap-2">
                     <Icons.logo className="size-8 text-primary" />
-                    <span className="font-bold text-xs mt-1 group-data-[state=collapsed]:hidden">
-                    dev mustafa uslu
+                    <span className="font-bold text-lg group-data-[state=collapsed]:hidden">
+                    ConveyorAI
                     </span>
                 </Link>
            </div>

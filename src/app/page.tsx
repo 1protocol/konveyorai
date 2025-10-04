@@ -45,9 +45,9 @@ export default function LandingPage() {
       <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-background/30 backdrop-blur-xl">
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-2">
-             <Link href="/" className="flex flex-col items-center text-center">
+             <Link href="/" className="flex items-center gap-2">
               <Icons.logo className="h-8 w-8 text-primary" />
-              <span className="font-bold text-xs">dev mustafa uslu</span>
+              <span className="font-bold text-lg">ConveyorAI</span>
             </Link>
           </div>
           <nav className="flex items-center gap-4">
