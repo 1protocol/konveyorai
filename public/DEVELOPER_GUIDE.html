@@ -1,399 +1,519 @@
 <!DOCTYPE html>
 <html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Konveyor AI - Geliştirici Kılavuzu</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        :root {
-            --background: 224 71% 4%;
-            --foreground: 210 40% 98%;
-            --card-background: rgba(20, 22, 36, 0.7);
-            --border-color: rgba(255, 255, 255, 0.15);
-            --primary-glow: hsla(220, 70%, 60%, 0.8);
-            --secondary-glow: hsla(0, 0%, 100%, 0.8);
-            --tertiary-glow: hsla(0, 70%, 60%, 0.8);
-            --text-muted: rgba(235, 235, 245, 0.6);
-        }
+      :root {
+        --background: 224 71% 4%;
+        --foreground: 210 40% 98%;
+        --card: 224 71% 10%;
+        --card-foreground: 210 40% 98%;
+        --primary: 210 40% 98%;
+        --accent: 32 95% 54%;
+        --border: 217 33% 17%;
+      }
 
+      body {
+        font-family: "Poppins", sans-serif;
+        background-color: hsl(var(--background));
+        color: hsl(var(--foreground));
+        margin: 0;
+        padding: 2rem;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 2rem;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 10;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1.25rem;
+        font-weight: 700;
+        text-decoration: none;
+        color: hsl(var(--foreground));
+      }
+
+      .logo-icon {
+        width: 24px;
+        height: 24px;
+        stroke: hsl(var(--primary));
+      }
+
+      .back-to-app-btn {
+        background-color: hsla(var(--foreground), 0.1);
+        color: hsl(var(--foreground));
+        padding: 0.75rem 1.5rem;
+        border-radius: 9999px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: background-color 0.3s ease;
+        border: 1px solid hsl(var(--border));
+      }
+
+      .back-to-app-btn:hover {
+        background-color: hsla(var(--foreground), 0.2);
+      }
+
+      main {
+        padding-top: 80px;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        text-align: center;
+        font-size: clamp(2.5rem, 5vw, 3.5rem);
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        margin-bottom: 1rem;
+        background: linear-gradient(
+          90deg,
+          hsl(var(--accent)),
+          hsl(var(--primary)),
+          hsl(var(--accent))
+        );
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: text-shine 5s linear infinite;
+      }
+
+      @keyframes text-shine {
+        to {
+          background-position: 200% center;
+        }
+      }
+
+      .subtitle {
+        text-align: center;
+        font-size: 1.1rem;
+        max-width: 60ch;
+        margin: 0 auto 3rem auto;
+        color: hsl(var(--foreground) / 0.7);
+      }
+
+      .grid-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 2rem;
+      }
+
+      .card {
+        position: relative;
+        overflow: hidden;
+        background: transparent;
+        padding: 4px; /* Kenarlık kalınlığı için */
+        border-radius: 20px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      }
+
+      .card::after {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: conic-gradient(
+          from 180deg at 50% 50%,
+          hsla(0, 70%, 60%, 0.8),
+          transparent,
+          hsla(0, 0%, 100%, 0.8),
+          transparent,
+          hsla(220, 70%, 60%, 0.8)
+        );
+        animation: border-glow 8s linear infinite;
+        z-index: 1;
+      }
+
+      @keyframes border-glow {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .card-inner {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background: rgba(20, 22, 36, 0.7);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border-radius: 18px;
+        overflow: hidden;
+        z-index: 2;
+        padding: 30px;
+      }
+
+      .card h2 {
+        font-size: clamp(1.2rem, 3vw, 1.5rem);
+        margin: 0 0 1rem 0;
+        color: hsl(var(--primary));
+        border-bottom: 2px solid hsl(var(--accent));
+        padding-bottom: 0.5rem;
+        display: inline-block;
+      }
+
+      .card p,
+      .card li {
+        font-size: 1rem;
+        line-height: 1.6;
+        color: hsl(var(--foreground) / 0.8);
+      }
+
+      .card ul {
+        list-style-type: none;
+        padding: 0;
+      }
+
+      .card li {
+        position: relative;
+        padding-left: 25px;
+        margin-bottom: 10px;
+      }
+
+      .card li::before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        color: hsl(var(--accent));
+        font-weight: bold;
+      }
+
+      code {
+        background-color: hsla(var(--border), 0.5);
+        border: 1px solid hsl(var(--border));
+        padding: 2px 6px;
+        border-radius: 6px;
+        font-family: "SF Mono", "Fira Code", "Fira Mono", "Roboto Mono",
+          monospace;
+        font-size: 0.9em;
+        color: hsl(var(--accent));
+      }
+
+      /* İmza Kartı Stilleri */
+      .signature-wrapper {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 4rem;
+      }
+      
+      .signature-card {
+        width: 100%;
+        max-width: 400px;
+        background: rgba(20, 22, 36, 0.6);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 30px;
+        position: relative;
+        overflow: hidden;
+        perspective: 1000px;
+        transition: transform 0.5s ease, box-shadow 0.5s ease;
+      }
+
+      .signature-card:hover {
+        transform: translateY(-10px) rotateY(-8deg) rotateX(8deg);
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+      }
+
+      .signature-card-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        gap: 20px;
+      }
+
+      .cube-container {
+        width: 60px;
+        height: 60px;
+        position: relative;
+        transform-style: preserve-3d;
+        animation: rotate-cube 15s linear infinite;
+      }
+      
+      .inner-cube {
+        width: 30px;
+        height: 30px;
+        position: absolute;
+        top: 15px; /* (60-30)/2 */
+        left: 15px; /* (60-30)/2 */
+        transform-style: preserve-3d;
+        animation: rotate-inner-cube 10s linear infinite;
+      }
+
+      .face {
+        position: absolute;
+        background: transparent;
+      }
+      
+      /* Dış küpün yüzeyleri */
+      .cube-container > .face {
+        width: 60px;
+        height: 60px;
+        border: 1.5px solid hsla(190, 100%, 75%, 0.8);
+        box-shadow: 0 0 15px hsla(190, 100%, 75%, 0.5), inset 0 0 10px hsla(190, 100%, 75%, 0.3);
+      }
+      .cube-container > .front  { transform: translateZ(30px); }
+      .cube-container > .back   { transform: rotateY(180deg) translateZ(30px); }
+      .cube-container > .right  { transform: rotateY(90deg) translateZ(30px); }
+      .cube-container > .left   { transform: rotateY(-90deg) translateZ(30px); }
+      .cube-container > .top    { transform: rotateX(90deg) translateZ(30px); }
+      .cubecontainer > .bottom { transform: rotateX(-90deg) translateZ(30px); }
+
+      /* İç küpün yüzeyleri */
+      .inner-cube > .face {
+        width: 30px;
+        height: 30px;
+        border: 1px solid hsla(300, 100%, 80%, 0.7);
+         box-shadow: 0 0 10px hsla(300, 100%, 80%, 0.4), inset 0 0 8px hsla(300, 100%, 80%, 0.2);
+      }
+      .inner-cube > .front  { transform: translateZ(15px); }
+      .inner-cube > .back   { transform: rotateY(180deg) translateZ(15px); }
+      .inner-cube > .right  { transform: rotateY(90deg) translateZ(15px); }
+      .inner-cube > .left   { transform: rotateY(-90deg) translateZ(15px); }
+      .inner-cube > .top    { transform: rotateX(90deg) translateZ(15px); }
+      .inner-cube > .bottom { transform: rotateX(-90deg) translateZ(15px); }
+      
+      .text-content {
+        text-align: right;
+      }
+      
+      .text-content h4 {
+        margin: 0 0 0.2rem 0;
+        font-weight: 400;
+        font-size: 0.9rem;
+        color: hsl(var(--foreground) / 0.7);
+      }
+
+      .text-content h3 {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: hsl(var(--primary));
+      }
+
+      .text-content p {
+        margin: 0.2rem 0 0 0;
+        font-size: 1rem;
+        color: hsl(var(--accent));
+      }
+
+      @keyframes rotate-cube {
+        0% { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+        100% { transform: rotateX(360deg) rotateY(480deg) rotateZ(240deg); }
+      }
+
+      @keyframes rotate-inner-cube {
+        0% { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+        100% { transform: rotateX(480deg) rotateY(-360deg) rotateZ(360deg); }
+      }
+
+
+      /* Duyarlılık Ayarları */
+      @media (max-width: 768px) {
         body {
-            background-color: hsl(var(--background));
-            color: hsl(var(--foreground));
-            font-family: 'Poppins', sans-serif;
-            margin: 0;
-            padding: 3rem 2rem;
-            overflow-x: hidden;
+          padding: 1rem;
         }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
+        main {
+          padding-top: 70px;
         }
-
-        .header {
-            text-align: center;
-            margin-bottom: 4rem;
-        }
-
         h1 {
-            font-size: clamp(2.5rem, 5vw, 3.5rem);
-            font-weight: 800;
-            margin-bottom: 0.5rem;
-            letter-spacing: -1px;
+          font-size: clamp(2rem, 8vw, 2.5rem);
         }
-
-        .header p {
-            font-size: clamp(1rem, 2.5vw, 1.2rem);
-            color: var(--text-muted);
-            max-width: 800px;
-            margin: 0 auto;
+        .subtitle {
+          font-size: 1rem;
+          margin-bottom: 2rem;
         }
-
-        .grid-container {
-            display: grid;
-            gap: 2rem;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-        }
-        
-        .card {
-            position: relative;
-            overflow: hidden;
-            background: transparent;
-            border-radius: 20px;
-            padding: 4px; /* Kenarlık kalınlığı için */
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-        }
-
-        .card::after {
-            content: '';
-            position: absolute;
-            top: -50%; 
-            left: -50%;
-            width: 200%; 
-            height: 200%;
-            background: conic-gradient(
-                from 180deg at 50% 50%,
-                var(--primary-glow), 
-                transparent, 
-                var(--secondary-glow), 
-                transparent, 
-                var(--tertiary-glow)
-            );
-            animation: border-glow 8s linear infinite;
-            z-index: 1;
-        }
-        
-        @keyframes border-glow {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .card-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            background: var(--card-background);
-            backdrop-filter: blur(15px);
-            border-radius: 18px; /* Dış kenarlıktan biraz daha küçük */
-            overflow: hidden;
-            z-index: 2; /* Hareketli kenarlığın üzerinde kalmasını sağlar */
-            padding: 30px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .card-inner h2 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-top: 0;
-            margin-bottom: 1rem;
-        }
-
-        .card-inner p, .card-inner ul {
-            font-size: 0.95rem;
-            line-height: 1.7;
-            color: var(--text-muted);
-            margin-top: 0;
-            flex-grow: 1;
-        }
-        .card-inner ul {
-            padding-left: 20px;
-            margin-bottom: 0;
-        }
-        .card-inner li {
-            margin-bottom: 0.5rem;
-        }
-
-        /* İmza Kartı Özel Stilleri */
         .signature-card {
-            grid-column: 1 / -1; /* Her zaman tam genişlik kaplar */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 300px;
-            perspective: 1000px;
-            transition: transform 0.5s ease, box-shadow 0.5s ease;
+          padding: 20px;
         }
-        
-        .signature-card:hover {
-            transform: translateY(-10px) rotateY(-8deg) rotateX(8deg);
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
-        }
-
-        .signature-card .card-inner {
-            flex-direction: row;
-            align-items: center;
-            justify-content: center;
-            gap: 2rem;
-            padding: 40px;
-        }
-
         .signature-card-content {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 3rem;
+          flex-direction: column;
+          text-align: center;
+          gap: 25px;
         }
-
         .text-content {
-            text-align: left;
+          text-align: center;
         }
-
-        .text-content h4 {
-            font-size: 1rem;
-            font-weight: 400;
-            color: var(--text-muted);
-            margin: 0 0 0.2rem 0;
-            opacity: 0.7;
-        }
-
-        .text-content h3 {
-            font-size: 2rem;
-            font-weight: 700;
-            margin: 0;
-            white-space: nowrap;
-        }
-
-        .text-content p {
-            font-size: 1.1rem;
-            color: var(--primary-glow);
-            margin: 0.2rem 0 0 0;
-        }
-
-        /* 3D Küp Animasyonu */
-        .cube-container {
-            width: 60px;
-            height: 60px;
-            position: relative;
-            transform-style: preserve-3d;
-            animation: rotate-cube 15s linear infinite;
-        }
-
-        .inner-cube {
-            width: 30px;
-            height: 30px;
-            position: absolute;
-            top: 15px; /* (60-30)/2 */
-            left: 15px; /* (60-30)/2 */
-            transform-style: preserve-3d;
-            animation: rotate-inner-cube 10s linear infinite;
-        }
-
-        .face {
-            position: absolute;
-            background: transparent;
-            box-sizing: border-box;
-        }
-        
-        /* Dış küpün yüzeyleri */
-        .cube-container > .face {
-            width: 60px;
-            height: 60px;
-            border: 1.5px solid hsla(190, 100%, 75%, 0.8);
-            box-shadow: 0 0 15px hsla(190, 100%, 75%, 0.5);
-        }
-        .cube-container > .front  { transform: translateZ(30px); }
-        .cube-container > .back   { transform: rotateY(180deg) translateZ(30px); }
-        .cube-container > .right  { transform: rotateY(90deg) translateZ(30px); }
-        .cube-container > .left   { transform: rotateY(-90deg) translateZ(30px); }
-        .cube-container > .top    { transform: rotateX(90deg) translateZ(30px); }
-        .cube-container > .bottom { transform: rotateX(-90deg) translateZ(30px); }
-
-        /* İç küpün yüzeyleri */
-        .inner-cube > .face {
-            width: 30px;
-            height: 30px;
-            border: 1px solid hsla(300, 100%, 80%, 0.7);
-            box-shadow: 0 0 10px hsla(300, 100%, 80%, 0.5);
-        }
-        .inner-cube > .front  { transform: translateZ(15px); }
-        .inner-cube > .back   { transform: rotateY(180deg) translateZ(15px); }
-        .inner-cube > .right  { transform: rotateY(90deg) translateZ(15px); }
-        .inner-cube > .left   { transform: rotateY(-90deg) translateZ(15px); }
-        .inner-cube > .top    { transform: rotateX(90deg) translateZ(15px); }
-        .inner-cube > .bottom { transform: rotateX(-90deg) translateZ(15px); }
-
-
-        @keyframes rotate-cube {
-            0% { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
-            100% { transform: rotateX(360deg) rotateY(480deg) rotateZ(240deg); }
-        }
-
-        @keyframes rotate-inner-cube {
-            0% { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
-            100% { transform: rotateX(480deg) rotateY(-360deg) rotateZ(360deg); }
-        }
-
-        /* Duyarlılık Ayarları */
-        @media (max-width: 1024px) {
-            .grid-container {
-                grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            }
-        }
-        
-        @media (max-width: 768px) {
-            body {
-                padding: 2rem 1rem;
-            }
-            .header {
-                margin-bottom: 3rem;
-            }
-            .grid-container {
-                gap: 1.5rem;
-            }
-            .card-inner {
-                padding: 25px;
-            }
-            .signature-card .card-inner {
-                flex-direction: column;
-                gap: 1.5rem;
-                padding: 30px;
-            }
-            .text-content {
-                text-align: center;
-            }
-            .text-content h3 {
-                font-size: 1.5rem;
-            }
-             .text-content h4 {
-                font-size: 0.9rem;
-            }
-            .text-content p {
-                font-size: 1rem;
-            }
-        }
+      }
 
     </style>
-</head>
-<body>
-    <div class="container">
-        <header class="header">
-            <h1>Konveyor AI Geliştirici Kılavuzu</h1>
-            <p>Bu kılavuz, Konveyor AI sisteminin teknik mimarisini, entegrasyon yeteneklerini ve gelecekteki gelişim potansiyelini akademik bir perspektifle sunmaktadır.</p>
-        </header>
+  </head>
+  <body>
+    <header>
+      <a href="/dashboard" class="logo">
+        <svg
+          class="logo-icon"
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <rect x="2" y="7" width="20" height="10" rx="2" ry="2" />
+          <circle cx="6" cy="12" r="1.5" fill="currentColor" />
+          <circle cx="18" cy="12" r="1.5" fill="currentColor" />
+        </svg>
+        <span>Konveyor AI</span>
+      </a>
+      <a href="/dashboard" class="back-to-app-btn">Uygulamaya Dön</a>
+    </header>
 
-        <div class="grid-container">
-            <!-- Kart 1: Proje Tanımı -->
-            <div class="card">
-                <div class="card-inner">
-                    <h2>Proje Tanımı ve Kapsamı</h2>
-                    <p>Konveyor AI, endüstriyel otomasyon süreçlerinde kritik bir bileşen olan konveyör bantlarının operasyonel bütünlüğünü sağlamak üzere tasarlanmış, yapay zeka tabanlı bir proaktif bakım ve izleme sistemidir. Projenin temel amacı, üretim hatlarındaki beklenmedik duruşları minimize etmek, bakım maliyetlerini düşürmek ve iş güvenliğini artırmaktır. Sistem, bantlardaki yönsel kayma (kayıklık) gibi yaygın ve maliyetli sorunları, geleneksel sensörlere kıyasla daha esnek ve akıllı bir yöntem olan görsel analiz ile tespit eder.</p>
-                </div>
+    <main>
+      <div class="signature-wrapper">
+        <div class="signature-card">
+          <div class="signature-card-content">
+            <div class="cube-container">
+              <div class="face front"></div>
+              <div class="face back"></div>
+              <div class="face right"></div>
+              <div class="face left"></div>
+              <div class="face top"></div>
+              <div class="face bottom"></div>
+        
+              <div class="inner-cube">
+                <div class="face front"></div>
+                <div class="face back"></div>
+                <div class="face right"></div>
+                <div class="face left"></div>
+                <div class="face top"></div>
+                <div class="face bottom"></div>
+              </div>
             </div>
-
-            <!-- Kart 2: Mimari ve Entegrasyon -->
-            <div class="card">
-                <div class="card-inner">
-                    <h2>Sistem Mimarisi ve Teknolojik Entegrasyon</h2>
-                    <p>Uygulama, modern web teknolojileri ve esnek yapay zeka araçları üzerine inşa edilmiştir:</p>
-                    <ul>
-                        <li><strong>Arayüz (Frontend):</strong> Next.js (App Router) ile sunucu tarafı render (SSR) ve istemci tarafı etkileşim dengesi sağlanmıştır.</li>
-                        <li><strong>Yapay Zeka (AI):</strong> Google Genkit, görüntü analizi için Gemini modelini kullanarak, gelen görüntü verilerinden yapılandırılmış JSON formatında (örn: `{ "deviation": 2.1 }`) sapma verileri üretir.</li>
-                        <li><strong>Entegrasyon Kabiliyeti:</strong> Sistem, PLC (Programlanabilir Mantıksal Denetleyici) üniteleri ile entegre olabilir. Anomali durumlarında, sistemden PLC'ye bir sinyal gönderilerek hattın yavaşlatılması veya durdurulması gibi otomatik aksiyonlar tetiklenebilir.</li>
-                    </ul>
-                </div>
+            <div class="text-content">
+              <h4>Hazırlayan:</h4>
+              <h3>Mustafa USLU</h3>
+              <p>Proje Geliştirici</p>
             </div>
-
-            <!-- Kart 3: Donanım Uyumluluğu -->
-            <div class="card">
-                <div class="card-inner">
-                    <h2>Donanım Uyumluluğu ve Seçimi</h2>
-                    <p>Konveyor AI, geniş bir donanım yelpazesiyle çalışacak şekilde esnek olarak tasarlanmıştır. Bu, sistemin farklı bütçe ve ihtiyaçlara göre ölçeklenmesini sağlar:</p>
-                    <ul>
-                        <li><strong>Temel Seviye:</strong> Standart USB web kameraları ile hızlı ve düşük maliyetli kurulum.</li>
-                        <li><strong>Endüstriyel Seviye:</strong> Zorlu ortam koşullarına dayanıklı endüstriyel IP kameralar.</li>
-                        <li><strong>Gelişmiş Seviye (Kenar Bilişim):</strong> Görüntü işleme görevini doğrudan sahada üstlenen <strong>NVIDIA Jetson</strong> veya Raspberry Pi gibi tek kart bilgisayarlar (SBC) ile entegrasyon. Bu, ağ gecikmesini ortadan kaldırır ve anlık tepki süresi sağlar.</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Kart 4: Performans ve Model Analizi -->
-            <div class="card">
-                <div class="card-inner">
-                    <h2>Performans Analizi ve Model Karşılaştırması</h2>
-                    <p>Sistemin kalbinde, Google'ın Gemini modeli yer alır. Bu modelin seçimi, özellikle "JSON Modu"nda çalışabilme yeteneği sayesinde stratejik bir karardır. Bu özellik, modelin çıktısını doğrudan programatik olarak işlenebilir, katı bir şemaya sahip bir JSON nesnesi olarak vermesini zorunlu kılar. Bu, görüntü analizinden elde edilen sonucun (sapma miktarı) güvenilir, tutarlı ve anında kullanılabilir olmasını garanti eder. Alternatif modellerle yapılan kıyaslamalarda, Gemini'nin bu yapılandırılmış veri çıkarma yeteneği, implementasyon süresini kısaltmış ve sistemin genel kararlılığını artırmıştır.</p>
-                </div>
-            </div>
-
-            <!-- Kart 5: Gelecek Vizyonu -->
-            <div class="card">
-                <div class="card-inner">
-                    <h2>Opsiyonel Geliştirme ve Gelecek Vizyonu</h2>
-                    <p>Konveyor AI projesi, modüler yapısı sayesinde gelecekteki geliştirmelere açıktır:</p>
-                    <ul>
-                        <li><strong>Merkezi Kontrol Paneli:</strong> Birden fazla fabrika veya üretim tesisinin tek bir merkezden izlenmesi.</li>
-                        <li><strong>Gelişmiş Operatör Yönetimi:</strong> Kullanıcı rolleri (mühendis, operatör, yönetici) tanımlama ve yetkilendirme.</li>
-                        <li><strong>Öngörücü Bakım:</strong> Toplanan anomali verilerini analiz ederek, olası büyük arızaları önceden tahmin eden ve bakım önerileri sunan makine öğrenmesi modelleri geliştirme.</li>
-                        <li><strong>Bulut Veri Analitiği:</strong> Anomali kayıtlarını bir bulut veritabanında (örn: Firestore) depolayarak uzun vadeli performans analizleri ve raporlamalar yapma.</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <!-- Kart 6: Sonuç -->
-            <div class="card">
-                <div class="card-inner">
-                    <h2>Sonuç ve Değerlendirme</h2>
-                    <p>Konveyor AI, modern yapay zeka teknolojilerini kullanarak endüstri 4.0 prensiplerini üretim hatlarına taşıyan yenilikçi bir çözümdür. Esnek donanım uyumluluğu, PLC entegrasyon potansiyeli ve gelişmiş görsel analiz yetenekleri sayesinde, sadece bir anomali tespit aracı olmanın ötesinde, üretim verimliliğini ve güvenliğini optimize eden proaktif bir bakım platformu olma potansiyeline sahiptir. Proje, hem yazılım hem de donanım katmanlarında ölçeklenebilir ve geliştirilebilir bir temel üzerine kurulmuştur.</p>
-                </div>
-            </div>
-            
-            <!-- İmza Kartı -->
-             <div class="card signature-card">
-                <div class="card-inner">
-                    <div class="signature-card-content">
-                        <div class="cube-container">
-                            <div class="face front"></div>
-                            <div class="face back"></div>
-                            <div class="face right"></div>
-                            <div class="face left"></div>
-                            <div class="face top"></div>
-                            <div class="face bottom"></div>
-
-                            <div class="inner-cube">
-                                <div class="face front"></div>
-                                <div class="face back"></div>
-                                <div class="face right"></div>
-                                <div class="face left"></div>
-                                <div class="face top"></div>
-                                <div class="face bottom"></div>
-                            </div>
-                        </div>
-                        <div class="text-content">
-                            <h4>Hazırlayan:</h4>
-                            <h3>Mustafa USLU</h3>
-                            <p>Proje Geliştirici</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
-    </div>
-</body>
+      </div>
+      
+      <h1>Geliştirici Kılavuzu</h1>
+      <p class="subtitle">
+        Konveyor AI sisteminin teknik altyapısı, tasarım felsefesi ve kullanılan
+        ileri düzey CSS efektlerinin detaylı bir incelemesi.
+      </p>
+
+      <div class="grid-container">
+        <div class="card">
+          <div class="card-inner">
+            <h2>Tasarım Felsefesi: VR Glassmorphism</h2>
+            <p>
+              Arayüz, "Glassmorphism" (Cam Efekti) ve fütüristik Sanal Gerçeklik
+              (VR) temalarından ilham alınarak tasarlanmıştır. Bu yaklaşım,
+              katmanlı, yarı saydam ve bulanık arka planlara sahip elemanlar
+              kullanarak derinlik hissi yaratır. Amaç, hem modern ve estetik bir
+              görünüm sunmak hem de kullanıcıya karmaşık verileri sezgisel bir
+              şekilde sunmaktır.
+            </p>
+            <ul>
+              <li>
+                <b>Katmanlı Yapı:</b> Arayüz elemanları üst üste binerek
+                hiyerarşi ve derinlik algısı oluşturur.
+              </li>
+              <li>
+                <b>Yarı Saydamlık:</b> <code>backdrop-filter: blur()</code> ile
+                elde edilen "buzlu cam" efekti, estetik bir dokunuş katarken
+                içeriğin okunabilirliğini korur.
+              </li>
+              <li>
+                <b>Neon Vurgular:</b> Hareketli kenarlıklar ve parlak renkler,
+                teknolojik ve dinamik bir atmosfer yaratır.
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-inner">
+            <h2>Efekt 1: Hareketli "VR" Kenarlık</h2>
+            <p>
+              Kartların en dikkat çekici özelliklerinden biri, etraflarında
+              sürekli dönen çok renkli ışıktır. Bu efekt, CSS'in
+              <code>conic-gradient</code> ve <code>@keyframes</code> özellikleri
+              kullanılarak saf CSS ile oluşturulmuştur.
+            </p>
+            <ul>
+              <li>
+                Bir <code>::after</code> pseudo-elementi, kartın kendisinden
+                daha büyük bir alana yayılır.
+              </li>
+              <li>
+                Bu elementin arka planına, merkez etrafında dönen kesik bir
+                renk gradyanı (<code>conic-gradient</code>) uygulanır.
+              </li>
+              <li>
+                <code>@keyframes</code> ile bu gradyan katmanı 360 derece
+                döndürülerek, kenarlıkta hareket eden bir ışık yanılsaması elde
+                edilir.
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-inner">
+            <h2>Efekt 2: İç İçe 3D Küp Animasyonu</h2>
+            <p>
+              Geliştirici imza kartında yer alan animasyon,
+              <code>transform-style: preserve-3d</code> ve çok eksenli
+              <code>@keyframes</code> animasyonları kullanılarak oluşturulmuş,
+              iç içe geçmiş iki adet 3D küpten oluşur.
+            </p>
+             <ul>
+              <li>
+                <b>3D Sahne:</b> Ana taşıyıcıya <code>perspective</code> verilerek 3D derinlik oluşturulur.
+              </li>
+              <li>
+                <b>Çok Eksenli Dönüş:</b> Küpler, X, Y ve Z eksenlerinde, farklı hızlarda ve zıt yönlerde dönerek karmaşık, senkronize olmayan bir hareket deseni oluşturur.
+              </li>
+              <li>
+                <b>Tel Kafes (Wireframe) Tasarımı:</b> Küp yüzeylerinin sadece kenarlıkları görünür bırakılarak animasyonun karmaşıklığı zarif bir şekilde sergilenir.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </main>
+    
+  </body>
 </html>
