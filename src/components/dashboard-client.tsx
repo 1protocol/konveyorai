@@ -31,6 +31,7 @@ import {
   Bell,
   Users,
   Camera,
+  Loader,
 } from "lucide-react";
 import { analyzeConveyorBelt } from "@/ai/flows/analyze-conveyor-flow";
 import {
@@ -48,10 +49,12 @@ import { Switch } from "@/components/ui/switch";
 import { SvgIcons } from "./ui/svg-icons";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "./ui/input";
+import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 
 type AnomalyLog = {
-  timestamp: Date;
+  timestamp: string; // Use string to ensure serializability for localStorage
   deviation: number;
+  bant: string;
 };
 
 export type AppSettings = {
@@ -63,20 +66,25 @@ export type CameraConfig = {
   [key: string]: string;
 };
 
-export function DashboardClient() {
-  const searchParams = useSearchParams();
-  const selectedBant = searchParams.get('bant') || '1';
+const defaultSettings: AppSettings = {
+  anomalyThreshold: 2.0,
+  isSoundAlertEnabled: true,
+};
 
-  const [settings, setSettings] = useState<AppSettings>({
-    anomalyThreshold: 2.0,
-    isSoundAlertEnabled: true,
-  });
-  const [cameraConfig, setCameraConfig] = useState<CameraConfig>({
+const defaultCameraConfig: CameraConfig = {
     '1': '/conveyor-video.mp4',
     '2': '/conveyor-video.mp4',
     '3': '/conveyor-video.mp4',
     '4': '/conveyor-video.mp4',
-  });
+};
+
+export function DashboardClient() {
+  const searchParams = useSearchParams();
+  const selectedBant = searchParams.get('bant') || '1';
+
+  const [isClient, setIsClient] = useState(false);
+  const [settings, setSettings] = useState<AppSettings>(defaultSettings);
+  const [cameraConfig, setCameraConfig] = useState<CameraConfig>(defaultCameraConfig);
   const [deviation, setDeviation] = useState(0);
   const [status, setStatus] = useState<"NORMAL" | "ANOMALİ" | "KALİBRE EDİLİYOR">(
     "NORMAL"
@@ -91,6 +99,64 @@ export function DashboardClient() {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isProcessing, setIsProcessing] = useState(false);
 
+  // --- Data Persistence Effects ---
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (isClient) {
+      try {
+        const savedSettings = localStorage.getItem("konveyorGardSettings");
+        const savedCameraConfig = localStorage.getItem("konveyorGardCameraConfig");
+        const savedLogs = localStorage.getItem("konveyorGardLogs");
+
+        if (savedSettings) {
+          setSettings(JSON.parse(savedSettings));
+        }
+        if (savedCameraConfig) {
+          setCameraConfig(JSON.parse(savedCameraConfig));
+        }
+        if (savedLogs) {
+          setLogs(JSON.parse(savedLogs));
+        }
+        toast({
+            title: "Ayarlar Yüklendi",
+            description: "Kaydedilmiş yapılandırmanız başarıyla yüklendi.",
+        });
+      } catch (error) {
+        console.error("Yerel depolamadan ayarlar okunurken hata oluştu:", error);
+        toast({
+            variant: "destructive",
+            title: "Ayarlar Yüklenemedi",
+            description: "Ayarlarınız yüklenirken bir sorun oluştu.",
+        });
+      }
+    }
+  }, [isClient, toast]);
+
+  const saveSettings = useCallback((newSettings: AppSettings) => {
+    setSettings(newSettings);
+    if (isClient) {
+        localStorage.setItem("konveyorGardSettings", JSON.stringify(newSettings));
+    }
+  }, [isClient]);
+
+  const saveCameraConfig = useCallback((newConfig: CameraConfig) => {
+    setCameraConfig(newConfig);
+    if (isClient) {
+        localStorage.setItem("konveyorGardCameraConfig", JSON.stringify(newConfig));
+    }
+  }, [isClient]);
+
+  const saveLogs = useCallback((newLogs: AnomalyLog[]) => {
+    setLogs(newLogs);
+    if (isClient) {
+        localStorage.setItem("konveyorGardLogs", JSON.stringify(newLogs));
+    }
+  }, [isClient]);
+
+
   const playAlertSound = useCallback(() => {
     if (settings.isSoundAlertEnabled && audioRef.current?.src) {
         audioRef.current.play().catch(e => console.error("Ses çalma hatası:", e));
@@ -100,14 +166,16 @@ export function DashboardClient() {
   useEffect(() => {
     setDeviation(0);
     setStatus("NORMAL");
-    setLogs([]);
     setIsCalibrating(false);
     setCalibrationProgress(0);
 
     if(videoRef.current) {
-      videoRef.current.src = cameraConfig[selectedBant] || '/conveyor-video.mp4';
-      videoRef.current.load();
-      videoRef.current.play().catch(e => console.error("Video oynatma hatası:", e));
+      const videoSource = cameraConfig[selectedBant] || '/conveyor-video.mp4';
+      if (videoRef.current.src !== window.location.origin + videoSource) {
+          videoRef.current.src = videoSource;
+          videoRef.current.load();
+          videoRef.current.play().catch(e => console.error("Video oynatma hatası:", e));
+      }
     }
 
   }, [selectedBant, cameraConfig]);
@@ -120,7 +188,7 @@ export function DashboardClient() {
       setIsProcessing(true);
   
       const video = videoRef.current;
-      if (video.paused || video.ended || video.readyState < 2) {
+      if (video.paused || video.ended || video.readyState < 3) { // Use readyState 3 (HAVE_FUTURE_DATA) for more reliability
         setIsProcessing(false);
         return;
       }
@@ -144,9 +212,13 @@ export function DashboardClient() {
               playAlertSound();
             }
             setStatus("ANOMALİ");
-            setLogs((prevLogs) =>
-              [{ timestamp: new Date(), deviation: newDeviation }, ...prevLogs].slice(0, 100)
-            );
+            const newLog: AnomalyLog = { 
+                timestamp: new Date().toISOString(), 
+                deviation: newDeviation,
+                bant: selectedBant
+            };
+            saveLogs([newLog, ...logs].slice(0, 100));
+
           } else {
              setStatus("NORMAL");
           }
@@ -167,7 +239,7 @@ export function DashboardClient() {
   
     const interval = setInterval(analyzeFrame, 2000);
     return () => clearInterval(interval);
-  }, [isCalibrating, isProcessing, toast, settings.anomalyThreshold, status, playAlertSound, selectedBant]);
+  }, [isCalibrating, isProcessing, toast, settings.anomalyThreshold, status, playAlertSound, selectedBant, logs, saveLogs]);
 
   useEffect(() => {
     if (isCalibrating && calibrationProgress === 100) {
@@ -196,8 +268,17 @@ export function DashboardClient() {
       });
     }, 300);
   };
-
+  
+  const filteredLogs = logs.filter(log => log.bant === selectedBant);
   const isAnomaly = status === "ANOMALİ";
+
+  if (!isClient) {
+      return (
+        <div className="flex items-center justify-center h-full">
+            <Loader className="h-16 w-16 animate-spin text-primary" />
+        </div>
+      );
+  }
 
   return (
     <div className="space-y-8">
@@ -205,13 +286,13 @@ export function DashboardClient() {
         <h1 className="text-2xl font-bold tracking-tight">Genel Bakış - Bant {selectedBant}</h1>
         <SettingsDialog 
           settings={settings} 
-          onSettingsChange={setSettings} 
+          onSettingsChange={saveSettings} 
           audioRef={audioRef} 
           isCalibrating={isCalibrating}
           calibrationProgress={calibrationProgress}
           onCalibrate={handleCalibrate}
           cameraConfig={cameraConfig}
-          onCameraConfigChange={setCameraConfig}
+          onCameraConfigChange={saveCameraConfig}
         />
       </div>
 
@@ -235,7 +316,7 @@ export function DashboardClient() {
                   playsInline 
                   loop
                   crossOrigin="anonymous"
-                  key={selectedBant}
+                  key={cameraConfig[selectedBant] || selectedBant}
                 />
                 <canvas ref={canvasRef} className="hidden" />
                 {isProcessing && (
@@ -243,7 +324,7 @@ export function DashboardClient() {
                     <p className="text-white font-medium">İşleniyor...</p>
                   </div>
                 )}
-                 <audio ref={audioRef} src="/alert-sound.mp3" preload="auto" onCanPlayThrough={() => {}} onError={(e) => console.error("Ses dosyası yüklenemedi", e)}></audio>
+                 <audio ref={audioRef} src="/alert-sound.mp3" preload="auto"></audio>
             </div>
         </CardContent>
       </Card>
@@ -321,10 +402,10 @@ export function DashboardClient() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {logs.length > 0 ? (
-                  logs.map((log, index) => (
+                {filteredLogs.length > 0 ? (
+                  filteredLogs.map((log, index) => (
                     <TableRow key={index}>
-                      <TableCell>{log.timestamp.toLocaleString('tr-TR')}</TableCell>
+                      <TableCell>{new Date(log.timestamp).toLocaleString('tr-TR')}</TableCell>
                       <TableCell className="text-right font-medium text-destructive">
                         {log.deviation.toFixed(2)}
                       </TableCell>
@@ -336,13 +417,28 @@ export function DashboardClient() {
                       colSpan={2}
                       className="h-24 text-center text-muted-foreground"
                     >
-                      Henüz anomali kaydedilmedi.
+                      Bu bant için henüz anomali kaydedilmedi.
                     </TableCell>
                   </TableRow>
                 )}
               </TableBody>
             </Table>
           </div>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>
+            <CardTitle>Tüm Bantlar İçin 8 Saatlik Eylem Raporu</CardTitle>
+            <CardDescription>Son 8 saat içinde tüm bantlarda tespit edilen anomaliler.</CardDescription>
+        </CardHeader>
+        <CardContent>
+            <Alert>
+                <Users className="h-4 w-4" />
+                <AlertTitle>Gelecek Özellik</AlertTitle>
+                <AlertDescription>
+                    Bu bölümde, operatör atamaları ve veritabanı entegrasyonu tamamlandığında son 8 saatlik detaylı anomali raporları gösterilecektir.
+                </AlertDescription>
+            </Alert>
         </CardContent>
       </Card>
     </div>
@@ -387,18 +483,7 @@ function SettingsDialog({
   const handleSoundSwitchChange = (checked: boolean) => {
     setCurrentSettings({ ...currentSettings, isSoundAlertEnabled: checked });
     if (checked && audioRef.current?.src) {
-      // Ensure the audio is loaded before playing
-      audioRef.current.load();
-      const playPromise = audioRef.current.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(error => {
-          // Autoplay was prevented. This is a common browser policy.
-          // We can ignore this error in the context of a test sound.
-          if (error.name !== "AbortError") {
-             console.error("Test sesi çalma hatası:", error);
-          }
-        });
-      }
+      audioRef.current.play().catch(e => console.error("Test sesi çalınamadı:", e));
     }
   };
 

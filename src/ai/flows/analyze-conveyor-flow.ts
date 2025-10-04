@@ -46,7 +46,7 @@ const prompt = ai.definePrompt({
 
 Analizine göre sapma miktarını milimetre cinsinden belirle ve 'deviation' alanına yaz.
 
-Gerçek bir sensörün davranışını simüle etmek için, sapma değerini 0.0 ile 4.0 arasında rastgele bir sayı olarak belirle. Değerin 2.0'ın üzerine çıkma olasılığı daha düşük olmalıdır. Bu, nadir ama kritik anormallikleri temsil eder.
+Gerçek bir sensörün davranışını simüle et. Çoğunlukla 0.1 ile 1.5 arasında normal sapma değerleri üret. Ancak, her 20 çağrıdan birinde, 2.5 ile 4.5 arasında bir anomali (ani yükselme) oluşturarak kritik durumları simüle et. Bu, nadir ama önemli arızaları temsil eder.
 
 Görüntü: {{media url=frameDataUri}}`,
 });
@@ -58,7 +58,24 @@ const analyzeConveyorBeltFlow = ai.defineFlow(
     outputSchema: AnalyzeConveyorBeltOutputSchema,
   },
   async (input) => {
-    const { output } = await prompt(input);
-    return output!;
+    // This is a mock implementation to simulate realistic behavior.
+    // In a real-world scenario, this would involve a complex computer vision model.
+
+    // Simulate a rare anomaly spike
+    const isAnomalySpike = Math.random() < 0.05; // 5% chance of a spike
+
+    let deviation: number;
+
+    if (isAnomalySpike) {
+      // Generate a high deviation value for an anomaly
+      deviation = 2.5 + Math.random() * 2.0; // Range: 2.5 to 4.5
+    } else {
+      // Generate a normal, low deviation value
+      deviation = 0.1 + Math.random() * 1.4; // Range: 0.1 to 1.5
+    }
+
+    return {
+      deviation: parseFloat(deviation.toFixed(2)),
+    };
   }
 );
