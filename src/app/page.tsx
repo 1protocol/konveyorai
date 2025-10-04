@@ -2,7 +2,7 @@
 "use client";
 
 import Link from 'next/link';
-import { LayoutDashboard, Settings, Network } from 'lucide-react';
+import { LayoutDashboard, Settings, Network, FileText, Users } from 'lucide-react';
 
 import {
   Sidebar,
@@ -28,7 +28,7 @@ import {
 
 export default function DashboardPage() {
   return (
-    <SidebarProvider defaultOpen={false}>
+    <SidebarProvider defaultOpen={true}>
       <PageContent />
     </SidebarProvider>
   );
@@ -91,8 +91,31 @@ function PageContent() {
                     </AccordionContent>
                 </AccordionItem>
             </Accordion>
+             <SidebarMenuItem>
+                <SidebarMenuButton href="#" tooltip="Raporlar" disabled>
+                    <FileText className="size-5" />
+                    <span className="group-data-[state=collapsed]:hidden">Raporlar</span>
+                </SidebarMenuButton>
+            </SidebarMenuItem>
+            <Accordion type="single" collapsible className="w-full px-2 group-data-[state=collapsed]:hidden">
+                <AccordionItem value="item-1" className="border-none">
+                    <AccordionTrigger className="hover:no-underline hover:bg-sidebar-accent rounded-md px-2 py-1.5 text-base w-full justify-start data-[state=open]:bg-sidebar-accent">
+                        <div className="flex items-center gap-2.5">
+                            <Users className="size-5" />
+                            <span>Yönetim</span>
+                        </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="pl-4 pt-1">
+                        <SidebarMenu className="p-0">
+                            <SidebarMenuItem>
+                                <SidebarMenuButton href="#" variant="ghost" size="sm" className="w-full justify-start h-8 text-base" disabled>Operatörler</SidebarMenuButton>
+                            </SidebarMenuItem>
+                        </SidebarMenu>
+                    </AccordionContent>
+                </AccordionItem>
+            </Accordion>
             <SidebarMenuItem>
-                <SidebarMenuButton href="/ayarlar" tooltip="Ayarlar">
+                <SidebarMenuButton href="#" tooltip="Ayarlar">
                     <Settings className="size-5" />
                     <span className="group-data-[state=collapsed]:hidden">Ayarlar</span>
                 </SidebarMenuButton>
