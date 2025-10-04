@@ -5,10 +5,11 @@ ConveyorAI, endüstriyel üretim hatlarındaki konveyör bantlarını gerçek za
 ## ✨ Temel Özellikler
 
 - **🤖 Otomatik Referans ve AI Destekli Analiz:** Sistem ilk çalıştırıldığında, bantın mevcut konumunu otomatik olarak bir başlangıç referansı olarak kaydeder. Canlı video akışını sürekli analiz ederek konveyör bandının bu referanstan sapmalarını milimetre cinsinden tespit eder.
-- **📹 Gerçek Zamanlı İzleme ve Çoklu İstasyon:** Birden fazla konveyör bandını (istasyon) ayrı ayrı izleme ve yönetme imkanı sunar. Her istasyonun anlık durumunu gösteren bir canlı izleme paneli bulunur.
+- **📹 Gerçek Zamanlı Görselleştirme:** Canlı video akışı üzerine eklenen dinamik çizgilerle, yapay zekanın referans noktasını ve anlık sapmayı nasıl ölçtüğünü görsel olarak gösterir.
+- **⚙️ Çoklu İstasyon Yönetimi:** Birden fazla konveyör bandını (istasyon) ayrı ayrı izleme ve yönetme imkanı sunar. Her istasyonun anlık durumu, ana panelden veya kenar çubuğundan kolayca seçilebilir.
 - **⚠️ Anomali Tespiti ve Uyarı:** Kullanıcı tarafından belirlenen sapma eşik değeri (örn: 2mm) aşıldığında anında "Anomali" durumu oluşturur ve sesli/görsel uyarılar verir.
 - **🔧 Dinamik Yapılandırma:** Kullanıcılar, "Gelişmiş Ayarlar" menüsünden aşağıdaki parametreleri dinamik olarak yönetebilir:
-    - **İstasyon Yönetimi:** Yeni konveyör bantları (istasyonlar) ekleme, isimlendirme ve video kaynağını (webcam veya dosya) atama.
+    - **İstasyon Yönetimi:** Yeni konveyör bantları (istasyonlar) ekleme, isimlendirme ve video kaynağını (webcam veya dosya yolu) atama.
     - **Hassasiyet Ayarı:** Anomali olarak kabul edilecek sapma eşiğini (mm cinsinden) ayarlama.
     - **AI Kalibrasyonu:** Tek tıklamayla yapay zeka modelinin başlangıç referans noktasını yeniden oluşturma.
     - **Sesli Uyarılar:** Anomali uyarı sesini açıp kapatma.
@@ -33,7 +34,7 @@ Projenin temel dosya ve klasör yapısı aşağıda açıklanmıştır:
 ├── src
 │   ├── app/                # Next.js App Router sayfaları ve ana layout
 │   │   ├── layout.tsx
-│   │   └── page.tsx        # Ana kontrol paneli sayfası ve kenar çubuğu
+│   │   └── page.tsx        # Ana kontrol paneli ve kenar çubuğu yerleşimi
 │   │
 │   ├── components/         # Tekrar kullanılabilir React bileşenleri
 │   │   ├── ui/             # Shadcn UI temel bileşenleri
