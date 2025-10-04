@@ -1,282 +1,305 @@
 <!DOCTYPE html>
 <html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Konveyor AI - Geliştirici Kılavuzu</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Konveyor AI Geliştirici Kılavuzu</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        :root {
-            --bg-color: #12141d;
-            --card-bg-color: rgba(40, 43, 56, 0.6);
-            --text-color: #E0E1E6;
-            --primary-color: #fca311;
-            --muted-color: #8D93A4;
-            --border-color: rgba(255, 255, 255, 0.1);
-        }
+      :root {
+        --background-color: hsl(224, 71%, 4%);
+        --primary-text-color: hsl(210, 40%, 98%);
+        --secondary-text-color: hsl(215, 20%, 65%);
+        --accent-color: hsl(32, 95%, 54%);
+        --accent-hover: hsl(32, 100%, 65%);
+        --card-bg: rgba(40, 43, 56, 0.6);
+        --card-inner-bg: rgba(60, 65, 85, 0.5);
+        --card-border: rgba(255, 255, 255, 0.1);
+        --card-inner-border: rgba(255, 255, 255, 0.2);
+        --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.7;
-            font-size: 16px;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            background-image: radial-gradient(circle at 1% 1%, #2a2d3a 0%, transparent 25%), radial-gradient(circle at 99% 99%, #2a2d3a 0%, transparent 25%);
-        }
+      body {
+        font-family: 'Poppins', sans-serif;
+        background-color: var(--background-color);
+        background-image: radial-gradient(
+            circle at 15% 50%,
+            hsla(220, 40%, 20%, 0.3),
+            transparent 40%
+          ),
+          radial-gradient(
+            circle at 85% 30%,
+            hsla(280, 40%, 25%, 0.25),
+            transparent 40%
+          );
+        color: var(--primary-text-color);
+        line-height: 1.7;
+        font-size: 16px;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
 
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px;
+      }
+
+      .banner,
+      .card {
+        background: var(--card-bg);
+        border-radius: 20px;
+        border: 1px solid var(--card-border);
+        box-shadow: var(--card-shadow);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        margin-bottom: 40px;
+        padding: 12px;
+      }
+      
+      .card-inner {
+        background: var(--card-inner-bg);
+        border-radius: 12px;
+        border: 1px solid var(--card-inner-border);
+        padding: 30px;
+        height: 100%;
+        width: 100%;
+      }
+
+
+      .banner {
+        text-align: center;
+        margin-bottom: 60px;
+      }
+
+      h1,
+      h2,
+      h3 {
+        line-height: 1.3;
+        font-weight: 700;
+      }
+
+      .banner h1 {
+        font-size: 2.8rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        background: -webkit-linear-gradient(
+          45deg,
+          #fff,
+          var(--accent-color) 80%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .banner p {
+        font-size: 1.1rem;
+        color: var(--secondary-text-color);
+        max-width: 700px;
+        margin: 0 auto 2rem auto;
+      }
+
+      h2 {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+        color: var(--primary-text-color);
+        border-bottom: 2px solid var(--accent-color);
+        padding-bottom: 0.5rem;
+        display: inline-block;
+      }
+
+      p {
+        color: var(--secondary-text-color);
+        margin-bottom: 1rem;
+      }
+      
+      ul {
+        list-style-type: none;
+        padding-left: 0;
+      }
+
+      .tech-stack ul {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        justify-content: center;
+      }
+
+      .tech-stack li {
+        color: var(--secondary-text-color);
+        font-size: 1rem;
+        font-weight: 500;
+        text-align: center;
+        background-color: rgba(255, 255, 255, 0.05);
+        padding: 10px 20px;
+        border-radius: 8px;
+      }
+
+      .btn {
+        display: inline-block;
+        background-color: var(--accent-color);
+        color: var(--background-color);
+        padding: 14px 28px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+      }
+
+      .btn:hover {
+        background-color: var(--accent-hover);
+        transform: translateY(-2px);
+      }
+      
+      /* Responsive Design */
+      @media (max-width: 768px) {
         .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
-
-        .banner {
-            text-align: center;
-            padding: 50px 30px;
-            margin-bottom: 50px;
-            background: var(--card-bg-color);
-            border-radius: 16px;
-            border: 1px solid var(--border-color);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+            padding: 20px;
         }
 
         .banner h1 {
-            font-size: 2.8rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
+            font-size: 2.2rem;
         }
-
+        
         .banner p {
-            font-size: 1.1rem;
-            color: var(--muted-color);
-            max-width: 700px;
-            margin: 0 auto 2rem auto;
+            font-size: 1rem;
+        }
+        
+        h2 {
+            font-size: 1.6rem;
+        }
+        
+        .card, .banner {
+            padding: 8px;
+        }
+        
+        .card-inner {
+            padding: 20px;
         }
 
         .btn {
-            display: inline-block;
-            background-color: var(--primary-color);
-            color: #141414;
-            padding: 14px 28px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-        }
-
-        .btn:hover {
-            background-color: #ffb74d;
-            transform: translateY(-2px);
-        }
-
-        h2 {
-            font-size: 2rem;
-            font-weight: 600;
-            margin-bottom: 2rem;
-            border-bottom: 2px solid var(--primary-color);
-            padding-bottom: 0.5rem;
-            display: inline-block;
-        }
-
-        .card {
-            background: var(--card-bg-color);
-            padding: 30px;
-            border-radius: 16px;
-            margin-bottom: 40px;
-            border: 1px solid var(--border-color);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
-        }
-
-        .card p, .card li {
-            color: var(--muted-color);
-        }
-
-        .card ul {
-            list-style-position: inside;
-            padding-left: 0;
-        }
-        
-        .card li {
-            margin-bottom: 0.5rem;
-        }
-
-        pre {
-            background-color: #0c0d12;
-            padding: 20px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            white-space: pre-wrap;
-            word-wrap: break-word;
+            padding: 12px 24px;
             font-size: 0.9rem;
-            color: #cdd2de;
         }
+      }
 
-        code {
-            font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
-        }
-
-        .tech-stack {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 20px;
-            list-style: none;
-            padding: 0;
-            text-align: center;
-        }
-
-        .tech-stack li {
-            background: rgba(12, 13, 18, 0.5);
-            padding: 20px;
-            border-radius: 8px;
-            transition: transform 0.3s ease;
-        }
-
-        .tech-stack li:hover {
-            transform: translateY(-5px);
-        }
-
-        .tech-stack span {
-            font-weight: 500;
-            font-size: 1rem;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .container {
-                padding: 20px 15px;
-            }
-
-            .banner {
-                padding: 30px 20px;
-                margin-bottom: 30px;
-            }
-
-            .banner h1 {
-                font-size: 2.2rem;
-            }
-
-            .banner p {
-                font-size: 1rem;
-            }
-
-            h2 {
-                font-size: 1.6rem;
-            }
-
-            .card {
-                padding: 20px;
-                margin-bottom: 30px;
-            }
-
-            .btn {
-                padding: 12px 24px;
-                font-size: 0.95rem;
-            }
-
-            pre {
-                padding: 15px;
-            }
-        }
     </style>
-</head>
-<body>
-    <div class="container">
-        <header class="banner">
-            <h1>Konveyor AI Geliştirici Kılavuzu</h1>
-            <p>Yapay zeka destekli konveyör bandı güvenlik sisteminin teknik altyapısı, kurulumu ve en iyi kullanım pratikleri hakkında kapsamlı bir rehber.</p>
-            <a href="/dashboard" class="btn">Operasyon Paneline Git</a>
-        </header>
+  </head>
+  <body>
+    <main>
+      <div class="container">
+        <div class="banner">
+           <div class="card-inner">
+                <h1>Konveyor AI Geliştirici Kılavuzu</h1>
+                <p>
+                Yapay zeka destekli konveyör bandı güvenlik sisteminin teknik
+                yapısını, kurulum adımlarını ve en iyi kullanım senaryolarını
+                keşfedin.
+                </p>
+                <a href="/dashboard" class="btn">Operasyon Paneline Git</a>
+           </div>
+        </div>
 
-        <section id="introduction" class="card">
-            <h2>✨ Proje Tanıtımı</h2>
-            <p>Konveyor AI, endüstriyel üretim hatlarındaki konveyör bantlarını yapay zeka ile gerçek zamanlı izleyerek olası yönsel kayma (kayıklık) sorunlarını otomatik olarak tespit eden modern bir web uygulamasıdır. Sistem, harici bir veri setine ihtiyaç duymadan, çalışmaya başladığı anda kendi referansını oluşturarak üretim verimliliğini ve güvenliğini artırmak için tasarlanmıştır.</p>
-        </section>
-
-        <section id="architecture" class="card">
-            <h2>⚙️ Sistem Mimarisi ve Çalışma Prensibi</h2>
-            <p>Konveyor AI, üç temel adımda çalışır:</p>
+        <section class="card tech-stack">
+          <div class="card-inner">
+            <h2>Teknoloji Yığını</h2>
             <ul>
-                <li><strong>1. Referans Oluşturma (Kalibrasyon):</strong> "Kalibrasyonu Başlat" komutuyla, sistem anlık video akışından konveyör bandının ideal konumunu öğrenir ve bunu bir başlangıç referansı olarak kaydeder.</li>
-                <li><strong>2. Gerçek Zamanlı AI Analizi:</strong> Google Genkit ve Gemini modeli kullanılarak, canlı video akışından alınan her görüntü karesi bu referansla karşılaştırılır. Yapay zeka, bandın kenarındaki olası sapmaları milimetre cinsinden hassas bir şekilde ölçer.</li>
-                <li><strong>3. Anomali Tespiti ve Uyarı:</strong> Ölçülen sapma değeri, kullanıcı tarafından belirlenen "Anomali Eşiği"ni aşarsa, sistem anında görsel ve sesli uyarılar üreterek operatörleri bilgilendirir ve bu durumu kayıt altına alır.</li>
+              <li>Next.js</li>
+              <li>TypeScript</li>
+              <li>Google Genkit</li>
+              <li>Shadcn UI</li>
+              <li>Tailwind CSS</li>
+              <li>Lucide React</li>
             </ul>
+          </div>
         </section>
 
-        <section id="tech-stack" class="card">
-            <h2>🚀 Teknoloji Yığını</h2>
-            <ul class="tech-stack">
-                <li><span>Next.js</span></li>
-                <li><span>TypeScript</span></li>
-                <li><span>Google Genkit</span></li>
-                <li><span>Shadcn UI</span></li>
-                <li><span>Tailwind CSS</span></li>
-                <li><span>Lucide React</span></li>
-            </ul>
+        <section class="card" id="features">
+           <div class="card-inner">
+                <h2>Kullanım Özellikleri ve Optimizasyon</h2>
+                <h3>Donanım Seçimi ve Kurulum</h3>
+                <p>
+                Sistemin doğruluğu, büyük ölçüde kullanılan donanımın kalitesine ve
+                doğru yapılandırılmasına bağlıdır.
+                </p>
+                <ul>
+                <li>
+                    <strong>Kamera Seçimi:</strong> Yüksek çözünürlüklü (en az 1080p)
+                    ve endüstriyel ortam koşullarına dayanıklı bir kamera seçimi
+                    kritiktir. Global Shutter özelliğine sahip kameralar, hareketli
+                    bantlardaki görüntü yırtılmalarını engelleyerek daha net veriler
+                    sunar.
+                </li>
+                <li>
+                    <strong>Lens Seçimi:</strong> Lens, bandın tamamını net bir
+                    şekilde görecek ve perspektif bozulmasını en aza indirecek bir
+                    açıya sahip olmalıdır. Sabit odaklı (prime) lensler genellikle
+                    daha keskin görüntüler sağlar.
+                </li>
+                <li>
+                    <strong>Referans Konumun Sabitliği:</strong> Kameranın, titreşim
+                    veya dış müdahalelerle hareket etmeyecek şekilde sabitlenmesi,
+                    AI modelinin referans noktasını kaybetmemesi için hayati önem
+                    taşır.
+                </li>
+                </ul>
+                <h3>Çevresel Faktörler</h3>
+                <p>
+                Işıklandırma, yapay zeka modelinin bandın kenarlarını doğru tespit
+                etmesi için en önemli çevresel faktördür.
+                </p>
+                <ul>
+                <li>
+                    <strong>Işıklandırma:</strong> Konveyör bandı yüzeyinde gölge
+                    veya parlama oluşturmayacak, homojen ve sabit bir aydınlatma
+                    sağlanmalıdır. LED bar aydınlatmalar bu iş için idealdir. Ortam
+                    ışığındaki (güneş ışığı vb.) değişiklikler, sistemin yanlış
+                    ölçümler yapmasına neden olabilir.
+                </li>
+                </ul>
+                <h3>Sistem Entegrasyonu ve Performans</h3>
+                <p>
+                Konveyor AI, daha güçlü donanımlar ve kontrol sistemleri ile
+                entegre edildiğinde yeteneklerini en üst düzeye çıkarır.
+                </p>
+                <ul>
+                <li>
+                    <strong>Geliştirici Kartları:</strong> Sistem, standart
+                    bilgisayarlarda çalışabilse de, gerçek zamanlı ve yüksek
+                    hassasiyetli analizler için <strong>NVIDIA Jetson Xavier NX</strong>
+                    veya <strong>Orin</strong> serisi gibi yapay zeka odaklı
+                    geliştirici kartları kullanılması tavsiye edilir. Bu kartlar,
+                    görüntü işleme sürecini saniyelerden milisaniyelere indirerek,
+                    özellikle yüksek hızlı üretim hatlarında anlık müdahale imkanı
+                    tanır.
+                </li>
+                <li>
+                    <strong>Otomasyon ve Kontrol:</strong> Tespit edilen anomali
+                    verileri, endüstriyel otomasyon sistemleriyle (PLC vb.) entegre
+                    edilebilir. Belirlenen sapma eşiği aşıldığında, sistem otomatik
+                    olarak hattı durdurabilir, bir uyarı ışığını yakabilir veya ilgili
+                    operatöre anlık bildirim gönderebilir.
+                </li>
+                </ul>
+           </div>
         </section>
-
-        <section id="features" class="card">
-            <h2>🛠️ Donanım ve Kullanım Özellikleri</h2>
-            <p>Sistemin en yüksek doğruluk ve performansla çalışması için donanım seçimi ve ortam koşulları kritik öneme sahiptir.</p>
-            <ul>
-                <li><strong>Kamera ve Sensör Seçimi:</strong> Yüksek çözünürlüklü (en az 1080p) ve yüksek FPS (kare/saniye) oranına sahip endüstriyel kameralar tercih edilmelidir. Küresel deklanşör (Global Shutter) özellikli kameralar, hızlı hareket eden bantlarda görüntü yırtılmasını engelleyerek AI modelinin doğruluğunu artırır.</li>
-                <li><strong>Lens Seçimi ve Konumlandırma:</strong> Lens, konveyör bandının kenarını net bir şekilde ve minimum bozulmayla görecek şekilde seçilmelidir. Kamera, banda dik bir açıyla, titreşimden arındırılmış sabit bir montaj noktasına yerleştirilmelidir. Bu, "Referans Konumun Sabitliği" için esastır.</li>
-                <li><strong>Işıklandırma:</strong> Ortam ışığının sabit ve homojen olması, gölgeleri ve yansımaları en aza indirmesi gerekir. Harici, kararlı bir ışık kaynağı (LED paneller gibi) kullanmak, günün farklı saatlerinde veya değişen ortam ışığında bile sistemin tutarlı çalışmasını sağlar.</li>
-                <li><strong>Geliştirici Kartları (NVIDIA Jetson):</strong> Gerçek zamanlı ve yüksek hızlı analiz için, projenin bir NVIDIA Jetson Xavier NX veya Orin gibi kenar bilişim (edge computing) cihazı üzerinde çalıştırılması tavsiye edilir. Bu kartlar, video verisini buluta göndermeden yerel olarak işleyerek gecikmeyi ortadan kaldırır ve performansı en üst düzeye çıkarır. Gemini AI modeli, bu güçlü işlemciler üzerinde daha verimli çalışacaktır.</li>
-                <li><strong>Otomasyon Entegrasyonu:</strong> Tespit edilen anomali verileri, bir PLC (Programlanabilir Mantıksal Denetleyici) veya benzeri bir endüstriyel kontrol ünitesine gönderilebilir. Bu entegrasyon sayesinde, kritik bir sapma durumunda üretim hattının otomatik olarak yavaşlatılması veya durdurulması gibi acil durum senaryoları programlanabilir.</li>
-            </ul>
-        </section>
-
-        <section id="project-structure" class="card">
-            <h2>📂 Proje Yapısı</h2>
-            <pre><code>/
-├── src/
-│   ├── app/             # Next.js App Router sayfaları
-│   │   ├── dashboard/   # Ana kontrol paneli
-│   │   └── page.tsx     # Bu geliştirici kılavuzunun giriş noktası
-│   │
-│   ├── components/      # React bileşenleri
-│   │   ├── ui/          # Shadcn UI temel bileşenleri
-│   │   └── dashboard-client.tsx # Panelin ana istemci tarafı mantığı
-│   │
-│   ├── ai/              # Google Genkit akışları ve yapılandırması
-│   │   └── flows/
-│   │       └── analyze-conveyor-flow.ts
-│   │
-│   └── lib/             # Yardımcı fonksiyonlar ve araçlar
-│
-├── public/              # Statik varlıklar (video, ses, bu kılavuz)
-│   ├── conveyor-video.mp4
-│   ├── alert-sound.mp3
-│   └── DEVELOPER_GUIDE.html
-│
-└── package.json         # Proje bağımlılıkları
-</code></pre>
-        </section>
-
-        <section id="setup" class="card">
-            <h2>🏁 Kurulum ve Başlangıç</h2>
-            <p>Projeyi yerel makinenizde çalıştırmak için aşağıdaki adımları izleyin:</p>
-            <p>1. Bağımlılıkları yükleyin:</p>
-            <pre><code>npm install</code></pre>
-            <p>2. Geliştirme sunucusunu başlatın:</p>
-            <pre><code>npm run dev</code></pre>
-            <p>Uygulama varsayılan olarak <code>http://localhost:9002</code> adresinde çalışmaya başlayacaktır.</p>
-        </section>
-    </div>
-</body>
+      </div>
+    </main>
+  </body>
 </html>
