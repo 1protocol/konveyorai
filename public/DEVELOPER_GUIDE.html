@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -12,11 +11,11 @@
         :root {
             --background: #0f172a;
             --foreground: #e2e8f0;
-            --card-background: rgba(30, 41, 59, 0.5);
+            --card-bg: rgba(30, 41, 59, 0.5);
             --border-color: rgba(255, 255, 255, 0.1);
-            --primary-accent: #f9a826;
-            --primary-accent-dark: #f59e0b;
-            --muted-foreground: #94a3b8;
+            --primary: #fbbf24;
+            --primary-hover: #f59e0b;
+            --text-muted: #94a3b8;
         }
 
         body {
@@ -24,20 +23,19 @@
             color: var(--foreground);
             font-family: 'Poppins', sans-serif;
             margin: 0;
-            line-height: 1.7;
-            font-size: 16px;
+            padding: 40px;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            font-size: 16px;
         }
 
         .container {
             max-width: 900px;
             margin: 0 auto;
-            padding: 40px 20px;
         }
 
         .card {
-            background-color: var(--card-background);
+            background-color: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
             padding: 30px;
@@ -45,218 +43,261 @@
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.45);
         }
 
         .banner {
             text-align: center;
-            padding: 40px 30px;
-            margin-bottom: 50px;
-        }
-
-        h1, h2 {
-            color: var(--foreground);
-            font-weight: 700;
+            padding-top: 20px;
+            padding-bottom: 20px;
+            margin-bottom: 40px;
         }
 
         h1 {
             font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-        
-        .banner p {
-            font-size: 1.1rem;
-            color: var(--muted-foreground);
-            max-width: 700px;
-            margin: 0 auto 1.5rem auto;
+            font-weight: 700;
+            color: var(--foreground);
+            margin: 0;
         }
 
         h2 {
-            font-size: 1.75rem;
-            margin-bottom: 2rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid var(--border-color);
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--primary);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-top: 0;
+            margin-bottom: 30px;
+        }
+        
+        h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--foreground);
+            margin-top: 25px;
+            margin-bottom: 15px;
         }
 
         p {
-            color: var(--muted-foreground);
+            font-size: 1rem;
             line-height: 1.7;
-        }
-
-        a {
-            color: var(--primary-accent);
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        a:hover {
-            color: var(--primary-accent-dark);
+            color: var(--text-muted);
+            margin-bottom: 15px;
         }
 
         .btn {
             display: inline-block;
-            background-color: var(--primary-accent);
+            background-color: var(--primary);
             color: var(--background);
             padding: 12px 28px;
             border-radius: 8px;
-            font-weight: 600;
             text-decoration: none;
-            transition: background-color 0.3s ease, transform 0.2s ease;
+            font-weight: 600;
             font-size: 1rem;
-            margin-top: 1rem;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
         }
 
         .btn:hover {
-            background-color: var(--primary-accent-dark);
-            transform: translateY(-2px);
-            color: var(--background);
+            background-color: var(--primary-hover);
         }
-
-        code, pre {
-            background-color: rgba(0, 0, 0, 0.3);
-            border-radius: 6px;
-            font-family: 'SF Mono', 'Consolas', 'Monaco', monospace;
-            font-size: 0.9em;
-        }
-
-        code {
-            padding: 0.2em 0.4em;
-        }
-
-        pre {
-            padding: 1.2em;
-            border: 1px solid var(--border-color);
-            overflow-x: auto;
-            line-height: 1.5;
-        }
-
-        .section-grid {
+        
+        .grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 20px;
         }
 
-        .step-card {
-            background: rgba(255, 255, 255, 0.05);
+        pre {
+            background-color: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
             padding: 20px;
-            border-radius: 10px;
+            overflow-x: auto;
+            color: #d1d5db;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
         }
 
-        .step-card h3 {
-            margin-top: 0;
-            color: var(--primary-accent);
+        code {
+            color: var(--primary);
         }
 
-        .tech-stack {
+        .tech-stack ul {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 20px;
             list-style: none;
             padding: 0;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 15px;
-            text-align: center;
+            margin: 0;
         }
 
         .tech-stack li {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 20px 15px;
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 15px;
             border-radius: 8px;
-            font-weight: 500;
-            transition: background-color 0.3s;
             text-align: center;
         }
-
-        .tech-stack li:hover {
-            background: rgba(255, 255, 255, 0.1);
+        
+        .tech-stack span {
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        .step-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        .step-list li {
+            position: relative;
+            padding: 15px;
+            padding-left: 50px;
+            margin-bottom: 15px;
+            background-color: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+        .step-list li::before {
+            content: attr(data-step);
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 28px;
+            height: 28px;
+            background-color: var(--primary);
+            color: var(--background);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+        .step-list h3 {
+            margin-top: 0;
+            font-size: 1.1rem;
+            color: var(--foreground);
+        }
+        .step-list p {
+            margin-bottom: 0;
+            font-size: 0.95rem;
         }
 
-        .file-structure {
-            font-size: 0.85em;
-        }
     </style>
 </head>
 <body>
-
     <div class="container">
-        
         <div class="card banner">
             <h1>Konveyor AI Geliştirici Kılavuzu</h1>
-            <p>
-                Endüstriyel üretim hatları için tasarlanmış, yapay zeka destekli konveyör bandı güvenlik sisteminin teknik mimarisine, algoritmalarına ve kurulum adımlarına hoş geldiniz.
-            </p>
-             <a href="/dashboard" class="btn">Operasyon Paneline Git</a>
+            <p>Yapay zeka destekli konveyör bandı güvenlik sisteminin teknik mimarisi ve kullanım detayları.</p>
+            <a href="/dashboard" class="btn">Operasyon Paneline Git</a>
         </div>
 
-        <div class="card" id="features">
+        <section id="architecture" class="card">
             <h2>Sistem Mimarisi ve Çalışma Algoritması</h2>
-            <p>
-                Konveyor AI, gerçek zamanlı görüntü işleme ve yapay zeka analizi üzerine kurulu üç temel aşamadan oluşan bir mimariyle çalışır:
-            </p>
-            <div class="section-grid">
-                <div class="step-card">
-                    <h3>Adım 1: Otomatik Referanslama</h3>
-                    <p>Sistem, kalibrasyon komutuyla konveyör bandının o anki görüntüsünü analiz eder ve bunu "ideal" veya "referans" konum olarak kaydeder. Bu referans, sapma hesaplamaları için temel ölçüt olur.</p>
-                </div>
-                <div class="step-card">
-                    <h3>Adım 2: Gerçek Zamanlı AI Analizi</h3>
-                    <p>Canlı video akışından periyodik olarak alınan kareler (frame), Google Genkit (Gemini) üzerinde çalışan AI modeline gönderilir. Model, görüntüyü referansla karşılaştırır ve olası dikey kaymayı milimetre cinsinden hesaplar.</p>
-                </div>
-                <div class="step-card">
-                    <h3>Adım 3: Anomali Tespiti ve Uyarı</h3>
-                    <p>AI'dan dönen sapma değeri, kullanıcı tarafından belirlenen "anomali eşiği" ile karşılaştırılır. Eğer sapma eşikten büyükse, sistem "ANOMALİ" durumuna geçer, görsel/sesli uyarılar verir ve olayı kayıt defterine işler.</p>
-                </div>
-            </div>
-        </div>
+            <p>Konveyor AI, endüstriyel üretim hatlarında konveyör bantlarının yönsel kaymasını (kayıklık) önlemek için tasarlanmış üç aşamalı bir yapay zeka sistemidir. Sistem, canlı video akışını analiz ederek milimetrik sapmaları tespit eder ve olası arızaları önceden bildirir.</p>
+            <ol class="step-list">
+                <li data-step="1">
+                    <h3>Referans Noktası Oluşturma (Kalibrasyon)</h3>
+                    <p>Sistem ilk kez çalıştırıldığında veya "Kalibrasyon" tetiklendiğinde, yapay zeka modeli mevcut konveyör bandı görüntüsünü analiz eder ve bunu "ideal" veya "sıfır" referans noktası olarak kaydeder. Bu, harici bir veri setine ihtiyaç duymadan sistemin kendi kendine öğrenmesini sağlar.</p>
+                </li>
+                <li data-step="2">
+                    <h3>Gerçek Zamanlı AI Analizi</h3>
+                    <p>Kalibrasyon tamamlandıktan sonra, AI modeli sürekli olarak canlı video akışındaki her bir kareyi (frame) analiz eder. Her kareyi, daha önce oluşturulan referans noktasıyla karşılaştırır ve konveyör bandının kenarındaki dikey veya yatay sapmayı milimetre cinsinden hesaplar.</p>
+                </li>
+                <li data-step="3">
+                    <h3>Anomali Tespiti ve Uyarı</h3>
+                    <p>Hesaplanan sapma değeri, kullanıcı tarafından "Gelişmiş Ayarlar" menüsünde belirlenen "Anomali Eşiği" ile karşılaştırılır. Eğer sapma bu eşiği aşarsa, sistem durumu "ANOMALİ" olarak değiştirilir, görsel ve işitsel uyarılar tetiklenir ve olay anomali kayıt defterine eklenir.</p>
+                </li>
+            </ol>
+        </section>
 
-        <div class="card">
+        <section id="tech-stack" class="card tech-stack">
             <h2>Teknoloji Yığını</h2>
-            <ul class="tech-stack">
-                <li><span>Next.js (App Router)</span></li>
+            <ul>
+                <li><span>Next.js</span></li>
+                <li><span>React</span></li>
                 <li><span>TypeScript</span></li>
                 <li><span>Google Genkit (Gemini)</span></li>
-                <li><span>Shadcn UI</span></li>
                 <li><span>Tailwind CSS</span></li>
+                <li><span>Shadcn UI</span></li>
                 <li><span>Lucide React</span></li>
+                <li><span>Recharts</span></li>
             </ul>
-        </div>
+        </section>
 
-        <div class="card">
+        <section id="features" class="card">
+            <h2>Kullanım Özellikleri ve En İyi Sonuçlar</h2>
+            <p>
+                Konveyor AI sisteminden maksimum verim alabilmek için donanım seçimi ve ortam koşullarının doğru yapılandırılması kritik öneme sahiptir. Bu bölümde, sistemin en iyi sonuçları vermesi için gereken adımlar ve öneriler yer almaktadır.
+            </p>
+        
+            <h3>Donanım Seçimi ve Kurulumu</h3>
+            <p>
+                Sistemin doğruluğu, büyük ölçüde görüntü kalitesine bağlıdır. Doğru kamera, lens ve aydınlatma seçimi, AI modelinin başarısını doğrudan etkiler.
+            </p>
+            <ul>
+                <li><strong>Kamera Seçimi:</strong> Yüksek çözünürlüklü (en az 1080p) ve endüstriyel ortamlara dayanıklı IP kameralar veya USB kameralar tercih edilmelidir. Düşük ışık performansı yüksek olan ve global shutter özelliğine sahip kameralar, hareketli bantlarda daha net görüntüler sağlar.</li>
+                <li><strong>Lens Seçimi:</strong> Lens, bandın tamamını veya kritik bölgelerini net bir şekilde görecek şekilde seçilmelidir. Görüntüde kenar bozulmalarını (distorsiyon) en aza indiren kaliteli lensler, ölçüm hassasiyetini artırır.</li>
+                <li><strong>Referans Konumun Sabitliği:</strong> Kamera, titreşimden etkilenmeyecek sağlam bir montaj ayağına sabitlenmelidir. Kameranın en ufak bir hareketi, AI tarafından yanlış bir sapma olarak yorumlanabilir. Bu nedenle montajın rijitliği hayati önem taşır.</li>
+                <li><strong>Aydınlatma:</strong> Görüntüdeki gölgeleri ve parlamaları en aza indiren, homojen ve sabit bir aydınlatma sağlanmalıdır. LED panel aydınlatmalar, bandın yüzeyini eşit şekilde aydınlatarak AI modelinin bant kenarını net bir şekilde ayırt etmesine yardımcı olur. Işığın zamanla değişmesi (örneğin güneş ışığı), hatalı alarmlara neden olabilir, bu nedenle kapalı ve kontrollü bir aydınlatma ortamı idealdir.</li>
+            </ul>
+        
+            <h3>Performans ve Geliştirme Seçenekleri</h3>
+            <p>
+                Konveyor AI, standart bir bilgisayarda çalışabilse de, daha yüksek performans ve gerçek zamanlı analiz kapasitesi için güçlü işlemci kartları ile entegre edilebilir.
+            </p>
+            <ul>
+                <li><strong>Geliştirici Kartları (Nvidia Jetson Serisi):</strong> NVIDIA Jetson Xavier NX veya Orin gibi kenar yapay zeka (Edge AI) cihazları, AI modelinin çok daha hızlı çalışmasını sağlar. Bu kartlar, saniyede daha fazla kare analiz etme (FPS) kapasitesi sunar ve birden fazla konveyör bandını tek bir merkezden gecikmesiz olarak izleme imkanı tanır. Bu, özellikle yüksek hızlı üretim hatları için kritik bir avantajdır.</li>
+                <li><strong>Kontrol Üniteleri (PLC Entegrasyonu):</strong> Sistem, tespit ettiği anomali durumlarını endüstriyel otomasyon sistemlerine bildirebilir. Bir anomali tespit edildiğinde, sistem bir dijital çıkış sinyali (örneğin bir röle üzerinden) veya bir ağ mesajı (MQTT, OPC-UA) göndererek PLC'yi (Programmable Logic Controller) tetikleyebilir. Bu sayede, bandın otomatik olarak durdurulması, hızının yavaşlatılması veya bir alarm kulesinin devreye sokulması gibi senaryolar hayata geçirilebilir.</li>
+            </ul>
+        
+            <h3>En İyi Sonuçlar İçin Çalışma Prensipleri</h3>
+            <p>
+                Sistemin kararlı ve doğru çalışması için aşağıdaki prensiplere dikkat edilmelidir:
+            </p>
+            <ol>
+                <li><strong>Doğru Kalibrasyon:</strong> Sistemin kurulumundan sonra veya bant üzerinde bakım/değişiklik yapıldığında mutlaka AI Kalibrasyonu yapılmalıdır. Kalibrasyon, bandın boş ve temiz olduğu bir anda yapılmalıdır.</li>
+                <li><strong>Hassasiyet Ayarı:</strong> Anomali eşiğini (mm), üretim hattınızın toleranslarına göre dikkatlice ayarlayın. Çok düşük bir eşik yanlış alarmlara, çok yüksek bir eşik ise gerçek sorunların gözden kaçmasına neden olabilir.</li>
+                <li><strong>Düzenli Kontrol:</strong> Kamera lensinin temiz olduğundan ve montajının gevşemediğinden emin olmak için periyodik kontroller yapın.</li>
+            </ol>
+        </section>
+        
+        <section id="file-structure" class="card">
             <h2>Proje Yapısı</h2>
-            <p>Proje, modüler ve ölçeklenebilir bir yapı sağlamak için Next.js App Router standartlarına göre düzenlenmiştir. Ana dizinler ve görevleri aşağıda özetlenmiştir:</p>
-            <pre class="file-structure"><code>.
-├── public/                 # Statik varlıklar (video, ses, HTML kılavuzu)
-│   ├── conveyor-video.mp4
-│   ├── alert-sound.mp3
-│   └── DEVELOPER_GUIDE.html
+            <pre>
+.
+├── public/
+│   ├── DEVELOPER_GUIDE.html  # Bu kılavuz dosyası
+│   └── conveyor-video.mp4    # Varsayılan test videosu
 │
 ├── src/
-│   ├── app/                # Sayfalar, layout'lar ve rota bileşenleri
+│   ├── app/
 │   │   ├── dashboard/
-│   │   │   └── page.tsx    # Ana kontrol paneli sayfası
-│   │   ├── layout.tsx      # Ana layout
-│   │   └── page.tsx        # Geliştirici kılavuzunu gösteren giriş sayfası
+│   │   │   └── page.tsx        # Ana kontrol paneli
+│   │   ├── layout.tsx          # Kök layout
+│   │   └── page.tsx            # Geliştirici kılavuzu gösterim sayfası
 │   │
-│   ├── components/         # Tekrar kullanılabilir React bileşenleri
-│   │   ├── ui/             # Shadcn UI temel bileşenleri
-│   │   └── dashboard-client.tsx # Panelin tüm istemci tarafı mantığı
+│   ├── components/
+│   │   ├── ui/                 # Shadcn UI temel bileşenleri
+│   │   ├── dashboard-client.tsx # Panelin ana istemci tarafı mantığı
+│   │   └── icons.tsx           # Özel ikonlar
 │   │
-│   ├── ai/                 # Genkit ve yapay zeka ile ilgili kodlar
+│   ├── ai/
 │   │   ├── flows/
 │   │   │   └── analyze-conveyor-flow.ts # Görüntü analizi yapan AI akışı
+│   │   └── genkit.ts           # Genkit yapılandırması
 │   │
-│   ├── hooks/              # Özel React hook'ları (use-toast, use-mobile)
+│   ├── hooks/                  # Özel React hook'ları
 │   │
-│   └── lib/                # Yardımcı fonksiyonlar ve TypeScript tanımları
+│   └── lib/                    # Yardımcı fonksiyonlar ve utility'ler
 │
-└── package.json            # Proje bağımlılıkları ve script'ler
-</code></pre>
-        </div>
+├── package.json                # Proje bağımlılıkları
+└── tailwind.config.ts          # Tailwind CSS yapılandırması
+</pre>
+        </section>
 
-        <div class="card">
+        <section id="setup" class="card">
             <h2>Kurulum ve Başlatma</h2>
             <p>Projeyi yerel makinenizde çalıştırmak için aşağıdaki adımları izleyin.</p>
             
@@ -266,9 +307,10 @@
             <h3>2. Geliştirme Sunucusunu Başlatın:</h3>
             <pre><code>npm run dev</code></pre>
             
-            <p>Uygulama varsayılan olarak <a href="http://localhost:9002">http://localhost:9002</a> adresinde çalışmaya başlayacaktır. Geliştirici Kılavuzu ana sayfada, operasyon paneli ise <code>/dashboard</code> altında yer alır.</p>
-        </div>
+            <p>Uygulama varsayılan olarak <code>http://localhost:9002</code> adresinde çalışmaya başlayacaktır.</p>
+        </section>
     </div>
-
 </body>
 </html>
+
+    
