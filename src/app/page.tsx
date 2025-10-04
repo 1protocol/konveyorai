@@ -57,7 +57,7 @@ export default function DocumentationPage() {
                 </div>
                 <div className="flex">
                     <strong className="w-32 shrink-0 text-muted-foreground">Proje Amacı:</strong>
-                    <span>Endüstriyel konveyör bant hıza sapmaların tespiti anormal durum bildirimi ve risk uyarılarını kayıt altına alma gerçek zamanlı teknik bildirim süreçlerinin yapay zeka destekli sürdürülebilir olmasını sağlamak</span>
+                    <span>Endüstriyel konveyör bant sapmalarını yapay zeka ile proaktif olarak tespit etmek, anormal durumları anında bildirerek riskleri yönetmek ve üretim süreçlerinde sürdürülebilir verimlilik sağlamak.</span>
                 </div>
                 <div className="flex">
                     <strong className="w-32 shrink-0 text-muted-foreground">Geliştirici:</strong>
@@ -196,5 +196,7 @@ export default function DocumentationPage() {
     </div>
   );
 }
+
+    
 
     
