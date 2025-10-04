@@ -41,9 +41,9 @@ export default function DocumentationPage() {
       <main className="container mx-auto px-4 pt-12 pb-12">
         
         <Link href="/dashboard" passHref>
-          <Button variant="outline" size="lg" className="w-full h-20 mb-8 text-xl font-bold bg-card/50 border-border/50 shadow-lg transition-all hover:shadow-xl hover:shadow-primary/20 hover:-translate-y-1 hover:bg-card/80 text-primary justify-between px-8 group">
+          <Button variant="outline" size="lg" className="w-full h-20 mb-8 text-2xl font-bold bg-card/50 border-border/50 shadow-lg transition-all hover:shadow-xl hover:shadow-primary/20 hover:scale-[1.01] hover:bg-card/80 text-primary justify-between px-8 group">
             <div className="flex items-center gap-4">
-              <LayoutDashboard className="h-9 w-9" />
+              <LayoutDashboard className="h-9 w-9 text-primary" />
               Kontrol Paneli
             </div>
             <ArrowRight className="h-8 w-8 transition-transform group-hover:translate-x-2" />
