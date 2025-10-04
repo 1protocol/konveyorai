@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -9,23 +10,22 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --background: #0a0c1f;
-            --foreground: #e0e1e6;
-            --card-background: rgba(20, 22, 37, 0.6);
+            --background: #0f172a;
+            --foreground: #e2e8f0;
+            --card-background: rgba(30, 41, 59, 0.5);
             --border-color: rgba(255, 255, 255, 0.1);
-            --primary: #f9a826;
-            --primary-hover: #fbc02d;
-            --text-muted: #94a3b8;
+            --primary-accent: #f9a826;
+            --primary-accent-dark: #f59e0b;
+            --muted-foreground: #94a3b8;
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
             background-color: var(--background);
             color: var(--foreground);
+            font-family: 'Poppins', sans-serif;
             margin: 0;
-            padding: 30px;
+            line-height: 1.7;
             font-size: 16px;
-            line-height: 1.6;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
@@ -33,8 +33,9 @@
         .container {
             max-width: 900px;
             margin: 0 auto;
+            padding: 40px 20px;
         }
-        
+
         .card {
             background-color: var(--card-background);
             border: 1px solid var(--border-color);
@@ -43,155 +44,170 @@
             margin-bottom: 40px;
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.45);
         }
 
         .banner {
             text-align: center;
             padding: 40px 30px;
-            margin-bottom: 40px;
+            margin-bottom: 50px;
         }
 
-        h1, h2, h3 {
+        h1, h2 {
             color: var(--foreground);
             font-weight: 700;
         }
 
         h1 {
             font-size: 2.5rem;
-            margin-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .banner p {
+            font-size: 1.1rem;
+            color: var(--muted-foreground);
+            max-width: 700px;
+            margin: 0 auto 1.5rem auto;
         }
 
         h2 {
-            font-size: 1.8rem;
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 10px;
-            margin-top: 0;
-            margin-bottom: 30px;
-        }
-
-        h3 {
-            font-size: 1.25rem;
-            color: var(--primary);
-            margin-top: 20px;
+            font-size: 1.75rem;
+            margin-bottom: 2rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
         }
 
         p {
-            color: var(--text-muted);
+            color: var(--muted-foreground);
             line-height: 1.7;
+        }
+
+        a {
+            color: var(--primary-accent);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--primary-accent-dark);
         }
 
         .btn {
             display: inline-block;
-            background-color: var(--primary);
+            background-color: var(--primary-accent);
             color: var(--background);
             padding: 12px 28px;
             border-radius: 8px;
-            text-decoration: none;
             font-weight: 600;
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.2s ease;
             font-size: 1rem;
-            margin-top: 20px;
-            transition: background-color 0.3s ease, transform 0.3s ease;
+            margin-top: 1rem;
         }
 
         .btn:hover {
-            background-color: var(--primary-hover);
+            background-color: var(--primary-accent-dark);
             transform: translateY(-2px);
+            color: var(--background);
         }
 
-        .architecture-steps {
+        code, pre {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            font-family: 'SF Mono', 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+        }
+
+        code {
+            padding: 0.2em 0.4em;
+        }
+
+        pre {
+            padding: 1.2em;
+            border: 1px solid var(--border-color);
+            overflow-x: auto;
+            line-height: 1.5;
+        }
+
+        .section-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 20px;
-            margin-top: 20px;
         }
 
-        .step {
-            background-color: rgba(255, 255, 255, 0.05);
+        .step-card {
+            background: rgba(255, 255, 255, 0.05);
             padding: 20px;
-            border-radius: 8px;
-            text-align: center;
+            border-radius: 10px;
         }
 
-        .step .number {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--primary);
-            display: block;
-            margin-bottom: 10px;
+        .step-card h3 {
+            margin-top: 0;
+            color: var(--primary-accent);
         }
 
         .tech-stack {
             list-style: none;
             padding: 0;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            text-align: center;
         }
 
         .tech-stack li {
             background: rgba(255, 255, 255, 0.05);
-            padding: 15px;
+            padding: 20px 15px;
             border-radius: 8px;
             font-weight: 500;
+            transition: background-color 0.3s;
             text-align: center;
         }
 
-        pre {
-            background-color: #010413;
-            color: #cdd3e0;
-            padding: 20px;
-            border-radius: 8px;
-            overflow-x: auto;
-            border: 1px solid var(--border-color);
-            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
-            font-size: 0.9rem;
+        .tech-stack li:hover {
+            background: rgba(255, 255, 255, 0.1);
         }
 
-        code {
-            font-family: inherit;
+        .file-structure {
+            font-size: 0.85em;
         }
     </style>
 </head>
 <body>
+
     <div class="container">
+        
         <div class="card banner">
             <h1>Konveyor AI Geliştirici Kılavuzu</h1>
-            <p>Yapay zeka destekli konveyör bandı güvenlik sisteminin teknik mimarisi, kurulumu ve proje yapısı hakkında kapsamlı bir rehber.</p>
-            <a href="/dashboard" class="btn">Kontrol Paneline Git</a>
-        </div>
-
-        <div class="card">
-            <h2>Genel Bakış</h2>
             <p>
-                Konveyor AI, endüstriyel üretim hatlarındaki konveyör bantlarını gerçek zamanlı olarak izleyen ve yapay zeka kullanarak olası yönsel kayma (kayıklık) sorunlarını otomatik olarak tespit eden modern bir web uygulamasıdır. Bu sistem, harici bir veri seti olmaksızın, çalışmaya başladığında kendi referansını oluşturarak üretim hattı güvenliğini artırmak ve olası arızaları önceden tahmin etmek için geliştirilmiştir.
+                Endüstriyel üretim hatları için tasarlanmış, yapay zeka destekli konveyör bandı güvenlik sisteminin teknik mimarisine, algoritmalarına ve kurulum adımlarına hoş geldiniz.
             </p>
+             <a href="/dashboard" class="btn">Operasyon Paneline Git</a>
         </div>
 
-        <div class="card">
+        <div class="card" id="features">
             <h2>Sistem Mimarisi ve Çalışma Algoritması</h2>
-            <p>Sistem, basit ama etkili üç adımlı bir mimari üzerine kurulmuştur:</p>
-            <div class="architecture-steps">
-                <div class="step">
-                    <span class="number">1</span>
-                    <h3>Referans Kalibrasyonu</h3>
-                    <p>Kullanıcı, 'Kalibrasyonu Başlat' butonu ile sistemin mevcut bant konumunu bir "sağlıklı" referans noktası olarak kaydetmesini sağlar. Bu, AI modelinin temelini oluşturur.</p>
+            <p>
+                Konveyor AI, gerçek zamanlı görüntü işleme ve yapay zeka analizi üzerine kurulu üç temel aşamadan oluşan bir mimariyle çalışır:
+            </p>
+            <div class="section-grid">
+                <div class="step-card">
+                    <h3>Adım 1: Otomatik Referanslama</h3>
+                    <p>Sistem, kalibrasyon komutuyla konveyör bandının o anki görüntüsünü analiz eder ve bunu "ideal" veya "referans" konum olarak kaydeder. Bu referans, sapma hesaplamaları için temel ölçüt olur.</p>
                 </div>
-                <div class="step">
-                    <span class="number">2</span>
-                    <h3>Gerçek Zamanlı AI Analizi</h3>
-                    <p>Sistem, canlı video akışından periyodik olarak (örn. her 2 saniyede bir) kareler yakalar ve Google Genkit (Gemini) kullanarak bu kareleri analiz eder. AI, mevcut bandın referans noktasına göre sapmasını milimetre cinsinden hesaplar.</p>
+                <div class="step-card">
+                    <h3>Adım 2: Gerçek Zamanlı AI Analizi</h3>
+                    <p>Canlı video akışından periyodik olarak alınan kareler (frame), Google Genkit (Gemini) üzerinde çalışan AI modeline gönderilir. Model, görüntüyü referansla karşılaştırır ve olası dikey kaymayı milimetre cinsinden hesaplar.</p>
                 </div>
-                <div class="step">
-                    <span class="number">3</span>
-                    <h3>Anomali Tespiti ve Uyarı</h3>
-                    <p>Hesaplanan sapma değeri, kullanıcı tarafından belirlenen 'Anomali Eşiği'ni aşarsa, sistem "ANOMALİ" durumuna geçer, görsel/sesli uyarılar verir ve bu olayı kayıt defterine ekler.</p>
+                <div class="step-card">
+                    <h3>Adım 3: Anomali Tespiti ve Uyarı</h3>
+                    <p>AI'dan dönen sapma değeri, kullanıcı tarafından belirlenen "anomali eşiği" ile karşılaştırılır. Eğer sapma eşikten büyükse, sistem "ANOMALİ" durumuna geçer, görsel/sesli uyarılar verir ve olayı kayıt defterine işler.</p>
                 </div>
             </div>
         </div>
@@ -205,57 +221,54 @@
                 <li><span>Shadcn UI</span></li>
                 <li><span>Tailwind CSS</span></li>
                 <li><span>Lucide React</span></li>
-                <li><span>Recharts</span></li>
-                <li><span>Zod</span></li>
             </ul>
         </div>
 
         <div class="card">
             <h2>Proje Yapısı</h2>
-            <p>Projenin temel dosya ve klasör yapısı aşağıda açıklanmıştır:</p>
-            <pre><code>.
-├── public/
-│   ├── conveyor-video.mp4      # Varsayılan test videosu
-│   ├── alert-sound.mp3         # Anomali uyarı sesi
-│   └── DEVELOPER_GUIDE.html    # Bu kılavuz dosyası
+            <p>Proje, modüler ve ölçeklenebilir bir yapı sağlamak için Next.js App Router standartlarına göre düzenlenmiştir. Ana dizinler ve görevleri aşağıda özetlenmiştir:</p>
+            <pre class="file-structure"><code>.
+├── public/                 # Statik varlıklar (video, ses, HTML kılavuzu)
+│   ├── conveyor-video.mp4
+│   ├── alert-sound.mp3
+│   └── DEVELOPER_GUIDE.html
 │
 ├── src/
-│   ├── app/
+│   ├── app/                # Sayfalar, layout'lar ve rota bileşenleri
 │   │   ├── dashboard/
-│   │   │   └── page.tsx        # Ana kontrol paneli sayfası
-│   │   ├── layout.tsx          # Kök layout
-│   │   └── page.tsx            # Geliştirici kılavuzu görüntüleyici
+│   │   │   └── page.tsx    # Ana kontrol paneli sayfası
+│   │   ├── layout.tsx      # Ana layout
+│   │   └── page.tsx        # Geliştirici kılavuzunu gösteren giriş sayfası
 │   │
-│   ├── components/
-│   │   ├── ui/                 # Shadcn UI temel bileşenleri
-│   │   ├── dashboard-client.tsx  # Panelin ana istemci tarafı mantığı
-│   │   └── icons.tsx           # Özel SVG ikonları
+│   ├── components/         # Tekrar kullanılabilir React bileşenleri
+│   │   ├── ui/             # Shadcn UI temel bileşenleri
+│   │   └── dashboard-client.tsx # Panelin tüm istemci tarafı mantığı
 │   │
-│   ├── ai/
+│   ├── ai/                 # Genkit ve yapay zeka ile ilgili kodlar
 │   │   ├── flows/
 │   │   │   └── analyze-conveyor-flow.ts # Görüntü analizi yapan AI akışı
-│   │   └── genkit.ts           # Genkit yapılandırması
 │   │
-│   ├── hooks/                  # Özel React hook'ları (örn: use-toast)
+│   ├── hooks/              # Özel React hook'ları (use-toast, use-mobile)
 │   │
-│   ├── lib/                    # Yardımcı fonksiyonlar (örn: cn)
+│   └── lib/                # Yardımcı fonksiyonlar ve TypeScript tanımları
 │
-├── package.json                # Proje bağımlılıkları ve script'ler
-└── next.config.ts              # Next.js yapılandırması
+└── package.json            # Proje bağımlılıkları ve script'ler
 </code></pre>
         </div>
 
         <div class="card">
             <h2>Kurulum ve Başlatma</h2>
-            <p>Projeyi yerel makinenizde çalıştırmak için aşağıdaki adımları izleyin:</p>
+            <p>Projeyi yerel makinenizde çalıştırmak için aşağıdaki adımları izleyin.</p>
             
             <h3>1. Bağımlılıkları Yükleyin:</h3>
             <pre><code>npm install</code></pre>
-
+            
             <h3>2. Geliştirme Sunucusunu Başlatın:</h3>
             <pre><code>npm run dev</code></pre>
-            <p>Uygulama varsayılan olarak <code>http://localhost:9002</code> adresinde çalışmaya başlayacaktır.</p>
+            
+            <p>Uygulama varsayılan olarak <a href="http://localhost:9002">http://localhost:9002</a> adresinde çalışmaya başlayacaktır. Geliştirici Kılavuzu ana sayfada, operasyon paneli ise <code>/dashboard</code> altında yer alır.</p>
         </div>
     </div>
+
 </body>
 </html>

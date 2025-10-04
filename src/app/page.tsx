@@ -1,7 +1,7 @@
+
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function DeveloperGuidePage() {
@@ -9,13 +9,23 @@ export default function DeveloperGuidePage() {
     <div className="flex flex-col h-screen bg-background">
       <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-background/80 backdrop-blur-xl">
         <div className="container flex h-16 items-center justify-between">
-          <h1 className="text-xl font-bold text-foreground">
-            Geliştirici Kılavuzu
-          </h1>
-          <Button asChild variant="outline" className="bg-transparent">
+          <nav className="flex items-center gap-6 text-sm">
+            <Link
+              href="/"
+              className="font-semibold text-primary transition-colors hover:text-foreground"
+            >
+              Geliştirici Kılavuzu
+            </Link>
+            <Link
+              href="/DEVELOPER_GUIDE.html#features"
+              className="text-muted-foreground transition-colors hover:text-foreground"
+            >
+              Kullanım Özellikleri
+            </Link>
+          </nav>
+          <Button asChild variant="default">
             <Link href="/dashboard">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Kontrol Paneline Dön
+              Operasyon Paneli
             </Link>
           </Button>
         </div>
