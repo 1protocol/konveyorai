@@ -6,6 +6,8 @@ export const Icons = {
     return (
       <svg
         xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
@@ -15,24 +17,15 @@ export const Icons = {
         className={cn('text-primary', className)}
         {...props}
       >
-        <path d="M2 12h2.25" />
-        <path d="M19.75 12h2.25" />
-        <path d="M4.25 12a7.75 7.75 0 0 1 15.5 0" />
-        <path d="M4.25 12a7.75 7.75 0 0 0 15.5 0" />
-        <circle 
-            cx="8" 
-            cy="12" 
-            r="1.5" 
-            className="fill-green-500 animate-opacity-pulse"
-            stroke="none"
-        />
-        <circle 
-            cx="16" 
-            cy="12" 
-            r="1.5" 
-            className="fill-red-500 animate-opacity-pulse [animation-delay:750ms]"
-            stroke="none" 
-        />
+        <path d="M3 3v4" />
+        <path d="M19 3v4" />
+        <path d="M3 5h18" />
+        <path d="M3 21v-4" />
+        <path d="M19 21v-4" />
+        <path d="M3 19h18" />
+        <path d="M7 5v14" />
+        <path d="M12 5v14" />
+        <path d="M17 5v14" />
       </svg>
     );
   },
