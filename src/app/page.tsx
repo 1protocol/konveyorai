@@ -24,7 +24,7 @@ import {
 
 export default function DashboardPage() {
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={false}>
       <Sidebar side="right">
         <SidebarHeader className="border-b">
           <Link href="/" className="flex items-center gap-2 p-2">
