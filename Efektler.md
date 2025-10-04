@@ -97,88 +97,124 @@ Kartın en dikkat çekici kısmı, etrafında dönen çok renkli ışıktır. Bu
 
 ---
 
-## 4. 3D Dönen Küp İmza Kartı Efekti
+## 4. Gelişmiş 3D İç İçe Küp Animasyonu
 
-Geliştirici Sorumlusu kartı, saf CSS kullanılarak oluşturulmuş gelişmiş bir 3D animasyona sahiptir. Bu efekt, karta teknolojik ve modern bir kimlik kazandırır.
+Geliştirici Sorumlusu kartı, saf CSS kullanılarak oluşturulmuş, iç içe geçmiş iki küpten oluşan gelişmiş bir 3D animasyona sahiptir. Bu efekt, karta teknolojik, dinamik ve çok katmanlı bir kimlik kazandırır.
 
 ### HTML Yapısı
 
-Küpün her bir yüzü ayrı bir `div` elemanıdır ve hepsi bir `container` içinde yer alır.
+Efekt, dış ve iç küpleri barındıran iç içe geçmiş bir yapı kullanır. Her küp, 6 adet `div` (yüz) elemanından oluşur.
 
 ```html
 <div class="signature-card-content">
   <div class="cube-container">
+    <!-- Dış Küp -->
     <div class="face front"></div>
     <div class="face back"></div>
     <div class="face right"></div>
     <div class="face left"></div>
     <div class="face top"></div>
     <div class="face bottom"></div>
+
+    <!-- İç Küp -->
+    <div class="inner-cube">
+      <div class="face front"></div>
+      <div class8"face back"></div>
+      <div class="face right"></div>
+      <div class="face left"></div>
+      <div class="face top"></div>
+      <div class="face bottom"></div>
+    </div>
   </div>
   <div class="text-content">
+    <h4>Hazırlayan:</h4>
     <h3>Mustafa USLU</h3>
-    <p>Geliştirme Sorumlusu</p>
+    <p>Proje Geliştirici</p>
   </div>
 </div>
 ```
 
-### CSS ile 3D Sahne ve Küp Oluşturma
+### CSS ile 3D Sahne ve Küpler
 
-Bu efektin sırrı, `transform-style: preserve-3d` ve 3D `transform` özelliklerinin doğru kullanımında yatar.
+Efektin sırrı, `transform-style: preserve-3d` ve her bir küp için ayrı ayrı tanımlanmış, çok eksenli `@keyframes` animasyonlarında yatar.
 
 ```css
-/* Ana kartta 3D sahneyi oluşturur */
+/* Ana kartta 3D sahneyi oluşturur ve etkileşim ekler */
 .signature-card {
   perspective: 1000px;
+  transition: transform 0.5s ease, box-shadow 0.5s ease;
+}
+.signature-card:hover {
+  transform: translateY(-10px) rotateY(-8deg) rotateX(8deg);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
 }
 
+/* Dış küp için taşıyıcı ve animasyon */
 .cube-container {
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 60px;
   position: relative;
   transform-style: preserve-3d;
-  /* Animasyonu uygulama */
-  animation: rotate-cube 12s linear infinite;
+  animation: rotate-cube 15s linear infinite;
 }
 
+/* İç küp için taşıyıcı ve animasyon */
+.inner-cube {
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  top: 15px; /* (60-30)/2 */
+  left: 15px; /* (60-30)/2 */
+  transform-style: preserve-3d;
+  animation: rotate-inner-cube 10s linear infinite;
+}
+
+/* Tüm yüzler için ortak stiller (Tel Kafes Görünümü) */
 .face {
   position: absolute;
-  width: 50px;
-  height: 50px;
-  border: 1px solid rgba(0, 180, 255, 0.5);
-  background: rgba(0, 180, 255, 0.1);
+  background: transparent; /* Arka plan yok */
 }
 
-/* Her yüzü 3D uzayda doğru konuma döndürme ve taşıma */
-.front  { transform: translateZ(25px); }
-.back   { transform: rotateY(180deg) translateZ(25px); }
-.right  { transform: rotateY(90deg) translateZ(25px); }
-.left   { transform: rotateY(-90deg) translateZ(25px); }
-.top    { transform: rotateX(90deg) translateZ(25px); }
-.bottom { transform: rotateX(-90deg) translateZ(25px); }
+/* Dış küpün yüzeyleri */
+.cube-container > .face {
+  width: 60px;
+  height: 60px;
+  border: 1.5px solid hsla(190, 100%, 75%, 0.8);
+}
+.cube-container > .front  { transform: translateZ(30px); }
+.cube-container > .back   { transform: rotateY(180deg) translateZ(30px); }
+/* ... diğer yüzler */
+
+/* İç küpün yüzeyleri */
+.inner-cube > .face {
+  width: 30px;
+  height: 30px;
+  border: 1px solid hsla(300, 100%, 80%, 0.7);
+}
+.inner-cube > .front  { transform: translateZ(15px); }
+.inner-cube > .back   { transform: rotateY(180deg) translateZ(15px); }
+/* ... diğer yüzler */
+```
+
+### Çok Eksenli Animasyonlar
+
+İki küp, farklı hızlarda ve farklı eksen kombinasyonlarında dönerek sürekli değişen, hipnotik bir görsel oluşturur.
+
+```css
+/* Dış küp için 3 eksenli dönüş animasyonu */
+@keyframes rotate-cube {
+  0% { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+  100% { transform: rotateX(360deg) rotateY(480deg) rotateZ(240deg); }
+}
+
+/* İç küp için zıt yönlü ve farklı hızda dönüş animasyonu */
+@keyframes rotate-inner-cube {
+  0% { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+  100% { transform: rotateX(480deg) rotateY(-360deg) rotateZ(360deg); }
+}
 ```
 
 - **`perspective`:** Sahneye derinlik hissi katar.
-- **`transform-style: preserve-3d`:** `.cube-container` içindeki elemanların 3D uzayda konumlandırılmasına izin verir.
-- **`transform`:** Her bir `face` (yüz), `rotate` (döndürme) ve `translateZ` (Z ekseninde taşıma) fonksiyonları kullanılarak bir küp oluşturacak şekilde doğru pozisyonlarına yerleştirilir.
-
-### Animasyon ve İnteraktiflik
-
-Küpün sürekli dönmesi ve kartın fare etkileşimine tepki vermesi için `@keyframes` ve `:hover` kullanılır.
-
-```css
-/* Küpü X ve Y eksenlerinde sürekli döndüren animasyon */
-@keyframes rotate-cube {
-  0% { transform: rotateX(0deg) rotateY(0deg); }
-  100% { transform: rotateX(360deg) rotateY(360deg); }
-}
-
-/* Fare üzerine gelince karta 3D eğim verme */
-.signature-card:hover {
-  transform: rotateY(-10deg) rotateX(10deg);
-  box-shadow: 0 25px 50px rgba(0,0,0,0.4);
-}
-```
-
-- **`@keyframes rotate-cube`:** Küpü 12 saniyelik bir döngüde hem X hem de Y ekseninde tam bir tur döndürerek akıcı ve sürekli bir hareket sağlar.
-- **`:hover` Etkileşimi:** Fare kartın üzerine geldiğinde, kartın kendisi hafifçe 3D olarak eğilir ve gölgesi belirginleşir. Bu, kullanıcıya tatmin edici bir interaktif geri bildirim sunar.
+- **`transform-style: preserve-3d`:** Küp elemanlarının 3D uzayda konumlandırılmasına izin verir.
+- **`@keyframes` (Çok Eksenli):** Her iki küp de X, Y ve Z eksenlerinde, farklı hızlarda ve bitiş açılarında (`480deg`, `-360deg` vb.) dönerek karmaşık ve senkronize olmayan bir hareket deseni oluşturur. Bu, animasyonun daha organik ve daha az mekanik görünmesini sağlar.
+- **Tel Kafes (Wireframe) Tasarımı:** Küp yüzeylerinin arka planlarının şeffaf olması ve sadece kenarlıklarının görünür olması, animasyonun netliğini artırır ve karmaşıklığını zarif bir şekilde sergiler.
