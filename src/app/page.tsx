@@ -36,15 +36,17 @@ export default function DashboardPage() {
 
 
 function PageContent() {
-    const { setOpenMobile } = useSidebar();
+    const { setOpenMobile, isMobile } = useSidebar();
     
     const handleLinkClick = () => {
-        setOpenMobile(false);
+        if(isMobile) {
+            setOpenMobile(false);
+        }
     }
 
     return (
     <>
-      <Sidebar side="right">
+      <Sidebar side="left">
         <SidebarHeader className="border-b p-3">
           <Link href="/" className="flex items-center gap-2.5">
             <Icons.logo className="size-8 text-primary" />
@@ -99,16 +101,16 @@ function PageContent() {
         </SidebarContent>
       </Sidebar>
       <SidebarInset>
-        <header className="flex h-16 items-center justify-between gap-4 border-b bg-card px-6">
+        <header className="flex h-16 items-center justify-between gap-4 border-b bg-card px-4 sm:px-6">
            <div className="flex items-center gap-2.5">
+             <SidebarTrigger className="h-9 w-9 md:hidden" />
              <Link href="/" className="flex items-center gap-2.5">
                 <Icons.logo className="size-8 text-primary" />
-                <h1 className="font-bold text-lg">ConveyorAI</h1>
+                <h1 className="font-bold text-lg hidden sm:block">ConveyorAI</h1>
              </Link>
            </div>
           <div className="flex items-center gap-4">
             <ThemeToggle />
-            <SidebarTrigger className="h-9 w-9" />
           </div>
         </header>
         <main className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8">
