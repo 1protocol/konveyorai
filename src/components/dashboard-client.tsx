@@ -48,6 +48,8 @@ import {
   Trash2,
   ChevronDown,
   AreaChart,
+  Network,
+  Check,
 } from "lucide-react";
 import { analyzeConveyorBelt } from "@/ai/flows/analyze-conveyor-flow";
 import {
@@ -476,15 +478,20 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
             <h1 className="text-2xl font-bold tracking-tight">Genel Bakış</h1>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="min-w-48 justify-between bg-transparent backdrop-blur-sm">
-                       {selectedStation.name}
-                       <ChevronDown className="h-4 w-4" />
+                    <Button variant="outline" size="lg" className="min-w-56 justify-between text-base bg-white/5 backdrop-blur-sm border-white/10 hover:bg-white/10">
+                       <span className="flex items-center gap-2">
+                         <Network className="h-5 w-5 text-muted-foreground" />
+                         {selectedStation.name}
+                       </span>
+                       <ChevronDown className="h-5 w-5" />
                     </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56 bg-background/80 backdrop-blur-xl border-white/10">
+                <DropdownMenuContent className="w-64 text-base p-2 bg-background/80 backdrop-blur-xl border-white/10 shadow-2xl">
                     {stations.map(station => (
-                         <DropdownMenuItem key={station.id} onSelect={() => handleStationSelect(station.id)}>
-                            {station.name}
+                         <DropdownMenuItem key={station.id} onSelect={() => handleStationSelect(station.id)} className="p-2">
+                           <Network className="mr-2 h-5 w-5" />
+                            <span className="flex-grow">{station.name}</span>
+                            {station.id === selectedStationId && <Check className="h-5 w-5" />}
                          </DropdownMenuItem>
                     ))}
                 </DropdownMenuContent>
@@ -958,3 +965,4 @@ function SettingsDialog({
     
 
     
+
