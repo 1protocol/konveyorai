@@ -40,6 +40,13 @@ export default function DocumentationPage() {
     <div className="bg-background min-h-screen font-body text-foreground">
       <main className="container mx-auto px-4 pt-12 pb-12">
         
+        <Link href="/dashboard" passHref>
+          <Button size="lg" className="w-full h-16 mb-8 text-lg bg-card/50 border-border/50 shadow-lg transition-all hover:shadow-xl hover:-translate-y-1 hover:bg-card/70">
+            <LayoutDashboard className="mr-3 h-7 w-7" />
+            Kontrol Paneli
+          </Button>
+        </Link>
+
         <Card className="mb-12 bg-card/50 border-border/50 shadow-lg transition-all hover:shadow-xl hover:-translate-y-1">
             <CardHeader>
                 <div className="flex items-center gap-4">
@@ -196,7 +203,3 @@ export default function DocumentationPage() {
     </div>
   );
 }
-
-    
-
-    
