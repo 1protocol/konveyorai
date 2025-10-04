@@ -46,25 +46,25 @@ export default function DashboardPage() {
             </SidebarMenuItem>
             <Accordion type="single" collapsible className="w-full px-2 group-data-[state=collapsed]:hidden">
                 <AccordionItem value="item-1" className="border-none">
-                    <AccordionTrigger className="hover:no-underline hover:bg-sidebar-accent rounded-md px-2 py-1.5 text-base">
+                    <AccordionTrigger className="hover:no-underline hover:bg-sidebar-accent rounded-md px-2 py-1.5 text-base w-full justify-start data-[state=open]:bg-sidebar-accent">
                         <div className="flex items-center gap-2.5">
                             <Network className="size-5" />
                             <span>İstasyon</span>
                         </div>
                     </AccordionTrigger>
                     <AccordionContent className="pl-4 pt-1">
-                        <SidebarMenu>
+                        <SidebarMenu className="p-0">
                             <SidebarMenuItem>
-                                <SidebarMenuButton href="/?bant=1" variant="ghost" size="sm" className="w-full justify-start text-base">Bant 1</SidebarMenuButton>
+                                <SidebarMenuButton href="/?bant=1" variant="ghost" size="sm" className="w-full justify-start h-8 text-base">Bant 1</SidebarMenuButton>
                             </SidebarMenuItem>
                             <SidebarMenuItem>
-                                <SidebarMenuButton href="/?bant=2" variant="ghost" size="sm" className="w-full justify-start text-base">Bant 2</SidebarMenuButton>
+                                <SidebarMenuButton href="/?bant=2" variant="ghost" size="sm" className="w-full justify-start h-8 text-base">Bant 2</SidebarMenuButton>
                             </SidebarMenuItem>
                             <SidebarMenuItem>
-                                <SidebarMenuButton href="/?bant=3" variant="ghost" size="sm" className="w-full justify-start text-base">Bant 3</SidebarMenuButton>
+                                <SidebarMenuButton href="/?bant=3" variant="ghost" size="sm" className="w-full justify-start h-8 text-base">Bant 3</SidebarMenuButton>
                             </SidebarMenuItem>
                             <SidebarMenuItem>
-                                <SidebarMenuButton href="/?bant=4" variant="ghost" size="sm" className="w-full justify-start text-base">Bant 4</SidebarMenuButton>
+                                <SidebarMenuButton href="/?bant=4" variant="ghost" size="sm" className="w-full justify-start h-8 text-base">Bant 4</SidebarMenuButton>
                             </SidebarMenuItem>
                         </SidebarMenu>
                     </AccordionContent>
