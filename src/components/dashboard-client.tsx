@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
@@ -34,6 +35,8 @@ import {
   Loader,
   VideoOff,
   Scan,
+  PlusCircle,
+  Trash2,
 } from "lucide-react";
 import { analyzeConveyorBelt } from "@/ai/flows/analyze-conveyor-flow";
 import {
@@ -54,9 +57,9 @@ import { Input } from "./ui/input";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 
 type AnomalyLog = {
-  timestamp: string; // Use string to ensure serializability for localStorage
+  timestamp: string;
   deviation: number;
-  bant: string;
+  stationId: string;
 };
 
 export type AppSettings = {
@@ -64,8 +67,10 @@ export type AppSettings = {
   isSoundAlertEnabled: boolean;
 };
 
-export type CameraConfig = {
-  [key: string]: string;
+export type Station = {
+  id: string;
+  name: string;
+  source: string;
 };
 
 const defaultSettings: AppSettings = {
@@ -73,20 +78,21 @@ const defaultSettings: AppSettings = {
   isSoundAlertEnabled: true,
 };
 
-const defaultCameraConfig: CameraConfig = {
-    '1': '/conveyor-video.mp4',
-    '2': 'webcam',
-    '3': '/conveyor-video.mp4',
-    '4': '/conveyor-video.mp4',
-};
+const defaultStations: Station[] = [
+    { id: '1', name: 'Bant 1', source: '/conveyor-video.mp4' },
+    { id: '2', name: 'Bant 2', source: 'webcam' },
+    { id: '3', name: 'Bant 3', source: '/conveyor-video.mp4' },
+    { id: '4', name: 'Bant 4', source: '/conveyor-video.mp4' },
+];
 
-export function DashboardClient() {
+export function DashboardClient({ stations, onStationsChange }: { stations: Station[], onStationsChange: (stations: Station[]) => void }) {
   const searchParams = useSearchParams();
-  const selectedBant = searchParams.get('bant') || '1';
+  const selectedStationId = searchParams.get('station') || (stations.length > 0 ? stations[0].id : null);
+  
+  const selectedStation = stations.find(s => s.id === selectedStationId) || (stations.length > 0 ? stations[0] : null);
 
   const [isClient, setIsClient] = useState(false);
   const [settings, setSettings] = useState<AppSettings>(defaultSettings);
-  const [cameraConfig, setCameraConfig] = useState<CameraConfig>(defaultCameraConfig);
   const [deviation, setDeviation] = useState(0);
   const [status, setStatus] = useState<"NORMAL" | "ANOMALİ" | "KALİBRE EDİLİYOR">(
     "NORMAL"
@@ -102,8 +108,8 @@ export function DashboardClient() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
   
-  const selectedVideoSource = cameraConfig[selectedBant] || '/conveyor-video.mp4';
-  const isWebcam = selectedVideoSource === 'webcam';
+  const videoSource = selectedStation?.source || '/conveyor-video.mp4';
+  const isWebcam = videoSource === 'webcam';
 
   // --- Data Persistence Effects ---
   useEffect(() => {
@@ -114,15 +120,14 @@ export function DashboardClient() {
     if (isClient) {
       try {
         const savedSettings = localStorage.getItem("conveyorAISettings");
-        const savedCameraConfig = localStorage.getItem("conveyorAICameraConfig");
         const savedLogs = localStorage.getItem("conveyorAILogs");
 
         if (savedSettings) {
           setSettings(JSON.parse(savedSettings));
+        } else {
+          localStorage.setItem("conveyorAISettings", JSON.stringify(defaultSettings));
         }
-        if (savedCameraConfig) {
-          setCameraConfig(JSON.parse(savedCameraConfig));
-        }
+        
         if (savedLogs) {
           setLogs(JSON.parse(savedLogs));
         }
@@ -141,15 +146,17 @@ export function DashboardClient() {
     setSettings(newSettings);
     if (isClient) {
         localStorage.setItem("conveyorAISettings", JSON.stringify(newSettings));
+         window.dispatchEvent(new StorageEvent('storage', { key: 'conveyorAISettings', newValue: JSON.stringify(newSettings) }));
     }
   }, [isClient]);
 
-  const saveCameraConfig = useCallback((newConfig: CameraConfig) => {
-    setCameraConfig(newConfig);
+  const saveStations = useCallback((newStations: Station[]) => {
+    onStationsChange(newStations);
     if (isClient) {
-        localStorage.setItem("conveyorAICameraConfig", JSON.stringify(newConfig));
+        localStorage.setItem("conveyorAIStations", JSON.stringify(newStations));
+        window.dispatchEvent(new StorageEvent('storage', { key: 'conveyorAIStations', newValue: JSON.stringify(newStations) }));
     }
-  }, [isClient]);
+  }, [isClient, onStationsChange]);
 
   const saveLogs = useCallback((newLogs: AnomalyLog[]) => {
     setLogs(newLogs);
@@ -184,7 +191,7 @@ export function DashboardClient() {
     stopCameraStream(); // Stop any previous stream
 
     const videoElement = videoRef.current;
-    if (!videoElement) return;
+    if (!videoElement || !selectedStation) return;
 
     if (isWebcam) {
       const getCameraPermission = async () => {
@@ -208,25 +215,24 @@ export function DashboardClient() {
       };
       getCameraPermission();
     } else {
-        if (videoRef.current.src !== window.location.origin + selectedVideoSource) {
+        if (videoRef.current.src !== window.location.origin + videoSource) {
             videoRef.current.srcObject = null; // Clear srcObject for src to work
-            videoRef.current.src = selectedVideoSource;
+            videoRef.current.src = videoSource;
             videoRef.current.load();
             videoRef.current.play().catch(e => console.error("Video oynatma hatası:", e));
         }
     }
     
-    // Cleanup function
     return () => {
       stopCameraStream();
     }
 
-  }, [selectedBant, cameraConfig, isWebcam, toast, selectedVideoSource]);
+  }, [selectedStation, isWebcam, toast, videoSource]);
 
 
   useEffect(() => {
     const analyzeFrame = async () => {
-      if (isCalibrating || isProcessing || !videoRef.current || !canvasRef.current) return;
+      if (isCalibrating || isProcessing || !videoRef.current || !canvasRef.current || !selectedStation) return;
   
       setIsProcessing(true);
   
@@ -236,8 +242,7 @@ export function DashboardClient() {
         return;
       }
       
-      // For webcam, permission must be granted
-      if (isWebcam && hasCameraPermission === false) { // Explicitly check for false
+      if (isWebcam && hasCameraPermission === false) {
         setIsProcessing(false);
         return;
       }
@@ -264,7 +269,7 @@ export function DashboardClient() {
             const newLog: AnomalyLog = { 
                 timestamp: new Date().toISOString(), 
                 deviation: newDeviation,
-                bant: selectedBant
+                stationId: selectedStation.id
             };
             saveLogs([newLog, ...logs].slice(0, 100));
 
@@ -288,16 +293,16 @@ export function DashboardClient() {
   
     const interval = setInterval(analyzeFrame, 2000);
     return () => clearInterval(interval);
-  }, [isCalibrating, isProcessing, toast, settings.anomalyThreshold, status, playAlertSound, selectedBant, logs, saveLogs, isWebcam, hasCameraPermission]);
+  }, [isCalibrating, isProcessing, toast, settings.anomalyThreshold, status, playAlertSound, selectedStation, logs, saveLogs, isWebcam, hasCameraPermission]);
 
   useEffect(() => {
     if (isCalibrating && calibrationProgress === 100) {
       toast({
         title: "Kalibrasyon Tamamlandı",
-        description: `Bant ${selectedBant} için başlangıç referans verileri ayarlandı.`,
+        description: `${selectedStation?.name || 'Mevcut istasyon'} için başlangıç referans verileri ayarlandı.`,
       });
     }
-  }, [calibrationProgress, isCalibrating, toast, selectedBant]);
+  }, [calibrationProgress, isCalibrating, toast, selectedStation]);
 
   const handleCalibrate = () => {
     setIsCalibrating(true);
@@ -318,10 +323,10 @@ export function DashboardClient() {
     }, 300);
   };
   
-  const filteredLogs = logs.filter(log => log.bant === selectedBant);
+  const filteredLogs = selectedStationId ? logs.filter(log => log.stationId === selectedStationId) : [];
   const isAnomaly = status === "ANOMALİ";
 
-  if (!isClient) {
+  if (!isClient || !selectedStation) {
       return (
         <div className="flex items-center justify-center h-full">
             <Loader className="h-16 w-16 animate-spin text-primary" />
@@ -332,16 +337,16 @@ export function DashboardClient() {
   return (
     <div className="space-y-8">
        <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold tracking-tight">Genel Bakış - Bant {selectedBant}</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Genel Bakış - {selectedStation.name}</h1>
         <SettingsDialog 
           settings={settings} 
           onSettingsChange={saveSettings} 
+          stations={stations}
+          onStationsChange={saveStations}
           audioRef={audioRef} 
           isCalibrating={isCalibrating}
           calibrationProgress={calibrationProgress}
           onCalibrate={handleCalibrate}
-          cameraConfig={cameraConfig}
-          onCameraConfigChange={saveCameraConfig}
         />
       </div>
 
@@ -349,7 +354,7 @@ export function DashboardClient() {
         <CardHeader>
             <CardTitle className="flex items-center gap-2">
                 <Video />
-                Canlı İzleme - Bant {selectedBant}
+                Canlı İzleme - {selectedStation.name}
             </CardTitle>
             <CardDescription>
                 Yapay zeka, konveyör bandını kenar sapmaları için gerçek zamanlı olarak analiz eder.
@@ -363,9 +368,9 @@ export function DashboardClient() {
                   autoPlay 
                   muted 
                   playsInline 
-                  loop={!isWebcam} // Loop only for video files
+                  loop={!isWebcam}
                   crossOrigin="anonymous"
-                  key={selectedVideoSource + selectedBant}
+                  key={videoSource + selectedStation.id}
                 />
                 <canvas ref={canvasRef} className="hidden" />
                 
@@ -450,7 +455,7 @@ export function DashboardClient() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Anomali Kayıtları - Bant {selectedBant}</CardTitle>
+          <CardTitle>Anomali Kayıtları - {selectedStation.name}</CardTitle>
           <CardDescription>
             AI tarafından tespit edilen anormal kayma örnekleri (sapma &ge; {settings.anomalyThreshold}mm).
           </CardDescription>
@@ -480,7 +485,7 @@ export function DashboardClient() {
                       colSpan={2}
                       className="h-24 text-center text-muted-foreground"
                     >
-                      Bu bant için henüz anomali kaydedilmedi.
+                      Bu istasyon için henüz anomali kaydedilmedi.
                     </TableCell>
                   </TableRow>
                 )}
@@ -511,38 +516,38 @@ export function DashboardClient() {
 function SettingsDialog({
   settings,
   onSettingsChange,
+  stations,
+  onStationsChange,
   audioRef,
   isCalibrating,
   calibrationProgress,
   onCalibrate,
-  cameraConfig,
-  onCameraConfigChange,
 }: {
   settings: AppSettings;
   onSettingsChange: (settings: AppSettings) => void;
+  stations: Station[];
+  onStationsChange: (stations: Station[]) => void;
   audioRef: React.RefObject<HTMLAudioElement>;
   isCalibrating: boolean;
   calibrationProgress: number;
   onCalibrate: () => void;
-  cameraConfig: CameraConfig;
-  onCameraConfigChange: (config: CameraConfig) => void;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [currentSettings, setCurrentSettings] = useState(settings);
-  const [currentCameraConfig, setCurrentCameraConfig] = useState(cameraConfig);
+  const [currentStations, setCurrentStations] = useState(stations);
   const { toast } = useToast();
 
 
   useEffect(() => {
     if (isOpen) {
       setCurrentSettings(settings);
-      setCurrentCameraConfig(cameraConfig);
+      setCurrentStations(stations);
     }
-  }, [settings, cameraConfig, isOpen]);
+  }, [settings, stations, isOpen]);
 
   const handleSave = () => {
     onSettingsChange(currentSettings);
-    onCameraConfigChange(currentCameraConfig);
+    onStationsChange(currentStations);
     setIsOpen(false);
     toast({
         title: "Ayarlar Kaydedildi",
@@ -561,9 +566,33 @@ function SettingsDialog({
     }
   };
 
-  const handleCameraConfigFieldChange = (bant: string, value: string) => {
-    setCurrentCameraConfig(prev => ({...prev, [bant]: value}));
-  }
+  const handleStationFieldChange = (id: string, field: 'name' | 'source', value: string) => {
+    setCurrentStations(prev => 
+      prev.map(station => station.id === id ? {...station, [field]: value} : station)
+    );
+  };
+
+  const handleAddStation = () => {
+    const newId = (Date.now() + Math.random()).toString(36);
+    const newStation: Station = {
+        id: newId,
+        name: `Yeni İstasyon ${currentStations.length + 1}`,
+        source: '/conveyor-video.mp4'
+    };
+    setCurrentStations(prev => [...prev, newStation]);
+  };
+
+  const handleRemoveStation = (id: string) => {
+    if (currentStations.length <= 1) {
+        toast({
+            variant: 'destructive',
+            title: 'Son İstasyon Silinemez',
+            description: 'Sistemde en az bir istasyon bulunmalıdır.',
+        });
+        return;
+    }
+    setCurrentStations(prev => prev.filter(station => station.id !== id));
+  };
   
   const handleScanNetwork = () => {
     toast({
@@ -580,7 +609,7 @@ function SettingsDialog({
           Gelişmiş Ayarlar
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-2xl">
+      <DialogContent className="sm:max-w-3xl">
         <DialogHeader>
           <DialogTitle>Gelişmiş Ayarlar</DialogTitle>
           <DialogDescription>
@@ -590,7 +619,7 @@ function SettingsDialog({
         <Tabs defaultValue="ai-settings">
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="ai-settings"><BrainCircuit className="mr-2 h-4 w-4"/>Yapay Zeka</TabsTrigger>
-            <TabsTrigger value="cameras"><Camera className="mr-2 h-4 w-4"/>Kameralar</TabsTrigger>
+            <TabsTrigger value="cameras"><Camera className="mr-2 h-4 w-4"/>İstasyonlar</TabsTrigger>
             <TabsTrigger value="notifications"><Bell className="mr-2 h-4 w-4"/>Bildirimler</TabsTrigger>
             <TabsTrigger value="operators"><Users className="mr-2 h-4 w-4"/>Operatörler</TabsTrigger>
           </TabsList>
@@ -649,13 +678,13 @@ function SettingsDialog({
                 <div className="flex justify-between items-center mb-4">
                     <div>
                         <Label className="text-base">
-                            Kamera Yapılandırması
+                            İstasyon Yapılandırması
                         </Label>
                         <p className="text-sm text-muted-foreground">
-                            Her bir konveyör bandı için video kaynağı tanımlayın.
+                            İstasyonları (konveyör bantları) ekleyin, silin veya video kaynaklarını düzenleyin.
                         </p>
                     </div>
-                    <Button variant="outline" onClick={handleScanNetwork}>
+                    <Button variant="outline" onClick={handleScanNetwork} disabled>
                         <Scan className="mr-2 h-4 w-4" />
                         Ağdaki Kameraları Tara
                     </Button>
@@ -665,22 +694,33 @@ function SettingsDialog({
                     Video dosyası için yolu (örn: `/video.mp4`), cihaz kamerası için `webcam` anahtar kelimesini girin.
                 </p>
 
-                <div className="space-y-4 pt-2">
-                    {Object.keys(currentCameraConfig).map((bant) => (
-                         <div key={bant} className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor={`bant-${bant}-url`} className="text-right">
-                                Bant {bant}
-                            </Label>
+                <div className="space-y-4 pt-2 max-h-64 overflow-y-auto pr-2">
+                    {currentStations.map((station) => (
+                         <div key={station.id} className="grid grid-cols-12 items-center gap-2">
                             <Input
-                                id={`bant-${bant}-url`}
-                                value={currentCameraConfig[bant]}
-                                onChange={(e) => handleCameraConfigFieldChange(bant, e.target.value)}
-                                className="col-span-3"
-                                placeholder="örn: /video.mp4 veya webcam"
+                                id={`station-${station.id}-name`}
+                                value={station.name}
+                                onChange={(e) => handleStationFieldChange(station.id, 'name', e.target.value)}
+                                className="col-span-4"
+                                placeholder="İstasyon Adı"
                             />
+                            <Input
+                                id={`station-${station.id}-source`}
+                                value={station.source}
+                                onChange={(e) => handleStationFieldChange(station.id, 'source', e.target.value)}
+                                className="col-span-7"
+                                placeholder="Video Kaynağı (URL veya 'webcam')"
+                            />
+                            <Button variant="ghost" size="icon" onClick={() => handleRemoveStation(station.id)} className="col-span-1 text-muted-foreground hover:text-destructive">
+                                <Trash2 className="h-4 w-4"/>
+                            </Button>
                         </div>
                     ))}
                 </div>
+                <Button variant="outline" onClick={handleAddStation} className="w-full mt-4">
+                    <PlusCircle className="mr-2 h-4 w-4" />
+                    Yeni İstasyon Ekle
+                </Button>
              </div>
           </TabsContent>
           <TabsContent value="notifications" className="py-4">
@@ -740,8 +780,7 @@ function SettingsDialog({
         </Tabs>
         <DialogFooter>
             <Button variant="outline" onClick={() => setIsOpen(false)}>İptal</Button>
-            <Button onClick={handleSave}>Değişiklikleri Kaydet</Button>
-        </DialogFooter>
+            <Button onClick={handleSave}>Değişiklikleri Kaydet</Button>        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

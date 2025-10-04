@@ -3,7 +3,8 @@
 
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { LayoutDashboard, Settings, Network, FileText, Users } from 'lucide-react';
+import { LayoutDashboard, Settings, Network, FileText, Users, PlusCircle } from 'lucide-react';
+import type { Station } from '@/components/dashboard-client';
 
 import {
   Sidebar,
@@ -27,6 +28,8 @@ import {
     AccordionTrigger,
   } from "@/components/ui/accordion"
 import { Button } from '@/components/ui/button';
+import { useState, useEffect } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function DashboardPage() {
   return (
@@ -40,13 +43,66 @@ export default function DashboardPage() {
 function PageContent() {
     const { setOpenMobile, isMobile } = useSidebar();
     const searchParams = useSearchParams();
-    const selectedBant = searchParams.get('bant') || '1';
-    
+    const selectedStationId = searchParams.get('station') || null;
+
+    const [stations, setStations] = useState<Station[]>([]);
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+        try {
+            const savedStations = localStorage.getItem("conveyorAIStations");
+            if (savedStations) {
+                const parsedStations = JSON.parse(savedStations);
+                if(Array.isArray(parsedStations) && parsedStations.length > 0) {
+                   setStations(parsedStations);
+                } else {
+                  // If localStorage is corrupt or empty, set a default
+                  const defaultStations: Station[] = [{ id: '1', name: 'Bant 1', source: '/conveyor-video.mp4' }];
+                  setStations(defaultStations);
+                  localStorage.setItem("conveyorAIStations", JSON.stringify(defaultStations));
+                }
+            } else {
+                const defaultStations: Station[] = [{ id: '1', name: 'Bant 1', source: '/conveyor-video.mp4' }];
+                setStations(defaultStations);
+                localStorage.setItem("conveyorAIStations", JSON.stringify(defaultStations));
+            }
+        } catch (e) {
+            console.error("Failed to load stations from localStorage", e);
+            const defaultStations: Station[] = [{ id: '1', name: 'Bant 1', source: '/conveyor-video.mp4' }];
+            setStations(defaultStations);
+        }
+    }, []);
+
+    // Listen for storage changes to update stations list dynamically
+    useEffect(() => {
+        const handleStorageChange = (event: StorageEvent) => {
+            if (event.key === 'conveyorAIStations') {
+                try {
+                    if (event.newValue) {
+                        setStations(JSON.parse(event.newValue));
+                    }
+                } catch (e) {
+                    console.error("Failed to parse stations from storage event", e);
+                }
+            }
+        };
+
+        window.addEventListener('storage', handleStorageChange);
+        return () => {
+            window.removeEventListener('storage', handleStorageChange);
+        };
+    }, []);
+
+
     const handleLinkClick = () => {
         if(isMobile) {
             setOpenMobile(false);
         }
     }
+    
+    // Determine the default station ID if none is selected
+    const currentStationId = selectedStationId || (stations.length > 0 ? stations[0].id : '1');
 
     return (
     <>
@@ -64,7 +120,7 @@ function PageContent() {
         <SidebarContent>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/" isActive={!searchParams.get('bant')} tooltip="Kontrol Paneli">
+              <SidebarMenuButton href="/" isActive={!selectedStationId} tooltip="Kontrol Paneli">
                 <LayoutDashboard className="size-5" />
                 <span className="group-data-[state=collapsed]:hidden">
                   Kontrol Paneli
@@ -81,18 +137,30 @@ function PageContent() {
                     </AccordionTrigger>
                     <AccordionContent className="pl-4 pt-1">
                         <SidebarMenu className="p-0">
-                            <SidebarMenuItem>
-                                <SidebarMenuButton href="/?bant=1" variant="ghost" size="sm" className="w-full justify-start h-8 text-base" isActive={selectedBant === '1'} onClick={handleLinkClick}>Bant 1</SidebarMenuButton>
-                            </SidebarMenuItem>
-                            <SidebarMenuItem>
-                                <SidebarMenuButton href="/?bant=2" variant="ghost" size="sm" className="w-full justify-start h-8 text-base" isActive={selectedBant === '2'} onClick={handleLinkClick}>Bant 2</SidebarMenuButton>
-                            </SidebarMenuItem>
-                            <SidebarMenuItem>
-                                <SidebarMenuButton href="/?bant=3" variant="ghost" size="sm" className="w-full justify-start h-8 text-base" isActive={selectedBant === '3'} onClick={handleLinkClick}>Bant 3</SidebarMenuButton>
-                            </SidebarMenuItem>
-                            <SidebarMenuItem>
-                                <SidebarMenuButton href="/?bant=4" variant="ghost" size="sm" className="w-full justify-start h-8 text-base" isActive={selectedBant === '4'} onClick={handleLinkClick}>Bant 4</SidebarMenuButton>
-                            </SidebarMenuItem>
+                            {!isClient ? (
+                                <div className="space-y-2 p-2">
+                                    <Skeleton className="h-8 w-full" />
+                                    <Skeleton className="h-8 w-full" />
+                                </div>
+                            ) : stations.length > 0 ? (
+                                stations.map(station => (
+                                    <SidebarMenuItem key={station.id}>
+                                        <SidebarMenuButton 
+                                            href={`/?station=${station.id}`} 
+                                            variant="ghost" 
+                                            size="sm" 
+                                            className="w-full justify-start h-8 text-base" 
+                                            isActive={currentStationId === station.id} 
+                                            onClick={handleLinkClick}>
+                                            {station.name}
+                                        </SidebarMenuButton>
+                                    </SidebarMenuItem>
+                                ))
+                            ) : (
+                                <div className="text-center text-xs text-sidebar-foreground/70 p-4">
+                                    İstasyon bulunamadı. Lütfen ayarlardan ekleyin.
+                                </div>
+                            )}
                         </SidebarMenu>
                     </AccordionContent>
                 </AccordionItem>
@@ -100,7 +168,7 @@ function PageContent() {
              <SidebarMenuItem>
                 <SidebarMenuButton href="#" tooltip="Raporlar" disabled>
                     <FileText className="size-5" />
-                    <span className="group-data-[state=collapsed]:hidden">Raporlar</span>
+                    <span className="group-data-[state=collapsed-]:hidden">Raporlar</span>
                 </SidebarMenuButton>
             </SidebarMenuItem>
             <Accordion type="single" collapsible className="w-full px-2 group-data-[state=collapsed]:hidden">
@@ -143,7 +211,7 @@ function PageContent() {
           </div>
         </header>
         <main className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8">
-          <DashboardClient />
+          <DashboardClient stations={stations} onStationsChange={setStations} />
         </main>
       </SidebarInset>
     </>
