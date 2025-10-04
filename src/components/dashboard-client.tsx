@@ -475,7 +475,6 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
     <div className="space-y-8">
        <div className="flex justify-between items-start sm:items-center flex-col sm:flex-row gap-4">
         <div className="flex items-center gap-4">
-            <h1 className="text-2xl font-bold tracking-tight">Genel Bakış</h1>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button variant="outline" size="lg" className="min-w-56 justify-between text-base bg-white/5 backdrop-blur-sm border-white/10 hover:bg-white/10">
@@ -970,3 +969,6 @@ function SettingsDialog({
 
     
 
+
+
+    
