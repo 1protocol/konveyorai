@@ -1,3 +1,6 @@
+
+"use client";
+
 import Link from 'next/link';
 import { LayoutDashboard, Settings, Network } from 'lucide-react';
 
@@ -11,6 +14,7 @@ import {
   SidebarMenuItem,
   SidebarProvider,
   SidebarTrigger,
+  useSidebar
 } from '@/components/ui/sidebar';
 import { Icons } from '@/components/icons';
 import { DashboardClient } from '@/components/dashboard-client';
@@ -25,6 +29,21 @@ import {
 export default function DashboardPage() {
   return (
     <SidebarProvider defaultOpen={false}>
+      <PageContent />
+    </SidebarProvider>
+  );
+}
+
+
+function PageContent() {
+    const { setOpenMobile } = useSidebar();
+    
+    const handleLinkClick = () => {
+        setOpenMobile(false);
+    }
+
+    return (
+    <>
       <Sidebar side="right">
         <SidebarHeader className="border-b p-3">
           <Link href="/" className="flex items-center gap-2.5">
@@ -55,16 +74,16 @@ export default function DashboardPage() {
                     <AccordionContent className="pl-4 pt-1">
                         <SidebarMenu className="p-0">
                             <SidebarMenuItem>
-                                <SidebarMenuButton href="/?bant=1" variant="ghost" size="sm" className="w-full justify-start h-8 text-base">Bant 1</SidebarMenuButton>
+                                <SidebarMenuButton href="/?bant=1" variant="ghost" size="sm" className="w-full justify-start h-8 text-base" onClick={handleLinkClick}>Bant 1</SidebarMenuButton>
                             </SidebarMenuItem>
                             <SidebarMenuItem>
-                                <SidebarMenuButton href="/?bant=2" variant="ghost" size="sm" className="w-full justify-start h-8 text-base">Bant 2</SidebarMenuButton>
+                                <SidebarMenuButton href="/?bant=2" variant="ghost" size="sm" className="w-full justify-start h-8 text-base" onClick={handleLinkClick}>Bant 2</SidebarMenuButton>
                             </SidebarMenuItem>
                             <SidebarMenuItem>
-                                <SidebarMenuButton href="/?bant=3" variant="ghost" size="sm" className="w-full justify-start h-8 text-base">Bant 3</SidebarMenuButton>
+                                <SidebarMenuButton href="/?bant=3" variant="ghost" size="sm" className="w-full justify-start h-8 text-base" onClick={handleLinkClick}>Bant 3</SidebarMenuButton>
                             </SidebarMenuItem>
                             <SidebarMenuItem>
-                                <SidebarMenuButton href="/?bant=4" variant="ghost" size="sm" className="w-full justify-start h-8 text-base">Bant 4</SidebarMenuButton>
+                                <SidebarMenuButton href="/?bant=4" variant="ghost" size="sm" className="w-full justify-start h-8 text-base" onClick={handleLinkClick}>Bant 4</SidebarMenuButton>
                             </SidebarMenuItem>
                         </SidebarMenu>
                     </AccordionContent>
@@ -96,6 +115,6 @@ export default function DashboardPage() {
           <DashboardClient />
         </main>
       </SidebarInset>
-    </SidebarProvider>
+    </>
   );
 }
