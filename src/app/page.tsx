@@ -94,9 +94,9 @@ export default function LandingPage() {
               Sistemin fonksiyonel gereksinimleri karşılayan temel özellikleri.
             </p>
           </div>
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4" style={{ perspective: '1000px' }}>
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4" style={{ perspective: '1200px' }}>
             {features.map((feature) => (
-              <Card key={feature.title} className="card-3d text-center bg-background/30 backdrop-blur-xl border border-white/10 shadow-lg">
+              <Card key={feature.title} className="card-3d magic-card text-center bg-background/30 backdrop-blur-xl border-transparent shadow-lg">
                 <CardHeader>
                   <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 card-icon">
                     {feature.icon}
