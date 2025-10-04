@@ -51,7 +51,7 @@ export default function LandingPage() {
           <nav className="flex items-center gap-4">
              <Button asChild variant="ghost" className="hover:bg-primary/20 hover:text-white">
                 <Link href="/dashboard">
-                    Kontrol Paneli <ArrowRight className="ml-2 h-4 w-4" />
+                    Kontrol Paneli
                 </Link>
              </Button>
           </nav>
@@ -70,15 +70,15 @@ export default function LandingPage() {
         <section className="container grid place-items-center gap-8 py-20 text-center md:py-32">
           <div className="space-y-4">
             <h1 className="text-4xl font-extrabold tracking-tighter md:text-6xl">
-              Proaktif Üretim Güvenliği
+              Yapay Zeka Destekli Konveyör Güvenlik Sistemi
             </h1>
             <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-              ConveyorAI, yapay zeka ile konveyör bantlarınızdaki kayma sorunlarını anında tespit ederek üretim verimliliğinizi ve güvenliğinizi artırır.
+              Bu proje, endüstriyel konveyör bantlarındaki yönsel kayma sorunlarını, harici bir veri seti olmadan, kendi kendine referanslama yaparak tespit eden bir yapay zeka yazılımıdır.
             </p>
           </div>
           <Button size="lg" asChild className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20">
             <Link href="/dashboard">
-              Hemen Başlayın <ArrowRight className="ml-2 h-5 w-5" />
+              Kontrol Panelini Görüntüle <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
           </Button>
         </section>
@@ -86,9 +86,9 @@ export default function LandingPage() {
         {/* Features Section */}
         <section id="features" className="container space-y-12 py-16 md:py-24">
           <div className="mx-auto flex max-w-xl flex-col items-center text-center">
-            <h2 className="text-3xl font-bold tracking-tighter md:text-4xl">Temel Yetenekler</h2>
+            <h2 className="text-3xl font-bold tracking-tighter md:text-4xl">Projenin Temel Yetenekleri</h2>
             <p className="mt-4 text-muted-foreground">
-              ConveyorAI'ı endüstriyel izleme için güçlü bir çözüm yapan özellikler.
+              Sistemin fonksiyonel gereksinimleri karşılayan temel özellikleri.
             </p>
           </div>
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
@@ -112,9 +112,9 @@ export default function LandingPage() {
         <section id="how-it-works" className="bg-white/5 py-16 md:py-24">
           <div className="container">
             <div className="mx-auto flex max-w-xl flex-col items-center text-center">
-                <h2 className="text-3xl font-bold tracking-tighter md:text-4xl">Nasıl Çalışır?</h2>
+                <h2 className="text-3xl font-bold tracking-tighter md:text-4xl">Sistemin Çalışma Mimarisi</h2>
                 <p className="mt-4 text-muted-foreground">
-                    Sistemimiz, 3 basit adımda üretiminizi güvence altına alır.
+                    Sistem, 3 temel adımda analiz ve tespit gerçekleştirir.
                 </p>
             </div>
             <div className="mx-auto mt-12 grid max-w-5xl gap-8 md:grid-cols-3">
@@ -141,9 +141,9 @@ export default function LandingPage() {
         <section id="tech-stack" className="py-16 md:py-24">
             <div className="container">
                 <div className="mx-auto flex max-w-xl flex-col items-center text-center">
-                    <h2 className="text-3xl font-bold tracking-tighter md:text-4xl">Teknoloji Yığını</h2>
+                    <h2 className="text-3xl font-bold tracking-tighter md:text-4xl">Kullanılan Teknolojiler</h2>
                     <p className="mt-4 text-muted-foreground">
-                        ConveyorAI'ı hayata geçiren modern ve güçlü teknolojiler.
+                        Projenin geliştirilmesinde kullanılan teknolojiler ve kütüphaneler.
                     </p>
                 </div>
                 <div className="mt-12 flex flex-wrap justify-center gap-8 md:gap-12">
@@ -163,10 +163,12 @@ export default function LandingPage() {
       <footer className="border-t border-white/10">
         <div className="container flex h-16 items-center justify-center">
           <p className="text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} ConveyorAI. Tüm hakları saklıdır.
+            {new Date().getFullYear()} &copy; ConveyorAI Projesi
           </p>
         </div>
       </footer>
     </div>
   );
 }
+
+    
