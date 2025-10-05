@@ -705,14 +705,14 @@ function SettingsDialog({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [currentSettings, setCurrentSettings] = useState(settings);
-  const [currentStations, setCurrentStations]_ = useState(stations);
+  const [currentStations, setCurrentStations] = useState(stations);
   const { toast } = useToast();
 
 
   useEffect(() => {
     if (isOpen) {
       setCurrentSettings(settings);
-      setCurrentStations_(stations);
+      setCurrentStations(stations);
     }
   }, [settings, stations, isOpen]);
 
@@ -738,7 +738,7 @@ function SettingsDialog({
   };
 
   const handleStationFieldChange = (id: string, field: 'name' | 'source', value: string) => {
-    setCurrentStations_(prev => 
+    setCurrentStations(prev => 
       prev.map(station => station.id === id ? {...station, [field]: value} : station)
     );
   };
@@ -750,7 +750,7 @@ function SettingsDialog({
         name: `Yeni İstasyon ${currentStations.length + 1}`,
         source: '/conveyor-video.mp4'
     };
-    setCurrentStations_(prev => [...prev, newStation]);
+    setCurrentStations(prev => [...prev, newStation]);
   };
 
   const handleRemoveStation = (id: string) => {
@@ -762,7 +762,7 @@ function SettingsDialog({
         });
         return;
     }
-    setCurrentStations_(prev => prev.filter(station => station.id !== id));
+    setCurrentStations(prev => prev.filter(station => station.id !== id));
   };
   
   const handleScanNetwork = () => {
@@ -957,5 +957,5 @@ function SettingsDialog({
     </Dialog>
   );
 }
-
+    
     
