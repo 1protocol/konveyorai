@@ -45,7 +45,7 @@ export default function LandingPage() {
                         <div className="space-y-2">
                              <h4 className="font-semibold flex items-center gap-2"><Rocket className="text-accent/80 w-5 h-5"/>Proje Sunumu</h4>
                              <p className="text-muted-foreground text-base">
-                                "Konveyor AI projesi, endüstriyel otomasyonun sınırlarını yapay zeka ile ne kadar ileri taşıyabileceğimizin bir kanıtıdır. Amacım, sadece anlık sorunları tespit etmek değil, aynı zamanda öngörülebilir bakım altyapısı oluşturarak üretimde sıfır duruş hedefine ulaşmaktı. Bu sistem, verimliliği ve güvenliği bir araya getiren bir mühendislik vizyonunun ürünüdür."
+                                "Bu proje, endüstriyel verimliliği ve iş güvenliğini bir araya getiren bir mühendislik vizyonunun somut bir çıktısıdır. Konveyor AI ile amacım, reaktif bakımın getirdiği üretim kayıplarını ortadan kaldırmak ve yapay zeka destekli proaktif analizlerle 'sıfır duruş' hedefine bir adım daha yaklaşmaktır. Bu sistem, sadece bir anomali tespit aracı değil, aynı zamanda daha akıllı ve öngörülebilir bir üretim geleceğine yapılan bir yatırımdır."
                              </p>
                         </div>
                     </CardContent>
@@ -210,5 +210,3 @@ export default function LandingPage() {
     </div>
   );
 }
-
-    
