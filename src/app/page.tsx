@@ -29,18 +29,8 @@ export default function LandingPage() {
         
          {/* Developer Profile Section */}
         <section className="mb-20">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
-            <div className="md:col-span-1 flex justify-center">
-                <div className="card-3d group">
-                    <div className="card-3d-inner p-2">
-                        <Avatar className="h-48 w-48 border-4 border-primary/20 shadow-lg card-icon">
-                            <AvatarImage src="https://picsum.photos/seed/developer/200/200" alt="Geliştirici" data-ai-hint="developer portrait" />
-                            <AvatarFallback>AS</AvatarFallback>
-                        </Avatar>
-                    </div>
-                </div>
-            </div>
-            <div className="md:col-span-2">
+          <div className="grid grid-cols-1 gap-8 items-center">
+            <div>
                 <div className="magic-card p-6 border-white/10">
                     <CardHeader className="p-0 mb-4">
                         <CardTitle className="flex items-center gap-3 text-2xl">
