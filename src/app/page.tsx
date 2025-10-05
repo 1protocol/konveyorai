@@ -48,32 +48,6 @@ export default function DocumentationPage() {
           </Button>
         </Link>
 
-        <Card className="mb-12 bg-card/50 border-border/50 shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-            <CardHeader>
-                <div className="flex items-center gap-4">
-                    <Bot className="h-12 w-12 text-primary" />
-                    <div>
-                        <CardTitle className="text-2xl">Konveyor AI</CardTitle>
-                        <CardDescription>Proaktif Üretim Kontrol Ünitesi / Konveyör Bant Hıza dedektörü Teknik İstasyon Süreç Analizi ve Eylem İstatistik Raporlama</CardDescription>
-                    </div>
-                </div>
-            </CardHeader>
-            <CardContent className="space-y-2 text-sm">
-                <div className="flex">
-                    <strong className="w-32 shrink-0 text-muted-foreground">Proje Adı:</strong>
-                    <span>Konveyor AI</span>
-                </div>
-                <div className="flex">
-                    <strong className="w-32 shrink-0 text-muted-foreground">Proje Amacı:</strong>
-                    <span>Endüstriyel konveyör bant sapmalarını yapay zeka ile proaktif olarak tespit ederek, anormal durumları anında bildirmek, riskleri yönetmek ve üretim süreçlerinde sürdürülebilir verimlilik sağlamak.</span>
-                </div>
-                <div className="flex">
-                    <strong className="w-32 shrink-0 text-muted-foreground">Geliştirici:</strong>
-                    <span>Adınız Soyadınız</span>
-                </div>
-            </CardContent>
-        </Card>
-
         <Card className="mb-8 bg-card/50 border-border/50 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
             <CardHeader>
                 <CardTitle className="flex items-center gap-3 text-xl">
