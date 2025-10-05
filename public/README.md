@@ -1,77 +1,73 @@
-# Konveyor AI - Yapay Zeka Destekli Konveyör Bandı Güvenlik Sistemi
+# Konveyor AI Projesi
 
-Konveyor AI, endüstriyel üretim hatlarındaki konveyör bantlarını gerçek zamanlı olarak izleyen ve yapay zeka kullanarak olası yönsel kayma (kayıklık) sorunlarını otomatik olarak tespit eden modern bir web uygulamasıdır. Bu sistem, harici bir veri seti olmaksızın, çalışmaya başladığında kendi referansını oluşturarak üretim hattı güvenliğini artırmak ve olası arızaları önceden tahmin etmek için geliştirilmiştir.
+**Proje Adı:** Konveyor AI
+**Proje Amacı:** Endüstriyel konveyör bant sapmalarını yapay zeka ile proaktif olarak tespit ederek, anormal durumları anında bildirmek, riskleri yönetmek ve üretim süreçlerinde sürdürülebilir verimlilik sağlamak.
+**Geliştirici:** Adınız Soyadınız
 
-## ✨ Temel Özellikler
+---
 
-- **🤖 Otomatik Referans ve AI Destekli Analiz:** Sistem ilk çalıştırıldığında, bantın mevcut konumunu otomatik olarak bir başlangıç referansı olarak kaydeder. Canlı video akışını sürekli analiz ederek konveyör bandının bu referanstan sapmalarını milimetre cinsinden tespit eder.
-- **📹 Gerçek Zamanlı Görselleştirme:** Canlı video akışı üzerine eklenen dinamik çizgilerle, yapay zekanın referans noktasını ve anlık sapmayı nasıl ölçtüğünü görsel olarak gösterir.
-- **⚙️ Çoklu İstasyon Yönetimi:** Birden fazla konveyör bandını (istasyon) ayrı ayrı izleme ve yönetme imkanı sunar. Her istasyonun anlık durumu, kullanıcı deneyimi odaklı tasarlanmış modern açılır menülerden kolayca seçilebilir.
-- **⚠️ Anomali Tespiti ve Uyarı:** Kullanıcı tarafından belirlenen sapma eşik değeri aşıldığında anında "Anomali" durumu oluşturur ve sesli/görsel uyarılar verir.
-- **🔧 Dinamik Yapılandırma:** Kullanıcılar, "Gelişmiş Ayarlar" menüsünden aşağıdaki parametreleri dinamik olarak yönetebilir:
-    - **İstasyon Yönetimi:** Yeni konveyör bantları (istasyonlar) ekleme, isimlendirme ve video kaynağını (webcam veya dosya yolu) atama.
-    - **Hassasiyet Ayarı:** Anomali olarak kabul edilecek sapma eşiğini (mm cinsinden) ayarlama.
-    - **AI Kalibrasyonu:** Tek tıklamayla yapay zeka modelinin başlangıç referans noktasını yeniden oluşturma.
-    - **Sesli Uyarılar:** Anomali uyarı sesini açıp kapatma.
-- **🎨 Fütüristik Arayüz (VR/Glassmorphism):** Proje, kenarları boyunca hareket eden neon çizgilerle aydınlatılmış, katmanlı ve yarı saydam "cam" kartlar gibi gelişmiş görsel efektlerle zenginleştirilmiş, tamamen karanlık modda çalışan bir tasarıma sahiptir.
-- **📈 Anomali Kayıtları:** Tespit edilen tüm anormal sapmalar, istasyon bilgisi, zaman damgası ve sapma değeriyle birlikte bir kayıt defterine eklenir.
+## 🚀 Projeye Genel Bakış
 
-## 🚀 Kullanılan Teknolojiler
+Konveyor AI, endüstriyel üretim hatlarındaki konveyör bantlarının hizalama durumunu gerçek zamanlı olarak izleyen, yapay zeka tabanlı bir anomali tespit sistemidir. Sistem, kamera görüntülerinden aldığı verileri işleyerek bant üzerindeki milimetrik sapmaları dahi tespit eder ve belirlenen eşik değerleri aşıldığında anında uyarılar oluşturur.
 
-- **Framework:** [Next.js](https://nextjs.org/) (App Router)
-- **Dil:** [TypeScript](https://www.typescriptlang.org/)
-- **Yapay Zeka:** [Google Genkit](https://firebase.google.com/docs/genkit) (Gemini modeli ile)
-- **UI Kütüphanesi:** [Shadcn UI](https://ui.shadcn.com/)
-- **Stil:** [Tailwind CSS](https://tailwindcss.com/)
-- **İkonlar:** [Lucide React](https://lucide.dev/)
+Bu proaktif yaklaşım sayesinde, üretimde yaşanabilecek aksaklıkların, ürün kalitesi sorunlarının ve iş güvenliği risklerinin önüne geçilmesi hedeflenmektedir.
 
-## 📂 Proje Yapısı
+## 🛠️ Teknik Altyapı ve Mimarisi
 
-Projenin temel dosya ve klasör yapısı aşağıda açıklanmıştır:
+Proje, modern ve ölçeklenebilir teknolojiler kullanılarak geliştirilmiştir:
 
-```
-.
-├── src
-│   ├── app/                # Next.js App Router sayfaları ve ana layout
-│   │   ├── dashboard/
-│   │   │   └── page.tsx    # Ana kontrol paneli sayfası
-│   │   ├── layout.tsx      # Kök layout
-│   │   └── page.tsx        # Proje tanıtım (landing) sayfası
-│   │
-│   ├── components/         # Tekrar kullanılabilir React bileşenleri
-│   │   ├── ui/             # Shadcn UI temel bileşenleri (Button, Card, Sidebar etc.)
-│   │   ├── dashboard-client.tsx # Panelin ana istemci tarafı mantığı
-│   │   └── icons.tsx       # Özel ikonlar
-│   │
-│   ├── ai/                 # Genkit ve yapay zeka ile ilgili kodlar
-│   │   ├── flows/
-│   │   │   └── analyze-conveyor-flow.ts # Görüntü analizi yapan AI akışı
-│   │   └── genkit.ts       # Genkit yapılandırması
-│   │
-│   ├── hooks/              # Özel React hook'ları (örn: use-toast, use-mobile)
-│   │
-│   ├── lib/                # Yardımcı fonksiyonlar (örn: cn)
-│
-├── public/                 # Statik varlıklar (video, ses dosyaları)
-│   ├── conveyor-video.mp4  # Varsayılan test videosu
-│   └── alert-sound.mp3     # Anomali uyarı sesi
-│
-├── package.json            # Proje bağımlılıkları ve script'ler
-└── tailwind.config.ts      # Tailwind CSS yapılandırması
-```
+-   **Frontend:** Next.js (App Router), React, TypeScript, Shadcn UI, Tailwind CSS
+-   **AI & Görüntü İşleme:** Google Genkit (Gemini 2.5 Flash)
+-   **UI/UX:** Duyarlı (Responsive) tasarım, gerçek zamanlı veri görselleştirme (Recharts), karanlık mod desteği.
 
-## 🏁 Başlangıç
+### Dosya Yapısı
 
-Projeyi yerel makinenizde çalıştırmak için aşağıdaki adımları izleyin:
+Projenin modüler ve anlaşılır bir dosya yapısı vardır:
 
-1.  **Bağımlılıkları Yükleyin:**
+-   `src/app/dashboard`: Kontrol panelinin ana bileşenlerini ve mantığını içerir.
+-   `src/components`: Arayüzde kullanılan tekrar edilebilir UI bileşenlerini barındırır.
+-   `src/ai/flows`: Görüntü analizi yapan yapay zeka akışlarının (Genkit flows) tanımlandığı yerdir.
+-   `public`: Test videoları, uyarı sesleri gibi statik varlıklar burada tutulur.
+
+## ✨ Öne Çıkan Özellikler
+
+-   **Gerçek Zamanlı Anomali Tespiti:** Kamera görüntülerinden konveyör bandındaki sapmaları anlık olarak analiz eder.
+-   **Dinamik Eşik Değeri:** Kullanıcı tarafından ayarlanabilen sapma eşiği ile anomali hassasiyeti yönetilebilir.
+-   **Çoklu İstasyon Desteği:** Birden fazla konveyör bandı (istasyon) tanımlanabilir ve izlenebilir.
+-   **Görsel ve Sesli Uyarılar:** Anomali durumunda hem ekranda belirgin bir uyarı hem de sesli bir ikaz verir.
+-   **Veri Görselleştirme:** Sapma verilerini zaman serisi grafiği ile anlık olarak görselleştirir.
+-   **Anomali Kayıtları:** Tespit edilen her anomali, zaman damgası ve sapma değeri ile birlikte kaydedilir.
+-   **Esnek Video Kaynağı:** Hem önceden kaydedilmiş video dosyaları hem de canlı webcam görüntüleri ile çalışabilir.
+-   **Gelişmiş Ayarlar:** Kalibrasyon, istasyon yönetimi ve bildirim tercihleri gibi birçok ayar kullanıcı tarafından yapılandırılabilir.
+
+## ⚙️ Kurulum ve Çalıştırma
+
+Projeyi yerel makinenizde çalıştırmak için aşağıdaki adımları izleyebilirsiniz:
+
+1.  **Depoyu Klonlayın:**
+    ```bash
+    git clone https://github.com/path/to/your/repo.git
+    cd konveyor-ai
+    ```
+
+2.  **Bağımlılıkları Yükleyin:**
     ```bash
     npm install
     ```
 
-2.  **Geliştirme Sunucusunu Başlatın:**
+3.  **Geliştirme Sunucusunu Başlatın:**
+    Uygulamayı ve Genkit sunucusunu aynı anda başlatmak için:
     ```bash
     npm run dev
     ```
 
-Uygulama varsayılan olarak `http://localhost:9002` adresinde çalışmaya başlayacaktır.
+4.  **Uygulamaya Erişin:**
+    Tarayıcınızda `http://localhost:9002` adresini ziyaret edin.
+
+## 🔮 Gelecek Planları
+
+-   [ ] **Operatör Yönetimi:** Kullanıcı rolleri ve yetkilendirme.
+-   [ ] **Gelişmiş Raporlama:** Periyodik anomali raporları (PDF, Excel).
+-   [ ] **Bildirim Entegrasyonları:** E-posta, SMS ve anlık mesajlaşma uygulamaları (WhatsApp, Telegram) ile entegrasyon.
+-   [ ] **Bulut Tabanlı Veri Depolama:** Anomali loglarının ve ayarların bulutta saklanması (örn: Firebase Firestore).
+-   [ ] **Otomatik Ağ Taraması:** Ağdaki IP kameralarını otomatik olarak bularak istasyon eklemeyi kolaylaştırma.
