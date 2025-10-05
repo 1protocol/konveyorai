@@ -157,35 +157,6 @@ function PageContent() {
                     </AccordionContent>
                 </AccordionItem>
             </Accordion>
-             <SidebarMenuItem>
-                <SidebarMenuButton href="#" tooltip="Raporlar" disabled>
-                    <FileText className="size-5" />
-                    <span className="group-data-[state=collapsed]:hidden">Raporlar</span>
-                </SidebarMenuButton>
-            </SidebarMenuItem>
-            <Accordion type="single" collapsible className="w-full px-2 group-data-[state=collapsed]:hidden">
-                <AccordionItem value="item-1" className="border-none">
-                    <AccordionTrigger className="hover:no-underline hover:bg-sidebar-accent rounded-md px-2 py-1.5 text-base w-full justify-start data-[state=open]:bg-sidebar-accent">
-                        <div className="flex items-center gap-2.5">
-                            <Users className="size-5" />
-                            <span>Yönetim</span>
-                        </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="pl-4 pt-1">
-                        <SidebarMenu className="p-0">
-                            <SidebarMenuItem>
-                                <SidebarMenuButton href="#" variant="ghost" size="sm" className="w-full justify-start h-8 text-base" disabled>Operatörler</SidebarMenuButton>
-                            </SidebarMenuItem>
-                        </SidebarMenu>
-                    </AccordionContent>
-                </AccordionItem>
-            </Accordion>
-            <SidebarMenuItem>
-                <SidebarMenuButton href="#" tooltip="Ayarlar">
-                    <Settings className="size-5" />
-                    <span className="group-data-[state=collapsed]:hidden">Ayarlar</span>
-                </SidebarMenuButton>
-            </SidebarMenuItem>
           </SidebarMenu>
         </SidebarContent>
       </Sidebar>
@@ -207,11 +178,6 @@ function PageContent() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Hesabım</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>Ayarlar</DropdownMenuItem>
-                <DropdownMenuItem>Destek</DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>Çıkış Yap</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

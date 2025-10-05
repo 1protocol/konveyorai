@@ -140,47 +140,6 @@ export default function LandingPage() {
             </div>
         </section>
 
-        {/* Developer Guide */}
-        <section className="mb-16">
-            <div className="magic-card border-white/10">
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-3 text-xl">
-                        <Github className="text-accent"/>
-                        <span>Geliştirici Kılavuzu</span>
-                    </CardTitle>
-                    <CardDescription>
-                        Proje hakkında teknik bilgiler ve başlangıç adımları.
-                    </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                    <div>
-                        <h3 className="font-semibold mb-2">Başlangıç</h3>
-                        <p className="text-muted-foreground">
-                            Projeyi yerel makinenizde çalıştırmak için aşağıdaki komutları terminalde çalıştırın. Gerekli bağımlılıklar otomatik olarak yüklenecektir.
-                        </p>
-                        <code className="block bg-black/50 border border-white/10 rounded-md px-4 py-2 mt-2 font-mono text-sm">
-                            npm install &amp;&amp; npm run dev
-                        </code>
-                    </div>
-                    <div>
-                        <h3 className="font-semibold mb-2">Teknik Notlar</h3>
-                        <ul className="space-y-2 list-disc list-inside text-muted-foreground">
-                            <li><strong>Genkit SDK:</strong> Yapay zeka akışı <code className="text-xs">src/ai/flows/analyze-conveyor-flow.ts</code> dosyasında tanımlanmıştır. Bu akış, bir görüntü alıp sapma değeri döndüren bir Gemini modelini kullanır.</li>
-                            <li><strong>Arayüz (Frontend):</strong> Kontrol paneli <code className="text-xs">src/app/dashboard/page.tsx</code> ve ana bileşen <code className="text-xs">src/components/dashboard-client.tsx</code> dosyalarındadır.</li>
-                             <li><strong>Yapılandırma:</strong> Anomali eşiği, sesli uyarılar ve istasyon ayarları gibi temel konfigürasyonlar, kontrol panelindeki "Gelişmiş Ayarlar" bölümünden yönetilir ve tarayıcının <code className="text-xs">localStorage</code>'ında saklanır.</li>
-                        </ul>
-                    </div>
-                </CardContent>
-                 <CardFooter className="flex justify-end">
-                    <Button variant="outline" asChild>
-                        <Link href="/README.md" target="_blank">
-                             <Download className="mr-2"/> Proje Raporunu İncele
-                        </Link>
-                    </Button>
-                </CardFooter>
-            </div>
-        </section>
-
         {/* Final CTA */}
         <section className="py-16 text-center">
              <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
