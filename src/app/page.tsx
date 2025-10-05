@@ -119,7 +119,7 @@ export default function DocumentationPage() {
               </p>
               <ul className="list-disc list-inside text-muted-foreground mt-2 space-y-1">
                 <li><strong>Next.js (App Router):</strong> Performanslı ve SEO dostu bir React framework'ü.</li>
-                <li><strong>Google Genkit (Gemini):</strong> Görüntü analizi için kullanılan güçlü yapay zeka altyapısı.</li>
+                <li><strong>Genkit SDK:</strong> Görüntü analizi için kullanılan güçlü yapay zeka altyapısı.</li>
                 <li><strong>Shadcn UI & Tailwind CSS:</strong> Hızlı ve estetik arayüz geliştirmesi için modern bir UI kütüphanesi ve stil çerçevesi.</li>
                 <li><strong>TypeScript:</strong> Kod kalitesini ve sürdürülebilirliği artıran statik tip denetimi.</li>
               </ul>
