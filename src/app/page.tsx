@@ -35,7 +35,7 @@ export default function LandingPage() {
                     <CardHeader className="p-0 mb-4">
                         <CardTitle className="flex items-center gap-3 text-2xl">
                             <User className="text-accent"/>
-                            <span>Adınız Soyadınız</span>
+                            <span>Mustafa USLU</span>
                         </CardTitle>
                         <CardDescription>
                             Full-Stack AI Developer
@@ -210,3 +210,5 @@ export default function LandingPage() {
     </div>
   );
 }
+
+    
