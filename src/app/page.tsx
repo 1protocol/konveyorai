@@ -18,11 +18,6 @@ export default function LandingPage() {
           <Icons.logo className="size-9 text-primary" />
           <h1 className="text-xl font-bold tracking-tight">Konveyor AI</h1>
         </div>
-        <Button asChild>
-          <Link href="/dashboard">
-            Kontrol Paneli <ArrowRight className="ml-2 h-5 w-5" />
-          </Link>
-        </Button>
       </header>
 
       <main className="container mx-auto px-4 py-8">
