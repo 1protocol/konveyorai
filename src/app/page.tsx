@@ -148,7 +148,7 @@ export default function LandingPage() {
                             <li><strong>Proaktif Anomali Tespiti:</strong> Eşik değerini aşan sapmaları anında yakalama.</li>
                             <li><strong>Merkezi Yönetim Paneli:</strong> Tüm istasyonları tek bir arayüzden izleme ve yönetme.</li>
                             <li><strong>Anlık Uyarı Mekanizması:</strong> Anomali durumunda sesli ve görsel bildirimler.</li>
-                            <li><strong>Esnek Kaynak Desteği:</strong> IP kameralar, video dosyaları ve webcam'lerle uyumluluk.</li>
+                            <li><strong>Esnek Kaynak Desteği:</strong> IP kameralar ve video dosyaları ile uyumluluk.</li>
                         </ul>
                     </div>
                 </CardContent>
