@@ -505,9 +505,9 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column */}
-        <div className="lg:col-span-3 space-y-6">
+        <div className="lg:col-span-2 space-y-6">
           <Card className="transition-all duration-300 bg-background/30 backdrop-blur-xl border border-white/10 hover:border-white/20">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -551,134 +551,130 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
                 </div>
             </CardContent>
           </Card>
+          <Card className="transition-all duration-300 bg-background/30 backdrop-blur-xl border border-white/10 hover:border-white/20">
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-base">
+                    <AreaChart />
+                    Gerçek Zamanlı Sapma Grafiği (mm)
+                </CardTitle>
+            </CardHeader>
+            <CardContent className="h-64 sm:h-auto sm:aspect-video">
+                <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={deviationData} margin={{ top: 5, right: 20, left: -20, bottom: 5 }}>
+                        <XAxis dataKey="time" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
+                        <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
+                        <Tooltip
+                            contentStyle={{
+                                backgroundColor: 'hsl(var(--background) / 0.8)',
+                                borderColor: 'hsl(var(--border))',
+                                backdropFilter: 'blur(4px)',
+                            }}
+                            labelStyle={{color: 'hsl(var(--foreground))'}}
+                        />
+                        <Line 
+                            type="monotone" 
+                            dataKey="deviation" 
+                            stroke={isAnomaly ? "hsl(var(--destructive))" : "hsl(var(--accent))"}
+                            strokeWidth={2} 
+                            dot={false}
+                            isAnimationActive={false}
+                        />
+                        <ReferenceLine y={settings.anomalyThreshold} label={{ value: 'Eşik', position: 'insideTopLeft', fill: 'hsl(var(--muted-foreground))' }} stroke="hsl(var(--destructive))" strokeDasharray="3 3" />
+                    </LineChart>
+                </ResponsiveContainer>
+            </CardContent>
+        </Card>
         </div>
 
         {/* Right Column */}
-        <div className="lg:col-span-2 space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <Card className={cn("transition-all duration-300 bg-background/30 backdrop-blur-xl border border-white/10", isAnomaly && "bg-destructive/30 text-white border-red-500/50")}>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium flex items-center justify-between">
-                      Sistem Durumu
-                      {status === "NORMAL" && <CheckCircle className="h-5 w-5 text-green-400" />}
-                      {status === "ANOMALİ" && <AlertTriangle className="h-5 w-5 text-red-400 animate-pulse" />}
-                      {status === "KALİBRE EDİLİYOR" && <SlidersHorizontal className="h-5 w-5 text-accent" />}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">
-                       {status}
-                    </div>
-                    <p className={cn("text-xs", isAnomaly ? "text-red-200" : "text-muted-foreground")}>
-                      {isAnomaly
-                        ? `Sapma eşiği aşıldı.`
-                        : status === "NORMAL"
-                        ? "Parametreler dahilinde."
-                        : "Referans oluşturuluyor..."}
-                    </p>
-                  </CardContent>
-                </Card>
+        <div className="lg:col-span-1 space-y-6">
+            <Card className={cn("transition-all duration-300 bg-background/30 backdrop-blur-xl border border-white/10", isAnomaly && "bg-destructive/30 text-white border-red-500/50")}>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium flex items-center justify-between">
+                  Sistem Durumu
+                  {status === "NORMAL" && <CheckCircle className="h-5 w-5 text-green-400" />}
+                  {status === "ANOMALİ" && <AlertTriangle className="h-5 w-5 text-red-400 animate-pulse" />}
+                  {status === "KALİBRE EDİLİYOR" && <SlidersHorizontal className="h-5 w-5 text-accent" />}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                   {status}
+                </div>
+                <p className={cn("text-xs", isAnomaly ? "text-red-200" : "text-muted-foreground")}>
+                  {isAnomaly
+                    ? `Sapma eşiği aşıldı.`
+                    : status === "NORMAL"
+                    ? "Parametreler dahilinde."
+                    : "Referans oluşturuluyor..."}
+                </p>
+              </CardContent>
+            </Card>
 
-                <Card className="bg-background/30 backdrop-blur-xl border border-white/10 transition-all duration-300">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium flex items-center justify-between">
-                      Mevcut Sapma
-                      <span className="text-muted-foreground">(AI)</span>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div
-                      className={cn(
-                        "text-2xl font-bold",
-                        deviation >= settings.anomalyThreshold && "text-red-400"
-                      )}
-                    >
-                      {deviation.toFixed(2)} mm
-                    </div>
-                    <p className="text-xs text-muted-foreground">
-                      Gerçek zamanlı ölçüm
-                    </p>
-                  </CardContent>
-                </Card>
-            </div>
-             <Card className="bg-background/30 backdrop-blur-xl border border-white/10 transition-all duration-300">
+            <Card className="bg-background/30 backdrop-blur-xl border border-white/10 transition-all duration-300">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium flex items-center justify-between">
+                  Mevcut Sapma
+                  <span className="text-muted-foreground">(AI)</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div
+                  className={cn(
+                    "text-2xl font-bold",
+                    deviation >= settings.anomalyThreshold && "text-red-400"
+                  )}
+                >
+                  {deviation.toFixed(2)} mm
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Gerçek zamanlı ölçüm
+                </p>
+              </CardContent>
+            </Card>
+            <Card className="transition-all duration-300 bg-background/30 backdrop-blur-xl border border-white/10 hover:border-white/20">
                 <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-base">
-                        <AreaChart />
-                        Gerçek Zamanlı Sapma Grafiği (mm)
-                    </CardTitle>
+                <CardTitle>Anomali Kayıtları</CardTitle>
+                <CardDescription>
+                    İstasyon: {selectedStation.name}
+                </CardDescription>
                 </CardHeader>
-                <CardContent className="h-48 sm:h-auto sm:aspect-video">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={deviationData} margin={{ top: 5, right: 20, left: -20, bottom: 5 }}>
-                            <XAxis dataKey="time" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
-                            <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
-                            <Tooltip
-                                contentStyle={{
-                                    backgroundColor: 'hsl(var(--background) / 0.8)',
-                                    borderColor: 'hsl(var(--border))',
-                                    backdropFilter: 'blur(4px)',
-                                }}
-                                labelStyle={{color: 'hsl(var(--foreground))'}}
-                            />
-                            <Line 
-                                type="monotone" 
-                                dataKey="deviation" 
-                                stroke={isAnomaly ? "hsl(var(--destructive))" : "hsl(var(--accent))"}
-                                strokeWidth={2} 
-                                dot={false}
-                                isAnimationActive={false}
-                            />
-                            <ReferenceLine y={settings.anomalyThreshold} label={{ value: 'Eşik', position: 'insideTopLeft', fill: 'hsl(var(--muted-foreground))' }} stroke="hsl(var(--destructive))" strokeDasharray="3 3" />
-                        </LineChart>
-                    </ResponsiveContainer>
+                <CardContent>
+                <div className="relative max-h-96 overflow-y-auto">
+                    <Table>
+                    <TableHeader className="sticky top-0 bg-card/80 backdrop-blur-sm">
+                        <TableRow>
+                        <TableHead>Zaman</TableHead>
+                        <TableHead className="text-right">Sapma</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {filteredLogs.length > 0 ? (
+                        filteredLogs.map((log, index) => (
+                            <TableRow key={index} className="hover:bg-white/5">
+                            <TableCell>{new Date(log.timestamp).toLocaleTimeString('tr-TR')}</TableCell>
+                            <TableCell className="text-right font-medium text-red-400">
+                                {log.deviation.toFixed(2)} mm
+                            </TableCell>
+                            </TableRow>
+                        ))
+                        ) : (
+                        <TableRow>
+                            <TableCell
+                            colSpan={2}
+                            className="h-24 text-center text-muted-foreground"
+                            >
+                            Henüz anomali yok.
+                            </TableCell>
+                        </TableRow>
+                        )}
+                    </TableBody>
+                    </Table>
+                </div>
                 </CardContent>
             </Card>
         </div>
       </div>
-
-
-      <Card className="transition-all duration-300 bg-background/30 backdrop-blur-xl border border-white/10 hover:border-white/20">
-        <CardHeader>
-          <CardTitle>Anomali Kayıtları - {selectedStation.name}</CardTitle>
-          <CardDescription>
-            AI tarafından tespit edilen anormal kayma örnekleri (sapma &ge; {settings.anomalyThreshold}mm).
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="relative max-h-60 overflow-y-auto">
-            <Table>
-              <TableHeader className="sticky top-0 bg-card/80 backdrop-blur-sm">
-                <TableRow>
-                  <TableHead>Zaman Damgası</TableHead>
-                  <TableHead className="text-right">Sapma (mm)</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredLogs.length > 0 ? (
-                  filteredLogs.map((log, index) => (
-                    <TableRow key={index} className="hover:bg-white/5">
-                      <TableCell>{new Date(log.timestamp).toLocaleString('tr-TR')}</TableCell>
-                      <TableCell className="text-right font-medium text-red-400">
-                        {log.deviation.toFixed(2)}
-                      </TableCell>
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell
-                      colSpan={2}
-                      className="h-24 text-center text-muted-foreground"
-                    >
-                      Bu istasyon için henüz anomali kaydedilmedi.
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }
@@ -729,7 +725,7 @@ function SettingsDialog({
     setCurrentSettings({ ...currentSettings, isSoundAlertEnabled: checked });
     if (checked && audioRef.current) {
         if (!audioRef.current.src || audioRef.current.src.endsWith('null')) {
-            audio.current.src = "/alert-sound.mp3";
+            audioRef.current.src = "/alert-sound.mp3";
             audioRef.current.load();
         }
         audioRef.current.play().catch(e => console.error("Test sesi çalınamadı:", e));
@@ -956,9 +952,3 @@ function SettingsDialog({
     </Dialog>
   );
 }
-    
-    
-
-    
-
-    

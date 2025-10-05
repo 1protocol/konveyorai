@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { LayoutDashboard, Settings, Network, User } from '@/components/ui/lucide-icons';
+import { LayoutDashboard, Network, User, Settings } from '@/components/ui/lucide-icons';
 import type { Station } from '@/components/dashboard-client';
 
 import {
@@ -110,7 +110,7 @@ function PageContent() {
         <SidebarContent>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/dashboard" isActive={!searchParams.get('station') || searchParams.get('station') === (stations.length > 0 ? stations[0].id : '')} tooltip="Kontrol Paneli">
+              <SidebarMenuButton href="/dashboard" isActive={true} tooltip="Kontrol Paneli">
                 <LayoutDashboard className="size-5" />
                 <span className="group-data-[state=collapsed]:hidden">
                   Kontrol Paneli
@@ -122,7 +122,7 @@ function PageContent() {
                     <AccordionTrigger className="hover:no-underline hover:bg-sidebar-accent rounded-md px-2 py-1.5 text-base w-full justify-start data-[state=open]:bg-sidebar-accent">
                         <div className="flex items-center gap-2.5">
                             <Network className="size-5" />
-                            <span>İstasyon</span>
+                            <span>İstasyonlar</span>
                         </div>
                     </AccordionTrigger>
                     <AccordionContent className="pl-4 pt-1">
@@ -148,7 +148,7 @@ function PageContent() {
                                 ))
                             ) : (
                                 <div className="text-center text-xs text-sidebar-foreground/70 p-4">
-                                    İstasyon bulunamadı. Lütfen ayarlardan ekleyin.
+                                    İstasyon bulunamadı.
                                 </div>
                             )}
                         </SidebarMenu>
@@ -162,8 +162,8 @@ function PageContent() {
         <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-sm sm:px-6">
           <div className="flex flex-1 items-center gap-4">
             <SidebarTrigger className="md:hidden" />
-            <div className="w-full flex-1">
-              <h1 className="font-bold text-lg sm:hidden">Konveyor AI</h1>
+             <div className="hidden sm:flex">
+              <h1 className="font-bold text-lg">Kontrol Paneli</h1>
             </div>
           </div>
           <div className="flex flex-1 items-center justify-end gap-4">
@@ -187,5 +187,3 @@ function PageContent() {
     </>
   );
 }
-
-    
