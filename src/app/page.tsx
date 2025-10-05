@@ -83,7 +83,7 @@ export default function LandingPage() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                      <p className="text-muted-foreground">
-                        Konveyor AI, üretim hatlarındaki konveyör bantlarını yapay zeka ile izleyerek olası arızaları önceden tespit eder. Amacımız, ani üretim duruşlarını engelleyerek verimliliği artırmak ve bakım maliyetlerini düşürmektir.
+                        Konveyor AI, konveyör bantlarını yapay zeka ile izleyerek olası risk ve kalite yönetimine katkıda bulunmayı amaçlar.
                     </p>
                     <Separator/>
                      <p className="text-foreground/90">
@@ -210,3 +210,5 @@ export default function LandingPage() {
     </div>
   );
 }
+
+    
