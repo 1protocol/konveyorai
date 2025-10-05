@@ -88,7 +88,7 @@ export default function LandingPage() {
                 <CardHeader>
                     <CardTitle className="flex items-center gap-3 text-xl">
                         <FileText className="text-accent"/>
-                        <span>Problem Tanımı ve Amaç</span>
+                        <span>Tanımı ve Amaç</span>
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
