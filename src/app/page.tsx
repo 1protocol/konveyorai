@@ -83,7 +83,7 @@ export default function LandingPage() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                      <p className="text-muted-foreground">
-                        Endüstriyel üretim hatlarındaki konveyör bantlarında meydana gelen hizalama sorunları, ani duruşlara, üretim kayıplarına ve yüksek bakım maliyetlerine yol açmaktadır. Geleneksel denetim yöntemleri bu tür sapmaları proaktif olarak tespit etmekte yetersiz kalmaktadır.
+                        Konveyor AI, üretim hatlarındaki konveyör bantlarını yapay zeka ile izleyerek olası arızaları önceden tespit eder. Amacımız, ani üretim duruşlarını engelleyerek verimliliği artırmak ve bakım maliyetlerini düşürmektir.
                     </p>
                     <Separator/>
                      <p className="text-foreground/90">
