@@ -73,7 +73,7 @@
     }
     
     .magic-card {
-        @apply relative overflow-hidden;
+        @apply relative overflow-hidden bg-card rounded-lg border;
     }
     
     .magic-card::before {
@@ -90,7 +90,7 @@
           radial-gradient(circle at 30% 80%, hsla(200, 70%, 50%, 0.3), transparent 25%);
         background-size: 300% 300%;
         animation: move-glow 8s linear infinite;
-        z-index: -1;
+        z-index: 0;
         will-change: background-position;
         transition: opacity 0.4s ease-in-out;
         opacity: 0;
@@ -100,6 +100,11 @@
         opacity: 1;
     }
     
+    .magic-card > * {
+        z-index: 1;
+        position: relative;
+    }
+
     @keyframes border-glow {
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
@@ -118,11 +123,11 @@
         width: 200%; height: 200%;
         background: conic-gradient(
             from 180deg at 50% 50%,
-            hsla(220, 70%, 60%, 0.8), transparent, hsla(350, 70%, 60%, 0.8), transparent, hsla(0, 0%, 100%, 0.8)
+            hsla(var(--primary), 0.5), transparent, hsla(var(--accent), 0.5), transparent, hsla(var(--primary), 0.5)
         );
         animation: border-glow 6s linear infinite;
         z-index: 1;
-        opacity: 1;
+        opacity: 0.8;
         transition: opacity 0.5s ease-in-out;
     }
     
@@ -131,7 +136,7 @@
     }
     
     .card-3d .card-3d-inner {
-      @apply relative w-full h-full bg-background/30 backdrop-blur-xl rounded-md overflow-hidden;
+      @apply relative w-full h-full bg-background/50 backdrop-blur-xl rounded-md overflow-hidden;
       z-index: 2;
     }
 
@@ -140,3 +145,5 @@
       filter: drop-shadow(0 5px 15px hsla(var(--primary), 0.4));
     }
 }
+
+    

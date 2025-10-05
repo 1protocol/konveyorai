@@ -1,10 +1,12 @@
 
 "use client";
 import Link from 'next/link';
-import { ArrowRight, Bot, Cpu, Layers, ShieldCheck, Video, BrainCircuit, Bell } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { ArrowRight, Bot, Cpu, Layers, ShieldCheck, Video, BrainCircuit, Bell, FileText, Download, Github } from 'lucide-react';
+import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/icons';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
 
 export default function LandingPage() {
   return (
@@ -21,114 +23,146 @@ export default function LandingPage() {
         </Button>
       </header>
 
-      <main className="container mx-auto px-4">
-        {/* Hero Section */}
-        <section className="text-center py-20 lg:py-32">
-            <div className="mx-auto mb-8 flex h-24 w-24 items-center justify-center rounded-full bg-primary/10">
-                <Bot className="h-12 w-12 text-primary" />
-            </div>
-          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tighter mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
-            Üretim Hattınızın Akıllı Gözü
-          </h1>
-          <p className="max-w-2xl mx-auto text-lg md:text-xl text-muted-foreground mb-8">
-            Endüstriyel konveyör bantlarındaki sapmaları yapay zeka ile anında tespit edin, üretimi güvence altına alın ve verimliliği en üst düzeye çıkarın.
-          </p>
-          <Button size="lg" asChild className="h-14 text-lg font-semibold group">
-            <Link href="/dashboard">
-              Hemen Başla
-              <ArrowRight className="ml-2 h-6 w-6 transition-transform duration-300 group-hover:translate-x-1" />
-            </Link>
-          </Button>
-        </section>
-
-        {/* Features Section */}
-        <section className="py-16">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold tracking-tight">Temel Yetenekler</h2>
-            <p className="text-muted-foreground mt-2">Konveyor AI'ın sunduğu güçlü özellikleri keşfedin.</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <FeatureCard
-              icon={<BrainCircuit className="h-8 w-8 text-accent" />}
-              title="Gerçek Zamanlı AI Analizi"
-              description="Canlı video akışları üzerinden konveyör bandı durumunu saniyeler içinde analiz eder ve anlık geri bildirim sağlar."
-            />
-            <FeatureCard
-              icon={<ShieldCheck className="h-8 w-8 text-accent" />}
-              title="Proaktif Anomali Tespiti"
-              description="Belirlenen eşiği aşan en küçük sapmaları bile anında tespit ederek arızalar büyümeden önlem almanızı sağlar."
-            />
-            <FeatureCard
-              icon={<Bell className="h-8 w-8 text-accent" />}
-              title="Anlık Uyarı Mekanizması"
-              description="Anomali durumunda sesli ve görsel uyarılar üreterek operatörlerin anında müdahale etmesine olanak tanır."
-            />
-            <FeatureCard
-              icon={<Cpu className="h-8 w-8 text-accent" />}
-              title="Esnek Donanım Desteği"
-              description="Edge cihazlardan (NVIDIA Jetson, Raspberry Pi) bulut tabanlı GPU'lara kadar geniş bir donanım yelpazesiyle uyumludur."
-            />
-            <FeatureCard
-              icon={<Layers className="h-8 w-8 text-accent" />}
-              title="Merkezi Yönetim Paneli"
-              description="Tüm istasyonları tek bir arayüzden izleyin, anomali kayıtlarını inceleyin ve sistem ayarlarını kolayca yönetin."
-            />
-            <FeatureCard
-              icon={<Video className="h-8 w-8 text-accent" />}
-              title="Çoklu Kaynak Desteği"
-              description="IP kameralar, yerel video dosyaları veya standart web kameraları gibi farklı video kaynaklarını sisteme entegre edin."
-            />
-          </div>
-        </section>
+      <main className="container mx-auto px-4 py-8">
         
-        {/* How It Works Section */}
-        <section className="py-16">
-           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold tracking-tight">Nasıl Çalışır?</h2>
-            <p className="text-muted-foreground mt-2">Sadece üç basit adımda üretim hattınızı güvence altına alın.</p>
-          </div>
-          <div className="relative flex flex-col items-center justify-between gap-8 md:flex-row">
-            <div className="absolute top-1/2 left-0 hidden h-0.5 w-full bg-border md:block"></div>
-             <HowItWorksStep
-                step="1"
-                title="Görüntü Aktarımı"
-                description="İstasyon kameralarından gelen canlı video akışı veya video dosyası sisteme aktarılır."
-              />
-              <HowItWorksStep
-                step="2"
-                title="Yapay Zeka Analizi"
-                description="Genkit destekli AI modeli, her bir kareyi analiz ederek milimetrik sapmaları tespit eder."
-              />
-              <HowItWorksStep
-                step="3"
-                title="Tespit ve Bildirim"
-                description="Anormal bir durum algılandığında, sistem anında görsel ve sesli uyarılar oluşturur."
-              />
-          </div>
+        {/* Main Presentation Card */}
+        <section className="mb-16">
+            <div className="card-3d group">
+                <div className="card-3d-inner p-8 text-center">
+                    <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 border-4 border-primary/20 shadow-lg card-icon">
+                        <Bot className="h-12 w-12 text-primary" />
+                    </div>
+                    <h1 className="text-4xl md:text-5xl font-extrabold tracking-tighter mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
+                        Konveyor AI: Endüstriyel Konveyör Analizi
+                    </h1>
+                    <p className="max-w-3xl mx-auto text-lg md:text-xl text-muted-foreground">
+                        Yapay zeka destekli proaktif anomali tespiti ile üretim hatlarında verimlilik ve güvenlik.
+                    </p>
+                </div>
+            </div>
         </section>
 
-
-        {/* Tech Stack Section */}
-        <section className="py-16">
-            <div className="text-center mb-12">
-                <h2 className="text-3xl font-bold tracking-tight">Teknoloji Mimarisi</h2>
-                <p className="text-muted-foreground mt-2">Modern ve güçlü teknolojilerle geliştirildi.</p>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+            {/* Problem Statement */}
+            <div className="magic-card border-white/10">
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-3 text-xl">
+                        <FileText className="text-accent"/>
+                        <span>Problem Tanımı ve Amaç</span>
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                     <p className="text-muted-foreground">
+                        Endüstriyel üretim hatlarındaki konveyör bantlarında meydana gelen hizalama sorunları, ani duruşlara, üretim kayıplarına ve yüksek bakım maliyetlerine yol açmaktadır. Geleneksel denetim yöntemleri bu tür sapmaları proaktif olarak tespit etmekte yetersiz kalmaktadır.
+                    </p>
+                    <Separator/>
+                     <p className="text-foreground/90">
+                        Bu projenin amacı, yapay zeka kullanarak konveyör bantlarındaki milimetrik sapmaları gerçek zamanlı olarak tespit eden, anormal durumları anında bildiren ve bu sayede üretim süreçlerinde sürdürülebilir verimlilik sağlayan proaktif bir izleme sistemi geliştirmektir.
+                    </p>
+                </CardContent>
             </div>
-            <div className="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-                <TechItem name="Next.js" />
-                <TechItem name="Genkit" />
-                <TechItem name="Tailwind CSS" />
-                <TechItem name="TypeScript" />
+            {/* Solution */}
+             <div className="magic-card border-white/10">
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-3 text-xl">
+                        <BrainCircuit className="text-accent"/>
+                         <span>Çözüm: Konveyor AI</span>
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <p className="text-muted-foreground">
+                        Konveyor AI, canlı kamera görüntülerini veya video dosyalarını Genkit tabanlı bir yapay zeka modeli ile analiz eder. Sistem, konveyör bandının kenarındaki hizalama bozukluklarını ve sapmaları sürekli olarak ölçer.
+                    </p>
+                    <p className="text-muted-foreground">
+                        Belirlenen eşik değerini (örneğin 2mm) aşan bir sapma tespit edildiğinde, sistem otomatik olarak bir "anomali" durumu tetikler, bu durumu kaydeder ve operatörleri sesli/görsel uyarılarla bilgilendirir.
+                    </p>
+                </CardContent>
+            </div>
+        </div>
+
+        {/* Combined Technical Section */}
+        <section className="mb-16">
+             <div className="magic-card border-white/10">
+                <CardHeader>
+                    <CardTitle className="text-center text-2xl font-bold tracking-tight mb-2">Teknik ve İşlevsel Çerçeve</CardTitle>
+                    <CardDescription className="text-center">Sistemin temelini oluşturan teknolojiler ve ana yetenekler.</CardDescription>
+                </CardHeader>
+                <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                     {/* Tech Stack */}
+                    <div className="space-y-4">
+                        <h3 className="font-semibold text-lg text-accent flex items-center gap-2"><Layers/> Teknoloji Mimarisi</h3>
+                        <ul className="space-y-2 list-disc list-inside text-muted-foreground">
+                            <li><strong>Next.js (App Router):</strong> Modern, sunucu-taraflı render edilmiş React arayüzü.</li>
+                            <li><strong>Genkit (Gemini Modeli):</strong> Görüntü analizi ve sapma tespiti için yapay zeka altyapısı.</li>
+                            <li><strong>Shadcn UI & Tailwind CSS:</strong> Esnek ve estetik kullanıcı arayüzü bileşenleri.</li>
+                            <li><strong>TypeScript:</strong> Kod kalitesi ve güvenilirliği için statik tip denetimi.</li>
+                            <li><strong>Recharts:</strong> Gerçek zamanlı veri görselleştirmeleri ve grafikler.</li>
+                        </ul>
+                    </div>
+
+                    {/* Core Features */}
+                    <div className="space-y-4">
+                        <h3 className="font-semibold text-lg text-accent flex items-center gap-2"><ShieldCheck/> Temel Yetenekler</h3>
+                        <ul className="space-y-2 list-disc list-inside text-muted-foreground">
+                            <li><strong>Gerçek Zamanlı AI Analizi:</strong> Canlı video akışları üzerinden anlık sapma tespiti.</li>
+                            <li><strong>Proaktif Anomali Tespiti:</strong> Eşik değerini aşan sapmaları anında yakalama.</li>
+                            <li><strong>Merkezi Yönetim Paneli:</strong> Tüm istasyonları tek bir arayüzden izleme ve yönetme.</li>
+                            <li><strong>Anlık Uyarı Mekanizması:</strong> Anomali durumunda sesli ve görsel bildirimler.</li>
+                            <li><strong>Esnek Kaynak Desteği:</strong> IP kameralar, video dosyaları ve webcam'lerle uyumluluk.</li>
+                        </ul>
+                    </div>
+                </CardContent>
+            </div>
+        </section>
+
+        {/* Developer Guide */}
+        <section className="mb-16">
+            <div className="magic-card border-white/10">
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-3 text-xl">
+                        <Github className="text-accent"/>
+                        <span>Geliştirici Kılavuzu</span>
+                    </CardTitle>
+                    <CardDescription>
+                        Proje hakkında teknik bilgiler ve başlangıç adımları.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                    <div>
+                        <h3 className="font-semibold mb-2">Başlangıç</h3>
+                        <p className="text-muted-foreground">
+                            Projeyi yerel makinenizde çalıştırmak için aşağıdaki komutları terminalde çalıştırın. Gerekli bağımlılıklar otomatik olarak yüklenecektir.
+                        </p>
+                        <code className="block bg-black/50 border border-white/10 rounded-md px-4 py-2 mt-2 font-mono text-sm">
+                            npm install &amp;&amp; npm run dev
+                        </code>
+                    </div>
+                    <div>
+                        <h3 className="font-semibold mb-2">Teknik Notlar</h3>
+                        <ul className="space-y-2 list-disc list-inside text-muted-foreground">
+                            <li><strong>Genkit SDK:</strong> Yapay zeka akışı <code className="text-xs">src/ai/flows/analyze-conveyor-flow.ts</code> dosyasında tanımlanmıştır. Bu akış, bir görüntü alıp sapma değeri döndüren bir Gemini modelini kullanır.</li>
+                            <li><strong>Arayüz (Frontend):</strong> Kontrol paneli <code className="text-xs">src/app/dashboard/page.tsx</code> ve ana bileşen <code className="text-xs">src/components/dashboard-client.tsx</code> dosyalarındadır.</li>
+                             <li><strong>Yapılandırma:</strong> Anomali eşiği, sesli uyarılar ve istasyon ayarları gibi temel konfigürasyonlar, kontrol panelindeki "Gelişmiş Ayarlar" bölümünden yönetilir ve tarayıcının <code className="text-xs">localStorage</code>'ında saklanır.</li>
+                        </ul>
+                    </div>
+                </CardContent>
+                 <CardFooter className="flex justify-end">
+                    <Button variant="outline" asChild>
+                        <Link href="/README.md" target="_blank">
+                             <Download className="mr-2"/> Proje Raporunu İncele
+                        </Link>
+                    </Button>
+                </CardFooter>
             </div>
         </section>
 
         {/* Final CTA */}
-        <section className="py-20 text-center">
+        <section className="py-16 text-center">
              <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
-                Verimliliği Artırmaya Hazır mısınız?
+                Sistemi Deneyimlemeye Hazır mısınız?
             </h2>
             <p className="max-w-xl mx-auto text-muted-foreground mb-8">
-                Konveyor AI ile üretim süreçlerinizi daha akıllı, daha güvenli ve daha verimli hale getirin.
+                Konveyor AI'nin üretim süreçlerinizi nasıl daha akıllı ve güvenli hale getirebileceğini görmek için kontrol paneline geçiş yapın.
             </p>
              <Button size="lg" asChild className="h-14 text-lg font-semibold group">
                 <Link href="/dashboard">
@@ -137,6 +171,7 @@ export default function LandingPage() {
                 </Link>
             </Button>
         </section>
+
       </main>
 
       <footer className="container mx-auto px-4 py-6 text-center text-muted-foreground border-t border-border">
@@ -146,28 +181,4 @@ export default function LandingPage() {
   );
 }
 
-const FeatureCard = ({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) => (
-  <div className="bg-card/50 p-6 rounded-lg border border-border/50 transition-all duration-300 hover:border-accent/50 hover:shadow-lg hover:-translate-y-1">
-    <div className="mb-4">{icon}</div>
-    <h3 className="text-xl font-bold mb-2">{title}</h3>
-    <p className="text-muted-foreground">{description}</p>
-  </div>
-);
-
-const TechItem = ({ name }: { name: string }) => (
-    <div className="flex flex-col items-center gap-2">
-        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-card border border-border/50">
-           <p className="text-sm font-bold">{name}</p>
-        </div>
-    </div>
-);
-
-const HowItWorksStep = ({ step, title, description }: { step: string, title: string, description: string }) => (
-    <div className="relative z-10 flex flex-col items-center text-center max-w-xs">
-        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full border-2 border-accent bg-background text-2xl font-bold text-accent">
-            {step}
-        </div>
-        <h3 className="mb-2 text-xl font-bold">{title}</h3>
-        <p className="text-muted-foreground">{description}</p>
-    </div>
-);
+    
