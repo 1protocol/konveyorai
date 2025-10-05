@@ -48,7 +48,7 @@ export default function LandingPage() {
                             <span>Adınız Soyadınız</span>
                         </CardTitle>
                         <CardDescription>
-                            Full-Stack AI Geliştirici & Proje Lideri
+                            Full-Stack AI Developer
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="p-0 space-y-4">
