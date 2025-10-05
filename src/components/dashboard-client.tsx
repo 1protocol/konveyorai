@@ -470,7 +470,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
 
   return (
     <div className="space-y-6 lg:space-y-8">
-       <div className="flex justify-between items-start sm:items-center flex-col sm:flex-row gap-4">
+       <div className="flex flex-wrap justify-between items-center gap-4">
         <div className="flex items-center gap-4">
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -505,9 +505,9 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
         {/* Left Column */}
-        <div className="lg:col-span-3 space-y-6">
+        <div className="md:col-span-3 lg:col-span-3 space-y-6">
           <Card className="transition-all duration-300 bg-background/30 backdrop-blur-xl border border-white/10 hover:border-white/20">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -554,7 +554,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
         </div>
 
         {/* Right Column */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="md:col-span-3 lg:col-span-2 space-y-6">
             <Card className="bg-background/30 backdrop-blur-xl border border-white/10 transition-all duration-300">
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-base">
@@ -958,4 +958,6 @@ function SettingsDialog({
   );
 }
     
+    
+
     
