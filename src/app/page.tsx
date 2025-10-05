@@ -215,7 +215,7 @@ export default function LandingPage() {
       </main>
 
       <footer className="container mx-auto px-4 py-6 text-center text-muted-foreground border-t border-border">
-        <p>&copy; {new Date().getFullYear()} Konveyor AI. Tüm hakları saklıdır.</p>
+        <p>©2025 Mustafa USLU - Proje Sunumu</p>
       </footer>
     </div>
   );
