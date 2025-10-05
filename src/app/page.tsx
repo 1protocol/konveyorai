@@ -44,6 +44,14 @@ export default function LandingPage() {
                              </p>
                         </div>
                     </CardContent>
+                    <CardFooter className="p-0 pt-6">
+                        <Button asChild variant="outline">
+                            <Link href="/README.md" target="_blank">
+                                <FileText className="mr-2"/>
+                                Proje Raporunu İncele
+                            </Link>
+                        </Button>
+                    </CardFooter>
                 </div>
             </div>
           </div>
