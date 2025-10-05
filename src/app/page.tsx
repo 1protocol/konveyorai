@@ -38,7 +38,7 @@ export default function LandingPage() {
                             <span>Mustafa USLU</span>
                         </CardTitle>
                         <CardDescription>
-                            Full-Stack AI Developer
+                            Proje Geliştirici
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="p-0 space-y-4">
