@@ -161,7 +161,7 @@ const SidebarProvider = React.forwardRef<
               } as React.CSSProperties
             }
             className={cn(
-              "group/sidebar-wrapper flex min-h-svh w-full",
+              "group/sidebar-wrapper grid grid-cols-[auto_1fr] min-h-svh w-full",
               className
             )}
             ref={ref}
@@ -202,7 +202,7 @@ const Sidebar = React.forwardRef<
                 "--sidebar-width": SIDEBAR_WIDTH_MOBILE,
               } as React.CSSProperties
             }
-            side="right"
+            side="left"
           >
             <div className="flex h-full w-full flex-col">{children}</div>
             <SheetClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
@@ -219,7 +219,7 @@ const Sidebar = React.forwardRef<
         data-state={state}
         data-testid="sidebar"
         className={cn("peer hidden text-sidebar-foreground transition-[width] md:block", 
-          "w-[var(--sidebar-width)] data-[state=collapsed]:w-[var(--sidebar-width-icon)]", "bg-sidebar-background border-l border-sidebar-border", className
+          "w-[var(--sidebar-width)] data-[state=collapsed]:w-[var(--sidebar-width-icon)]", "bg-sidebar-background border-r border-sidebar-border", className
         )}
         {...props}
       >

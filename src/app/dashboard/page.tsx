@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { LayoutDashboard, Settings, Network, FileText, Users, Bot, ArrowRight, Cpu, Layers, ShieldCheck, Loader } from '@/components/ui/lucide-icons';
+import { LayoutDashboard, Settings, Network, FileText, Users, Bot, ArrowRight, Cpu, Layers, ShieldCheck, Loader, PanelLeftOpen, Search } from '@/components/ui/lucide-icons';
 import type { Station } from '@/components/dashboard-client';
 
 import {
@@ -15,6 +15,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarProvider,
+  SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { Icons } from '@/components/icons';
 import { DashboardClient } from '@/components/dashboard-client';
@@ -28,6 +29,8 @@ import { useState, useEffect } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 export default function DashboardPage() {
   return (
@@ -95,21 +98,6 @@ function PageContent() {
 
     return (
     <>
-      <SidebarInset>
-        <header className="flex h-16 items-center justify-between gap-4 border-b bg-card px-4 sm:px-6">
-           <div className="flex items-center gap-2.5">
-             <Link href="/" className="flex items-center gap-2.5 md:hidden">
-                <Icons.logo className="size-8 text-primary" />
-             </Link>
-             <h1 className="hidden font-bold text-lg sm:block">Konveyor AI</h1>
-           </div>
-          <div className="flex items-center gap-4">
-          </div>
-        </header>
-        <main className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8">
-          <DashboardClient stations={stations} onStationsChange={setStations} />
-        </main>
-      </SidebarInset>
       <Sidebar>
         <SidebarHeader className="border-b p-3 justify-center">
             <div className="flex items-center gap-2.5">
@@ -201,8 +189,38 @@ function PageContent() {
           </SidebarMenu>
         </SidebarContent>
       </Sidebar>
+      <SidebarInset>
+        <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-sm sm:px-6">
+            <div className="flex items-center gap-4">
+               <SidebarTrigger className="md:hidden" />
+               <h1 className="hidden font-bold text-lg sm:block">Konveyor AI</h1>
+           </div>
+          <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
+          <form className="ml-auto flex-1 sm:flex-initial">
+              {/* This can be a search form in the future */}
+            </form>
+             <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="rounded-full border w-9 h-9">
+                    <User className="h-5 w-5" />
+                    <span className="sr-only">Kullanıcı menüsünü aç</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Hesabım</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>Ayarlar</DropdownMenuItem>
+                <DropdownMenuItem>Destek</DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>Çıkış Yap</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </header>
+        <main className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8">
+          <DashboardClient stations={stations} onStationsChange={setStations} />
+        </main>
+      </SidebarInset>
     </>
   );
 }
-
-    
