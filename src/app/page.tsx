@@ -1,12 +1,14 @@
 
 "use client";
 import Link from 'next/link';
-import { ArrowRight, Bot, Cpu, Layers, ShieldCheck, Video, BrainCircuit, Bell, FileText, Download, Github } from 'lucide-react';
+import { ArrowRight, Bot, Cpu, Layers, ShieldCheck, Video, BrainCircuit, Bell, FileText, Download, Github, User, Rocket } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/icons';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+
 
 export default function LandingPage() {
   return (
@@ -25,6 +27,44 @@ export default function LandingPage() {
 
       <main className="container mx-auto px-4 py-8">
         
+         {/* Developer Profile Section */}
+        <section className="mb-20">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+            <div className="md:col-span-1 flex justify-center">
+                <div className="card-3d group">
+                    <div className="card-3d-inner p-2">
+                        <Avatar className="h-48 w-48 border-4 border-primary/20 shadow-lg card-icon">
+                            <AvatarImage src="https://picsum.photos/seed/developer/200/200" alt="Geliştirici" data-ai-hint="developer portrait" />
+                            <AvatarFallback>AS</AvatarFallback>
+                        </Avatar>
+                    </div>
+                </div>
+            </div>
+            <div className="md:col-span-2">
+                <div className="magic-card p-6 border-white/10">
+                    <CardHeader className="p-0 mb-4">
+                        <CardTitle className="flex items-center gap-3 text-2xl">
+                            <User className="text-accent"/>
+                            <span>Adınız Soyadınız</span>
+                        </CardTitle>
+                        <CardDescription>
+                            Full-Stack AI Geliştirici & Proje Lideri
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="p-0 space-y-4">
+                        <div className="space-y-2">
+                             <h4 className="font-semibold flex items-center gap-2"><Rocket className="text-accent/80 w-5 h-5"/> Proje Yorumu ve Vizyonu</h4>
+                             <p className="text-muted-foreground text-base">
+                                "Konveyor AI projesi, endüstriyel otomasyonun sınırlarını yapay zeka ile ne kadar ileri taşıyabileceğimizin bir kanıtıdır. Amacım, sadece anlık sorunları tespit etmek değil, aynı zamanda öngörülebilir bakım altyapısı oluşturarak üretimde sıfır duruş hedefine ulaşmaktı. Bu sistem, verimliliği ve güvenliği bir araya getiren bir mühendislik vizyonunun ürünüdür."
+                             </p>
+                        </div>
+                    </CardContent>
+                </div>
+            </div>
+          </div>
+        </section>
+
+
         {/* Main Presentation Card */}
         <section className="mb-16">
             <div className="card-3d group">
