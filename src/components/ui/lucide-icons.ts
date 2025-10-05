@@ -21,6 +21,7 @@ export {
     PlusCircle,
     Rocket,
     Scan,
+    Search,
     Settings,
     ShieldCheck,
     SlidersHorizontal,
@@ -29,4 +30,5 @@ export {
     Users,
     Video,
     VideoOff,
+    PanelLeftOpen
 } from 'lucide-react'

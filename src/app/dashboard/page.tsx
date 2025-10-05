@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { LayoutDashboard, Settings, Network, FileText, Users, Bot, ArrowRight, Cpu, Layers, ShieldCheck, Loader, PanelLeftOpen, Search } from '@/components/ui/lucide-icons';
+import { LayoutDashboard, Settings, Network, FileText, Users, Bot, ArrowRight, Cpu, Layers, ShieldCheck, Loader, PanelLeftOpen, Search, User } from '@/components/ui/lucide-icons';
 import type { Station } from '@/components/dashboard-client';
 
 import {
@@ -191,14 +191,13 @@ function PageContent() {
       </Sidebar>
       <SidebarInset>
         <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-sm sm:px-6">
-            <div className="flex items-center gap-4">
-               <SidebarTrigger className="md:hidden" />
-               <h1 className="hidden font-bold text-lg sm:block">Konveyor AI</h1>
-           </div>
-          <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
-          <form className="ml-auto flex-1 sm:flex-initial">
-              {/* This can be a search form in the future */}
-            </form>
+          <div className="flex flex-1 items-center gap-4">
+            <SidebarTrigger className="md:hidden" />
+            <div className="w-full flex-1">
+              <h1 className="font-bold text-lg sm:hidden">Konveyor AI</h1>
+            </div>
+          </div>
+          <div className="flex flex-1 items-center justify-end gap-4">
              <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="rounded-full border w-9 h-9">
