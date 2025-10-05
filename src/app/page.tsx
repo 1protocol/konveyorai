@@ -42,7 +42,7 @@ export default function DocumentationPage() {
       <main className="container mx-auto px-4 pt-12 pb-12">
         
         <Link href="/dashboard" passHref>
-          <Button variant="outline" size="lg" className="w-full h-20 mb-8 text-xl font-bold bg-card/50 border-border/50 shadow-lg transition-all duration-300 hover:shadow-xl hover:shadow-primary/20 hover:scale-[1.01] hover:bg-card/70 text-primary justify-between px-8 group">
+          <Button variant="outline" size="lg" className="w-full h-20 mb-8 text-xl font-bold bg-card/50 border-border/50 shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-[1.01] hover:bg-card/70 text-primary justify-between px-8 group">
             Kontrol Paneli
             <ArrowRight className="h-8 w-8 transition-transform duration-300 group-hover:translate-x-2" />
           </Button>
@@ -120,7 +120,7 @@ export default function DocumentationPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-3 text-xl">
               <LayoutDashboard className="h-7 w-7 text-primary" />
-              İstasyon Tespit, Modelleme ve Raporlama
+              Tespit ve Raporlama
             </CardTitle>
           </CardHeader>
           <CardContent>
