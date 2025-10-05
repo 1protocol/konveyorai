@@ -1,7 +1,7 @@
 
 "use client";
 import Link from 'next/link';
-import { ArrowRight, Bot, Cpu, Layers, ShieldCheck, Video, BrainCircuit, Bell, FileText, Download, Github, User, Rocket } from 'lucide-react';
+import { ArrowRight, Bot, Cpu, Layers, ShieldCheck, Video, BrainCircuit, Bell, FileText, Download, Github, User, Rocket } from '@/components/ui/lucide-icons';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/icons';

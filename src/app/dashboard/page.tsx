@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { LayoutDashboard, Settings, Network, FileText, Users, Bot, ArrowRight, Cpu, Layers, ShieldCheck, Loader } from 'lucide-react';
+import { LayoutDashboard, Settings, Network, FileText, Users, Bot, ArrowRight, Cpu, Layers, ShieldCheck, Loader } from '@/components/ui/lucide-icons';
 import type { Station } from '@/components/dashboard-client';
 
 import {

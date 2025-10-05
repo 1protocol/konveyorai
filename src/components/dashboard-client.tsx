@@ -50,7 +50,7 @@ import {
   AreaChart,
   Network,
   Check,
-} from "lucide-react";
+} from "@/components/ui/lucide-icons";
 import { analyzeConveyorBelt } from "@/ai/flows/analyze-conveyor-flow";
 import {
   Dialog,
