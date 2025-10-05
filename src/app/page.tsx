@@ -189,7 +189,7 @@ export default function LandingPage() {
         {/* Final CTA */}
         <section className="py-16 text-center">
              <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
-                Sistemi Deneyimlemeye Hazır mısınız?
+                Değeri oluşturan deneyimleriniz. Her bir yorum gelişime atılan bir imza!
             </h2>
             <p className="max-w-xl mx-auto text-muted-foreground mb-8">
                 Konveyor AI'nin üretim süreçlerinizi nasıl daha akıllı ve güvenli hale getirebileceğini görmek için kontrol paneline geçiş yapın.
