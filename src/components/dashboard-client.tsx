@@ -71,6 +71,8 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "./ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 
 type AnomalyLog = {
   timestamp: string;
@@ -236,9 +238,10 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
       };
       getCameraPermission();
     } else {
-        if (videoRef.current.src !== window.location.origin + videoSource) {
+        const videoUrl = videoSource.startsWith('http') ? videoSource : window.location.origin + videoSource;
+        if (videoRef.current.src !== videoUrl) {
             videoRef.current.srcObject = null; // Clear srcObject for src to work
-            videoRef.current.src = videoSource;
+            videoRef.current.src = videoUrl;
             videoRef.current.load();
             videoRef.current.play().catch(e => console.error("Video oynatma hatası:", e));
         }
@@ -334,7 +337,10 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
     let pulseDirection = -1;
 
     const draw = () => {
-        if (!overlay || !video) return;
+        if (!overlay || !video || video.readyState < 2) {
+            animationFrameId.current = requestAnimationFrame(draw);
+            return;
+        }
         
         // Resize overlay to match video element size
         if (overlay.width !== video.clientWidth || overlay.height !== video.clientHeight) {
@@ -680,30 +686,6 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
   );
 }
 
-const MenuButton = ({
-    Icon,
-    label,
-    isActive,
-    onClick,
-  }: {
-    Icon: React.ElementType;
-    label: string;
-    isActive: boolean;
-    onClick: () => void;
-  }) => (
-    <Button
-      variant="ghost"
-      onClick={onClick}
-      className={cn(
-        "w-full justify-start gap-3 px-3",
-        isActive && "bg-muted text-foreground"
-      )}
-    >
-      <Icon className="h-5 w-5" />
-      <span>{label}</span>
-    </Button>
-  );
-
 function SettingsDialog({
   settings,
   onSettingsChange,
@@ -727,14 +709,11 @@ function SettingsDialog({
   const [currentSettings, setCurrentSettings] = useState(settings);
   const [currentStations, setCurrentStations] = useState(stations);
   const { toast } = useToast();
-  const [activeMenu, setActiveMenu] = useState('ai-settings');
-
 
   useEffect(() => {
     if (isOpen) {
       setCurrentSettings(settings);
       setCurrentStations(stations);
-      setActiveMenu('ai-settings');
     }
   }, [settings, stations, isOpen]);
 
@@ -794,14 +773,6 @@ function SettingsDialog({
     });
   }
 
-  const menuItems = [
-    { id: 'ai-settings', label: 'Yapay Zeka', icon: BrainCircuit },
-    { id: 'cameras', label: 'İstasyonlar', icon: Camera },
-    { id: 'notifications', label: 'Bildirimler', icon: Bell },
-    { id: 'operators', label: 'Operatörler', icon: Users },
-  ];
-
-
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
@@ -810,212 +781,205 @@ function SettingsDialog({
           Gelişmiş Ayarlar
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-4xl h-[650px] flex flex-col bg-background/80 backdrop-blur-xl border-white/10">
+      <DialogContent className="max-w-4xl h-auto md:h-auto max-h-[80vh] flex flex-col bg-background/80 backdrop-blur-xl border-white/10">
         <DialogHeader>
           <DialogTitle className="text-xl">Gelişmiş Ayarlar</DialogTitle>
           <DialogDescription>
             Sistem davranışını, yapay zeka parametrelerini ve bildirimleri yapılandırın.
           </DialogDescription>
         </DialogHeader>
-        <div className="flex-grow grid grid-cols-1 md:grid-cols-4 gap-x-8 gap-y-6 overflow-hidden">
-            <aside className="md:col-span-1 border-r border-white/10 pr-6 -ml-2">
-                <nav className="flex flex-col gap-2">
-                    {menuItems.map((item) => (
-                        <MenuButton
-                          key={item.id}
-                          Icon={item.icon}
-                          label={item.label}
-                          isActive={activeMenu === item.id}
-                          onClick={() => setActiveMenu(item.id)}
-                        />
-                    ))}
-                </nav>
-            </aside>
-            <main className="md:col-span-3 overflow-y-auto pr-2 -mr-4 pl-2">
-                <div className="space-y-8">
-                {activeMenu === 'ai-settings' && (
-                    <div className="space-y-8">
-                        <Card className="bg-card/50 border-white/10">
-                            <CardHeader>
-                                <CardTitle className="text-lg">Algılama Hassasiyeti</CardTitle>
-                                <CardDescription>
-                                    Bu değerin üzerindeki sapmalar "Anomali" olarak kabul edilecektir. Düşük değerler hassasiyeti artırır.
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="flex items-center gap-4">
-                                    <Slider
-                                    id="anomaly-threshold"
-                                    min={0.5}
-                                    max={5.0}
-                                    step={0.1}
-                                    value={[currentSettings.anomalyThreshold]}
-                                    onValueChange={(value) =>
-                                        setCurrentSettings({ ...currentSettings, anomalyThreshold: value[0] })
-                                    }
-                                    className="flex-1"
-                                    />
-                                    <span className="w-28 rounded-md border text-center p-2 font-mono text-base bg-background/50 border-white/20">
-                                    {currentSettings.anomalyThreshold.toFixed(1)} mm
-                                    </span>
-                                </div>
-                            </CardContent>
-                        </Card>
-                         <Card className="bg-card/50 border-white/10">
-                            <CardHeader>
-                                <CardTitle className="text-lg">AI Kalibrasyonu</CardTitle>
-                                 <CardDescription>
-                                    {isCalibrating
-                                        ? "AI modeli, konveyör bandının mevcut durumunu yeni referans olarak ayarlıyor..."
-                                        : "Sistemin sapmaları doğru tespit etmesi için, bantta fiziksel bir değişiklik yapıldığında AI'ı yeniden kalibre edin."}
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                {isCalibrating ? (
-                                <Progress value={calibrationProgress} className="w-full" />
-                                ) : (
-                                <Button
-                                    onClick={onCalibrate}
-                                    disabled={isCalibrating}
-                                    className="w-full"
-                                    variant="outline"
-                                >
-                                    <SlidersHorizontal className="mr-2 h-4 w-4" />
-                                    Kalibrasyonu Başlat
-                                </Button>
-                                )}
-                            </CardContent>
-                        </Card>
+        
+        <Tabs defaultValue="ai-settings" className="flex-grow flex flex-col overflow-hidden">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="ai-settings"><BrainCircuit className="mr-2"/>Yapay Zeka</TabsTrigger>
+            <TabsTrigger value="cameras"><Camera className="mr-2"/>İstasyonlar</TabsTrigger>
+            <TabsTrigger value="notifications"><Bell className="mr-2"/>Bildirimler</TabsTrigger>
+            <TabsTrigger value="operators"><Users className="mr-2"/>Operatörler</TabsTrigger>
+          </TabsList>
+          <div className="flex-grow overflow-y-auto pt-6 pr-2 -mr-4">
+          <TabsContent value="ai-settings" className="mt-0">
+            <div className="space-y-8">
+                <Card className="bg-card/50 border-white/10">
+                    <CardHeader>
+                        <CardTitle className="text-lg">Algılama Hassasiyeti</CardTitle>
+                        <CardDescription>
+                            Bu değerin üzerindeki sapmalar "Anomali" olarak kabul edilecektir. Düşük değerler hassasiyeti artırır.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="flex items-center gap-4">
+                            <Slider
+                            id="anomaly-threshold"
+                            min={0.5}
+                            max={5.0}
+                            step={0.1}
+                            value={[currentSettings.anomalyThreshold]}
+                            onValueChange={(value) =>
+                                setCurrentSettings({ ...currentSettings, anomalyThreshold: value[0] })
+                            }
+                            className="flex-1"
+                            />
+                            <span className="w-28 rounded-md border text-center p-2 font-mono text-base bg-background/50 border-white/20">
+                            {currentSettings.anomalyThreshold.toFixed(1)} mm
+                            </span>
+                        </div>
+                    </CardContent>
+                </Card>
+                    <Card className="bg-card/50 border-white/10">
+                    <CardHeader>
+                        <CardTitle className="text-lg">AI Kalibrasyonu</CardTitle>
+                            <CardDescription>
+                            {isCalibrating
+                                ? "AI modeli, konveyör bandının mevcut durumunu yeni referans olarak ayarlıyor..."
+                                : "Sistemin sapmaları doğru tespit etmesi için, bantta fiziksel bir değişiklik yapıldığında AI'ı yeniden kalibre edin."}
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        {isCalibrating ? (
+                        <Progress value={calibrationProgress} className="w-full" />
+                        ) : (
+                        <Button
+                            onClick={onCalibrate}
+                            disabled={isCalibrating}
+                            className="w-full"
+                            variant="outline"
+                        >
+                            <SlidersHorizontal className="mr-2 h-4 w-4" />
+                            Kalibrasyonu Başlat
+                        </Button>
+                        )}
+                    </CardContent>
+                </Card>
+            </div>
+          </TabsContent>
+          <TabsContent value="cameras">
+            <Card className="bg-card/50 border-white/10">
+                <CardHeader>
+                        <div className="flex justify-between items-start">
+                        <div>
+                            <CardTitle className="text-lg">İstasyon Yapılandırması</CardTitle>
+                            <CardDescription>
+                                Her bir konveyör bandı için video kaynağı tanımlayın.
+                            </CardDescription>
+                        </div>
+                        <Button variant="outline" onClick={handleScanNetwork} className="shrink-0">
+                            <Scan className="mr-2 h-4 w-4" />
+                            Ağı Tara
+                        </Button>
                     </div>
-                )}
-                 {activeMenu === 'cameras' && (
-                     <Card className="bg-card/50 border-white/10">
-                        <CardHeader>
-                             <div className="flex justify-between items-start">
-                                <div>
-                                    <CardTitle className="text-lg">İstasyon Yapılandırması</CardTitle>
-                                    <CardDescription>
-                                        Her bir konveyör bandı için video kaynağı tanımlayın.
-                                    </CardDescription>
-                                </div>
-                                <Button variant="outline" onClick={handleScanNetwork} className="shrink-0">
-                                    <Scan className="mr-2 h-4 w-4" />
-                                    Ağı Tara
+                </CardHeader>
+                <CardContent>
+                    <p className="text-sm text-muted-foreground pb-4">
+                        Video dosyası için yolu (örn: `/video.mp4`), cihaz kamerası için `webcam` anahtar kelimesini girin.
+                    </p>
+                    <div className="space-y-4 pt-2 max-h-60 overflow-y-auto pr-2 -mr-2">
+                        {currentStations.map((station) => (
+                            <div key={station.id} className="grid grid-cols-12 items-center gap-2">
+                                <Input
+                                    id={`station-${station.id}-name`}
+                                    value={station.name}
+                                    onChange={(e) => handleStationFieldChange(station.id, 'name', e.target.value)}
+                                    className="col-span-4 bg-background/50"
+                                    placeholder="İstasyon Adı"
+                                />
+                                <Input
+                                    id={`station-${station.id}-source`}
+                                    value={station.source}
+                                    onChange={(e) => handleStationFieldChange(station.id, 'source', e.target.value)}
+                                    className="col-span-7 bg-background/50"
+                                    placeholder="Video Kaynağı (URL veya 'webcam')"
+                                />
+                                <Button variant="ghost" size="icon" onClick={() => handleRemoveStation(station.id)} className="col-span-1 text-muted-foreground hover:text-destructive">
+                                    <Trash2 className="h-4 w-4"/>
                                 </Button>
                             </div>
-                        </CardHeader>
-                        <CardContent>
-                            <p className="text-sm text-muted-foreground pb-4">
-                                Video dosyası için yolu (örn: `/video.mp4`), cihaz kamerası için `webcam` anahtar kelimesini girin.
+                        ))}
+                    </div>
+                </CardContent>
+                <CardHeader className="pt-0"> {/* Using CardHeader as a footer with different padding */}
+                        <Button variant="outline" onClick={handleAddStation} className="w-full mt-4">
+                        <PlusCircle className="mr-2 h-4 w-4" />
+                        Yeni İstasyon Ekle
+                    </Button>
+                </CardHeader>
+                </Card>
+          </TabsContent>
+          <TabsContent value="notifications">
+            <div className="space-y-8">
+                <Card className="bg-card/50 border-white/10">
+                    <CardHeader>
+                        <CardTitle className="text-lg">Gerçek Zamanlı Uyarılar</CardTitle>
+                        <CardDescription>
+                            Anomali durumlarında sistemin nasıl tepki vereceğini yönetin.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <div className="flex items-center justify-between rounded-lg border p-4 border-white/10 bg-background/30">
+                            <div className="space-y-0.5">
+                            <Label htmlFor="sound-alert" className="text-base">
+                                Sesli Uyarı
+                            </Label>
+                            <p className="text-sm text-muted-foreground">
+                                Anomali tespit edildiğinde sesli bir uyarı çal.
                             </p>
-                            <div className="space-y-4 pt-2 max-h-60 overflow-y-auto pr-2 -mr-2">
-                                {currentStations.map((station) => (
-                                    <div key={station.id} className="grid grid-cols-12 items-center gap-2">
-                                        <Input
-                                            id={`station-${station.id}-name`}
-                                            value={station.name}
-                                            onChange={(e) => handleStationFieldChange(station.id, 'name', e.target.value)}
-                                            className="col-span-4 bg-background/50"
-                                            placeholder="İstasyon Adı"
-                                        />
-                                        <Input
-                                            id={`station-${station.id}-source`}
-                                            value={station.source}
-                                            onChange={(e) => handleStationFieldChange(station.id, 'source', e.target.value)}
-                                            className="col-span-7 bg-background/50"
-                                            placeholder="Video Kaynağı (URL veya 'webcam')"
-                                        />
-                                        <Button variant="ghost" size="icon" onClick={() => handleRemoveStation(station.id)} className="col-span-1 text-muted-foreground hover:text-destructive">
-                                            <Trash2 className="h-4 w-4"/>
-                                        </Button>
-                                    </div>
-                                ))}
                             </div>
-                        </CardContent>
-                        <CardHeader className="pt-0"> {/* Using CardHeader as a footer with different padding */}
-                             <Button variant="outline" onClick={handleAddStation} className="w-full mt-4">
-                                <PlusCircle className="mr-2 h-4 w-4" />
-                                Yeni İstasyon Ekle
-                            </Button>
-                        </CardHeader>
-                     </Card>
-                )}
-                 {activeMenu === 'notifications' && (
-                    <div className="space-y-8">
-                        <Card className="bg-card/50 border-white/10">
-                            <CardHeader>
-                                <CardTitle className="text-lg">Gerçek Zamanlı Uyarılar</CardTitle>
-                                <CardDescription>
-                                    Anomali durumlarında sistemin nasıl tepki vereceğini yönetin.
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                <div className="flex items-center justify-between rounded-lg border p-4 border-white/10 bg-background/30">
-                                  <div className="space-y-0.5">
-                                    <Label htmlFor="sound-alert" className="text-base">
-                                      Sesli Uyarı
-                                    </Label>
-                                    <p className="text-sm text-muted-foreground">
-                                      Anomali tespit edildiğinde sesli bir uyarı çal.
-                                    </p>
-                                  </div>
-                                  <Switch
-                                    id="sound-alert"
-                                    checked={currentSettings.isSoundAlertEnabled}
-                                    onCheckedChange={handleSoundSwitchChange}
-                                  />
-                                </div>
-                            </CardContent>
-                        </Card>
-                        <Card className="bg-card/50 border-white/10 opacity-60">
-                             <CardHeader>
-                                <CardTitle className="text-lg">Harici Bildirimler (Yakında)</CardTitle>
-                                <CardDescription>
-                                    Kritik anomalilerde tanımlı operatörlere harici bildirimler gönderin.
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                <div className="flex items-center justify-between rounded-lg border p-4 border-dashed border-white/20 bg-transparent">
-                                  <div className="space-y-0.5">
-                                    <Label htmlFor="email-alert" className="text-base">
-                                      E-posta Bildirimi
-                                    </Label>
-                                  </div>
-                                  <Switch
-                                    id="email-alert"
-                                    disabled
-                                  />
-                                </div>
-                                <div className="flex items-center justify-between rounded-lg border p-4 border-dashed border-white/20 bg-transparent">
-                                  <div className="space-y-0.5">
-                                    <Label htmlFor="sms-alert" className="text-base">
-                                      SMS & WhatsApp
-                                    </Label>
-                                  </div>
-                                  <Switch
-                                    id="sms-alert"
-                                    disabled
-                                  />
-                                </div>
-                            </CardContent>
-                        </Card>
+                            <Switch
+                            id="sound-alert"
+                            checked={currentSettings.isSoundAlertEnabled}
+                            onCheckedChange={handleSoundSwitchChange}
+                            />
+                        </div>
+                    </CardContent>
+                </Card>
+                <Card className="bg-card/50 border-white/10 opacity-60">
+                        <CardHeader>
+                        <CardTitle className="text-lg">Harici Bildirimler (Yakında)</CardTitle>
+                        <CardDescription>
+                            Kritik anomalilerde tanımlı operatörlere harici bildirimler gönderin.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <div className="flex items-center justify-between rounded-lg border p-4 border-dashed border-white/20 bg-transparent">
+                            <div className="space-y-0.5">
+                            <Label htmlFor="email-alert" className="text-base">
+                                E-posta Bildirimi
+                            </Label>
+                            </div>
+                            <Switch
+                            id="email-alert"
+                            disabled
+                            />
+                        </div>
+                        <div className="flex items-center justify-between rounded-lg border p-4 border-dashed border-white/20 bg-transparent">
+                            <div className="space-y-0.5">
+                            <Label htmlFor="sms-alert" className="text-base">
+                                SMS & WhatsApp
+                            </Label>
+                            </div>
+                            <Switch
+                            id="sms-alert"
+                            disabled
+                            />
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
+          </TabsContent>
+          <TabsContent value="operators">
+            <Card className="bg-card/50 border-white/10 h-full">
+                <CardContent className="h-full flex flex-col justify-center items-center text-center p-8 min-h-[300px]">
+                    <div className="p-4 bg-muted/50 rounded-full mb-4 border border-dashed border-white/20">
+                        <Users className="mx-auto h-12 w-12 text-muted-foreground" />
                     </div>
-                )}
-                {activeMenu === 'operators' && (
-                     <Card className="bg-card/50 border-white/10 h-full">
-                        <CardContent className="h-full flex flex-col justify-center items-center text-center p-8">
-                            <div className="p-4 bg-muted/50 rounded-full mb-4 border border-dashed border-white/20">
-                                <Users className="mx-auto h-12 w-12 text-muted-foreground" />
-                            </div>
-                            <h3 className="text-lg font-semibold text-foreground">Operatör Yönetimi</h3>
-                            <p className="text-muted-foreground mt-2">Bu özellik yakında eklenecektir. Operatörleri tanımlayıp, onlara özel bildirim atamaları yapabileceksiniz.</p>
-                        </CardContent>
-                    </Card>
-                )}
-                </div>
-            </main>
-        </div>
-        <DialogFooter className="pt-4 border-t border-white/10">
+                    <h3 className="text-lg font-semibold text-foreground">Operatör Yönetimi</h3>
+                    <p className="text-muted-foreground mt-2">Bu özellik yakında eklenecektir. Operatörleri tanımlayıp, onlara özel bildirim atamaları yapabileceksiniz.</p>
+                </CardContent>
+            </Card>
+          </TabsContent>
+          </div>
+        </Tabs>
+
+        <DialogFooter className="pt-4 border-t border-white/10 mt-auto">
             <Button variant="outline" onClick={() => setIsOpen(false)}>İptal</Button>
             <Button onClick={handleSave}>Değişiklikleri Kaydet</Button>        
         </DialogFooter>
@@ -1023,7 +987,5 @@ function SettingsDialog({
     </Dialog>
   );
 }
-
-    
 
     
