@@ -505,9 +505,9 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
         {/* Left Column */}
-        <div className="md:col-span-3 lg:col-span-3 space-y-6">
+        <div className="lg:col-span-3 space-y-6">
           <Card className="transition-all duration-300 bg-background/30 backdrop-blur-xl border border-white/10 hover:border-white/20">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -554,41 +554,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
         </div>
 
         {/* Right Column */}
-        <div className="md:col-span-3 lg:col-span-2 space-y-6">
-            <Card className="bg-background/30 backdrop-blur-xl border border-white/10 transition-all duration-300">
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-base">
-                        <AreaChart />
-                        Gerçek Zamanlı Sapma Grafiği (mm)
-                    </CardTitle>
-                </CardHeader>
-                <CardContent className="h-48">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={deviationData} margin={{ top: 5, right: 20, left: -20, bottom: 5 }}>
-                            <XAxis dataKey="time" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
-                            <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
-                            <Tooltip
-                                contentStyle={{
-                                    backgroundColor: 'hsl(var(--background) / 0.8)',
-                                    borderColor: 'hsl(var(--border))',
-                                    backdropFilter: 'blur(4px)',
-                                }}
-                                labelStyle={{color: 'hsl(var(--foreground))'}}
-                            />
-                            <Line 
-                                type="monotone" 
-                                dataKey="deviation" 
-                                stroke={isAnomaly ? "hsl(var(--destructive))" : "hsl(var(--accent))"}
-                                strokeWidth={2} 
-                                dot={false}
-                                isAnimationActive={false}
-                            />
-                            <ReferenceLine y={settings.anomalyThreshold} label={{ value: 'Eşik', position: 'insideTopLeft', fill: 'hsl(var(--muted-foreground))' }} stroke="hsl(var(--destructive))" strokeDasharray="3 3" />
-                        </LineChart>
-                    </ResponsiveContainer>
-                </CardContent>
-            </Card>
-
+        <div className="lg:col-span-2 space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <Card className={cn("transition-all duration-300 bg-background/30 backdrop-blur-xl border border-white/10", isAnomaly && "bg-destructive/30 text-white border-red-500/50")}>
                   <CardHeader className="pb-2">
@@ -635,6 +601,39 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
                   </CardContent>
                 </Card>
             </div>
+             <Card className="bg-background/30 backdrop-blur-xl border border-white/10 transition-all duration-300">
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-base">
+                        <AreaChart />
+                        Gerçek Zamanlı Sapma Grafiği (mm)
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className="h-48 sm:h-auto sm:aspect-video">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <LineChart data={deviationData} margin={{ top: 5, right: 20, left: -20, bottom: 5 }}>
+                            <XAxis dataKey="time" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
+                            <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
+                            <Tooltip
+                                contentStyle={{
+                                    backgroundColor: 'hsl(var(--background) / 0.8)',
+                                    borderColor: 'hsl(var(--border))',
+                                    backdropFilter: 'blur(4px)',
+                                }}
+                                labelStyle={{color: 'hsl(var(--foreground))'}}
+                            />
+                            <Line 
+                                type="monotone" 
+                                dataKey="deviation" 
+                                stroke={isAnomaly ? "hsl(var(--destructive))" : "hsl(var(--accent))"}
+                                strokeWidth={2} 
+                                dot={false}
+                                isAnimationActive={false}
+                            />
+                            <ReferenceLine y={settings.anomalyThreshold} label={{ value: 'Eşik', position: 'insideTopLeft', fill: 'hsl(var(--muted-foreground))' }} stroke="hsl(var(--destructive))" strokeDasharray="3 3" />
+                        </LineChart>
+                    </ResponsiveContainer>
+                </CardContent>
+            </Card>
         </div>
       </div>
 
@@ -730,7 +729,7 @@ function SettingsDialog({
     setCurrentSettings({ ...currentSettings, isSoundAlertEnabled: checked });
     if (checked && audioRef.current) {
         if (!audioRef.current.src || audioRef.current.src.endsWith('null')) {
-            audioRef.current.src = "/alert-sound.mp3";
+            audio.current.src = "/alert-sound.mp3";
             audioRef.current.load();
         }
         audioRef.current.play().catch(e => console.error("Test sesi çalınamadı:", e));
@@ -958,6 +957,8 @@ function SettingsDialog({
   );
 }
     
+    
+
     
 
     

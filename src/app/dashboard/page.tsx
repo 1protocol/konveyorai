@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { LayoutDashboard, Settings, Network, FileText, Users, Bot, ArrowRight, Cpu, Layers, ShieldCheck, Loader, PanelLeftOpen, Search, User } from '@/components/ui/lucide-icons';
+import { LayoutDashboard, Settings, Network, User } from '@/components/ui/lucide-icons';
 import type { Station } from '@/components/dashboard-client';
 
 import {
@@ -28,8 +28,6 @@ import {
 import { useState, useEffect } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 export default function DashboardPage() {
@@ -189,3 +187,5 @@ function PageContent() {
     </>
   );
 }
+
+    
