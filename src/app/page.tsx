@@ -78,7 +78,7 @@ export default function DocumentationPage() {
             <CardHeader>
                 <CardTitle className="flex items-center gap-3 text-xl">
                     <Cpu className="h-7 w-7 text-primary"/>
-                    Donanım Opsiyon
+                    Opsiyonel
                 </CardTitle>
             </CardHeader>
             <CardContent>
@@ -204,7 +204,3 @@ export default function DocumentationPage() {
     </div>
   );
 }
-
-    
-
-    
