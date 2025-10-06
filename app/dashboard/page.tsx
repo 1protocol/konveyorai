@@ -214,7 +214,7 @@ function PageContent() {
                 <SidebarMenu className="p-0 pl-7 pt-1 group-data-[state=collapsed]:hidden">
                     <SidebarMenuItem>
                         <SidebarMenuButton asChild variant="ghost" size="sm" className="w-full justify-start h-8 text-base" isActive={isSettingsView && section === 'ai'}>
-                           <Link href="/dashboard?view=settings&section=ai"><BrainCircuit className="mr-2 h-4 w-4" />Yapay Zeka</Link>
+                           <Link href="/dashboard?view=settings&section=ai"><BrainCircuit className="mr-2 h-4 w-4" />AI</Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                      <SidebarMenuItem>
