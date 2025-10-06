@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
@@ -97,12 +96,23 @@ export type Station = {
   source: string;
 };
 
-const defaultSettings: AppSettings = {
-  anomalyThreshold: 2.0,
-  isSoundAlertEnabled: true,
-};
+interface DashboardClientProps {
+  stations: Station[];
+  settings: AppSettings;
+  isCalibrating: boolean;
+  setIsCalibrating: (isCalibrating: boolean) => void;
+  setCalibrationProgress: (progress: number) => void;
+  audioRef: React.RefObject<HTMLAudioElement>;
+}
 
-export function DashboardClient({ stations, onStationsChange }: { stations: Station[], onStationsChange: (stations: Station[]) => void }) {
+export function DashboardClient({ 
+  stations, 
+  settings, 
+  isCalibrating, 
+  setIsCalibrating, 
+  setCalibrationProgress,
+  audioRef
+}: DashboardClientProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -111,21 +121,17 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
   const selectedStation = stations.find(s => s.id === selectedStationId) || (stations.length > 0 ? stations[0] : null);
 
   const [isClient, setIsClient] = useState(false);
-  const [settings, setSettings] = useState<AppSettings>(defaultSettings);
   const [deviation, setDeviation] = useState(0);
   const [status, setStatus] = useState<"NORMAL" | "ANOMALİ" | "KALİBRE EDİLİYOR">(
     "NORMAL"
   );
   const [logs, setLogs] = useState<AnomalyLog[]>([]);
   const [deviationData, setDeviationData] = useState<DeviationData[]>([]);
-  const [isCalibrating, setIsCalibrating] = useState(false);
-  const [calibrationProgress, setCalibrationProgress] = useState(0);
   const { toast } = useToast();
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const captureCanvasRef = useRef<HTMLCanvasElement>(null);
   const overlayCanvasRef = useRef<HTMLCanvasElement>(null);
-  const audioRef = useRef<HTMLAudioElement>(null);
   const animationFrameId = useRef<number>();
   const [isProcessing, setIsProcessing] = useState(false);
   const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
@@ -134,7 +140,6 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
   const isWebcam = videoSource === 'webcam';
   const isAnomaly = status === "ANOMALİ";
 
-  // --- Data Persistence Effects ---
   useEffect(() => {
     setIsClient(true);
   }, []);
@@ -142,45 +147,16 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
   useEffect(() => {
     if (isClient) {
       try {
-        const savedSettings = localStorage.getItem("konveyorAISettings");
         const savedLogs = localStorage.getItem("konveyorAILogs");
-
-        if (savedSettings) {
-          setSettings(JSON.parse(savedSettings));
-        } else {
-          localStorage.setItem("konveyorAISettings", JSON.stringify(defaultSettings));
-        }
-        
         if (savedLogs) {
           setLogs(JSON.parse(savedLogs));
         }
       } catch (error) {
-        console.error("Yerel depolamadan ayarlar okunurken hata oluştu:", error);
-        toast({
-            variant: "destructive",
-            title: "Ayarlar Yüklenemedi",
-            description: "Ayarlarınız yüklenirken bir sorun oluştu.",
-        });
+        console.error("Yerel depolamadan kayıtlar okunurken hata oluştu:", error);
       }
     }
-  }, [isClient, toast]);
-
-  const saveSettings = useCallback((newSettings: AppSettings) => {
-    setSettings(newSettings);
-    if (isClient) {
-        localStorage.setItem("konveyorAISettings", JSON.stringify(newSettings));
-         window.dispatchEvent(new StorageEvent('storage', { key: 'konveyorAISettings', newValue: JSON.stringify(newSettings) }));
-    }
   }, [isClient]);
-
-  const saveStations = useCallback((newStations: Station[]) => {
-    onStationsChange(newStations);
-    if (isClient) {
-        localStorage.setItem("konveyorAIStations", JSON.stringify(newStations));
-        window.dispatchEvent(new StorageEvent('storage', { key: 'konveyorAIStations', newValue: JSON.stringify(newStations) }));
-    }
-  }, [isClient, onStationsChange]);
-
+  
   const saveLogs = useCallback((newLogs: AnomalyLog[]) => {
     setLogs(newLogs);
     if (isClient) {
@@ -188,14 +164,13 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
     }
   }, [isClient]);
 
-
   const playAlertSound = useCallback(() => {
     if (settings.isSoundAlertEnabled && audioRef.current) {
         if (audioRef.current.src && !audioRef.current.src.endsWith('null')) {
             audioRef.current.play().catch(e => console.error("Ses çalma hatası:", e));
         }
     }
-  }, [settings.isSoundAlertEnabled]);
+  }, [settings.isSoundAlertEnabled, audioRef]);
 
   const stopCameraStream = () => {
     if (videoRef.current && videoRef.current.srcObject) {
@@ -252,7 +227,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
       stopCameraStream();
     }
 
-  }, [selectedStation, isWebcam, toast, videoSource]);
+  }, [selectedStation, isWebcam, toast, videoSource, setIsCalibrating, setCalibrationProgress]);
 
 
   useEffect(() => {
@@ -343,7 +318,6 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
             return;
         }
         
-        // Resize overlay to match video element size
         if (overlay.width !== video.clientWidth || overlay.height !== video.clientHeight) {
             overlay.width = video.clientWidth;
             overlay.height = video.clientHeight;
@@ -356,11 +330,10 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
             return;
         }
 
-        const lineY = overlay.height / 2; // Horizontal center
-        const deviationScale = 25; // Pixels per mm
+        const lineY = overlay.height / 2;
+        const deviationScale = 25;
         const deviationPx = deviation * deviationScale;
 
-        // --- Draw Reference Line ---
         ctx.strokeStyle = 'rgba(0, 255, 0, 0.6)';
         ctx.lineWidth = 1.5;
         ctx.setLineDash([4, 4]);
@@ -372,7 +345,6 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
 
 
         if (Math.abs(deviation) > 0.1) {
-            // --- Pulsing animation for anomaly ---
             if (isAnomaly) {
                 pulseOpacity += pulseDirection * 0.05;
                 if (pulseOpacity < 0.3 || pulseOpacity > 1) {
@@ -387,7 +359,6 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
             const normalColor = 'rgba(255, 165, 0, 1)';
             const currentColor = isAnomaly ? anomalyColor : normalColor;
             
-            // --- Draw Deviation Line (Ruler) ---
             ctx.strokeStyle = currentColor;
             ctx.lineWidth = 2.5;
             ctx.beginPath();
@@ -395,7 +366,6 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
             ctx.lineTo(overlay.width, lineY - deviationPx);
             ctx.stroke();
 
-            // --- Draw Measurement/Ruler Marks ---
             ctx.lineWidth = 1;
             const startY = Math.min(lineY, lineY - deviationPx);
             const endY = Math.max(lineY, lineY - deviationPx);
@@ -407,7 +377,6 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
                 ctx.stroke();
             }
 
-            // --- Draw Text ---
             ctx.fillStyle = currentColor;
             ctx.font = 'bold 18px var(--font-body), sans-serif';
             ctx.textAlign = 'left';
@@ -429,36 +398,6 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
     };
 }, [deviation, isAnomaly, isCalibrating, status]);
 
-
-  useEffect(() => {
-    if (isCalibrating && calibrationProgress === 100) {
-      toast({
-        title: "Kalibrasyon Tamamlandı",
-        description: `${selectedStation?.name || 'Mevcut istasyon'} için başlangıç referans verileri ayarlandı.`,
-      });
-    }
-  }, [calibrationProgress, isCalibrating, toast, selectedStation]);
-
-  const handleCalibrate = () => {
-    setIsCalibrating(true);
-    setStatus("KALİBRE EDİLİYOR");
-    setCalibrationProgress(0);
-    setDeviationData([]);
-
-    const progressInterval = setInterval(() => {
-      setCalibrationProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(progressInterval);
-          setIsCalibrating(false);
-          setStatus("NORMAL");
-          setDeviation(0);
-          return 100;
-        }
-        return prev + 10;
-      });
-    }, 300);
-  };
-  
   const handleStationSelect = (stationId: string) => {
     const newPath = `${pathname}?station=${stationId}`;
     router.push(newPath);
@@ -498,16 +437,6 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
                     ))}
                 </DropdownMenuContent>
             </DropdownMenu>
-            <SettingsDialog 
-              settings={settings} 
-              onSettingsChange={saveSettings} 
-              stations={stations}
-              onStationsChange={saveStations}
-              audioRef={audioRef} 
-              isCalibrating={isCalibrating}
-              calibrationProgress={calibrationProgress}
-              onCalibrate={handleCalibrate}
-            />
         </div>
       </div>
 
@@ -696,7 +625,7 @@ const settingsNavItems = [
 
 type SettingsSection = (typeof settingsNavItems)[number]['id'];
 
-function SettingsDialog({
+export function SettingsDialog({
   settings,
   onSettingsChange,
   stations,
@@ -788,12 +717,12 @@ function SettingsDialog({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="lg" className="text-base bg-card/60 backdrop-blur-lg border-white/10 hover:bg-card/80 transition-all duration-300">
-          <Settings className="mr-2 h-5 w-5" />
-          Gelişmiş Ayarlar
+        <Button variant="outline" size="icon" className="h-9 w-9">
+          <Settings className="h-5 w-5" />
+           <span className="sr-only">Gelişmiş Ayarlar</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-6xl w-[90vw] h-[90vh] flex flex-col bg-background/80 backdrop-blur-xl border-white/10 p-0">
+      <DialogContent className="max-w-4xl w-[90vw] h-[90vh] flex flex-col bg-background/80 backdrop-blur-xl border-white/10 p-0">
         <DialogHeader className="p-6 pb-0">
           <DialogTitle className="text-xl">Gelişmiş Ayarlar</DialogTitle>
           <DialogDescription>
@@ -801,8 +730,8 @@ function SettingsDialog({
           </DialogDescription>
         </DialogHeader>
         
-        <div className="flex-grow grid grid-cols-1 md:grid-cols-[250px_1fr] overflow-hidden px-6 gap-8">
-            <aside className="flex flex-col gap-2 pr-4 border-r border-white/10">
+        <div className="flex-grow grid grid-cols-1 md:grid-cols-[220px_1fr] overflow-hidden p-6 gap-6">
+            <aside className="flex flex-col gap-2 pr-4 border-r border-white/10 -ml-2">
                 {settingsNavItems.map(item => (
                     <Button 
                         key={item.id} 
@@ -818,7 +747,7 @@ function SettingsDialog({
                     </Button>
                 ))}
             </aside>
-            <main className="flex-grow overflow-y-auto space-y-8 pb-6 pr-2">
+            <main className="flex-grow overflow-y-auto space-y-8 pb-6 pr-2 -mr-2">
                 {activeSection === 'ai' && (
                     <div className="space-y-8">
                         <Card className="bg-card/50 border-white/10">
