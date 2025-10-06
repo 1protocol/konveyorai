@@ -128,18 +128,6 @@ export function DashboardClient({
   const router = useRouter();
   const pathname = usePathname();
   
-  const [localStations, setLocalStations] = useState<Station[]>(stations);
-  const [localSettings, setLocalSettings] = useState<AppSettings>(settings);
-
-  useEffect(() => {
-    setLocalStations(stations);
-  }, [stations]);
-
-  useEffect(() => {
-    setLocalSettings(settings);
-  }, [settings]);
-
-
   const selectedStationId = searchParams.get('station') || (stations.length > 0 ? stations[0].id : null);
   const selectedStation = stations.find(s => s.id === selectedStationId) || (stations.length > 0 ? stations[0] : null);
 
@@ -200,12 +188,12 @@ export function DashboardClient({
   }, [isClient]);
 
   const playAlertSound = useCallback(() => {
-    if (localSettings.isSoundAlertEnabled && audioRef.current) {
+    if (settings.isSoundAlertEnabled && audioRef.current) {
         if (audioRef.current.src && !audioRef.current.src.endsWith('null')) {
             audioRef.current.play().catch(e => console.error("Ses çalma hatası:", e));
         }
     }
-  }, [localSettings.isSoundAlertEnabled, audioRef]);
+  }, [settings.isSoundAlertEnabled, audioRef]);
 
   const stopCameraStream = () => {
     if (videoRef.current && videoRef.current.srcObject) {
@@ -307,7 +295,7 @@ export function DashboardClient({
           setDeviationData(prevData => [...prevData, { time: newTime, deviation: newDeviation }].slice(-30)); // Keep last 30 data points
 
 
-          if (newDeviation >= localSettings.anomalyThreshold) {
+          if (newDeviation >= settings.anomalyThreshold) {
             if (status !== "ANOMALİ") {
               playAlertSound();
             }
@@ -339,7 +327,7 @@ export function DashboardClient({
   
     const interval = setInterval(analyzeFrame, 2000);
     return () => clearInterval(interval);
-  }, [calibratingStationId, isProcessing, toast, localSettings.anomalyThreshold, status, playAlertSound, selectedStation, logs, saveLogs, isWebcam, hasCameraPermission]);
+  }, [calibratingStationId, isProcessing, toast, settings.anomalyThreshold, status, playAlertSound, selectedStation, logs, saveLogs, isWebcam, hasCameraPermission]);
 
   // Effect to draw detection lines
   useEffect(() => {
@@ -442,17 +430,18 @@ export function DashboardClient({
   const filteredLogs = selectedStationId ? logs.filter(log => log.stationId === selectedStationId) : [];
 
   const handleStationFieldChange = (id: string, field: 'name' | 'source', value: string) => {
-    setLocalStations(prev => prev.map(station => station.id === id ? {...station, [field]: value} : station));
+    const updatedStations = stations.map(station => station.id === id ? {...station, [field]: value} : station)
+    onStationsChange(updatedStations);
   };
   
   const handleRemoveStation = (id: string) => {
-    if (localStations.length <= 1) {
+    if (stations.length <= 1) {
       toast({ variant: 'destructive', title: 'Son İstasyon Silinemez', description: 'Sistemde en az bir istasyon bulunmalıdır.' });
       return;
     }
-    const updatedStations = localStations.filter(station => station.id !== id);
-    setLocalStations(updatedStations);
+    const updatedStations = stations.filter(station => station.id !== id);
     onStationsChange(updatedStations);
+    toast({ title: "İstasyon Silindi", description: "İstasyon başarıyla kaldırıldı."});
   };
 
   const handleScanNetwork = () => {
@@ -474,9 +463,8 @@ export function DashboardClient({
         name: camera.name || `Yeni İstasyon`,
         source: camera.source || ''
     };
-    const updatedStations = [...localStations, newStation];
-    setLocalStations(updatedStations);
-    toast({ title: "İstasyon Eklendi", description: `"${newStation.name}" ağdan eklendi. Değişiklikleri kaydetmeyi unutmayın.` });
+    onStationsChange([...stations, newStation]);
+    toast({ title: "İstasyon Eklendi", description: `"${newStation.name}" ağdan eklendi.` });
   };
   
   const handleManualAddStation = () => {
@@ -485,9 +473,8 @@ export function DashboardClient({
        return;
    }
    const newStation: Station = { id: (Date.now() + Math.random()).toString(36), name: newStationName, source: newStationSource };
-   const updatedStations = [...localStations, newStation];
-   setLocalStations(updatedStations);
-   toast({ title: "İstasyon Eklendi", description: `"${newStationName}" manuel olarak eklendi. Değişiklikleri kaydetmeyi unutmayın.` });
+   onStationsChange([...stations, newStation]);
+   toast({ title: "İstasyon Eklendi", description: `"${newStationName}" manuel olarak eklendi.` });
    setNewStationName("");
    setNewStationSource("");
    setOpenAddDialog(false);
@@ -574,7 +561,7 @@ export function DashboardClient({
           </Card>
           
             <Tabs defaultValue="data" className="w-full">
-                <TabsList className="grid w-full grid-cols-1 sm:grid-cols-3">
+                <TabsList>
                     <TabsTrigger value="data"><AreaChart className="mr-2"/>Canlı Veri</TabsTrigger>
                     <TabsTrigger value="station-settings"><Network className="mr-2"/>İstasyon Ayarları</TabsTrigger>
                     <TabsTrigger value="ai-config"><BrainCircuit className="mr-2"/>AI Yapılandırması</TabsTrigger>
@@ -589,7 +576,7 @@ export function DashboardClient({
                                     <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
                                     <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--background) / 0.8)', borderColor: 'hsl(var(--border))', backdropFilter: 'blur(4px)' }} labelStyle={{color: 'hsl(var(--foreground))'}}/>
                                     <Line type="monotone" dataKey="deviation" stroke={isAnomaly ? "hsl(var(--destructive))" : "hsl(var(--ring))"} strokeWidth={2} dot={false} isAnimationActive={false}/>
-                                    <ReferenceLine y={localSettings.anomalyThreshold} label={{ value: 'Eşik', position: 'insideTopLeft', fill: 'hsl(var(--muted-foreground))' }} stroke="hsl(var(--destructive))" strokeDasharray="3 3" />
+                                    <ReferenceLine y={settings.anomalyThreshold} label={{ value: 'Eşik', position: 'insideTopLeft', fill: 'hsl(var(--muted-foreground))' }} stroke="hsl(var(--destructive))" strokeDasharray="3 3" />
                                 </LineChart>
                             </ResponsiveContainer>
                         </CardContent>
@@ -609,7 +596,7 @@ export function DashboardClient({
                                 </p>
                             </div>
                             <div className="space-y-4 max-h-[25rem] overflow-y-auto pr-2 -mr-4">
-                                {localStations.map((station) => (
+                                {stations.map((station) => (
                                     <div key={station.id} className="flex items-center gap-3 p-3 rounded-lg border border-white/10 bg-background/20">
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 flex-1">
                                             <Input value={station.name} onChange={(e) => handleStationFieldChange(station.id, 'name', e.target.value)} className="bg-background/70" placeholder="İstasyon Adı"/>
@@ -646,7 +633,6 @@ export function DashboardClient({
                                     </DialogContent>
                                 </Dialog>
                             </div>
-                             <div className="flex justify-end pt-4"><Button onClick={() => onStationsChange(localStations)}>Değişiklikleri Kaydet</Button></div>
                         </CardContent>
                     </Card>
                 </TabsContent>
@@ -656,8 +642,8 @@ export function DashboardClient({
                             <CardHeader><CardTitle className="text-lg">Algılama Hassasiyeti</CardTitle><CardDescription>Bu değerin üzerindeki sapmalar "Anomali" olarak kabul edilecektir. Düşük değerler hassasiyeti artırır.</CardDescription></CardHeader>
                             <CardContent>
                                 <div className="flex items-center gap-4">
-                                    <Slider id="anomaly-threshold" min={0.5} max={5.0} step={0.1} value={[localSettings.anomalyThreshold]} onValueChange={(value) => setLocalSettings({ ...localSettings, anomalyThreshold: value[0] })} className="flex-1"/>
-                                    <span className="w-28 rounded-md border text-center p-2 font-mono text-base bg-background/50 border-white/20">{localSettings.anomalyThreshold.toFixed(1)} mm</span>
+                                    <Slider id="anomaly-threshold" min={0.5} max={5.0} step={0.1} value={[settings.anomalyThreshold]} onValueChange={(value) => onSettingsChange({ ...settings, anomalyThreshold: value[0] })} className="flex-1"/>
+                                    <span className="w-28 rounded-md border text-center p-2 font-mono text-base bg-background/50 border-white/20">{settings.anomalyThreshold.toFixed(1)} mm</span>
                                 </div>
                             </CardContent>
                         </Card>
@@ -674,11 +660,10 @@ export function DashboardClient({
                             <CardContent>
                                 <div className="flex items-center justify-between rounded-lg border p-4 border-white/10 bg-background/30">
                                     <div className="space-y-0.5"><Label htmlFor="sound-alert" className="text-base">Sesli Uyarı</Label><p className="text-sm text-muted-foreground">Anomali tespit edildiğinde sesli bir uyarı çal.</p></div>
-                                    <Switch id="sound-alert" checked={localSettings.isSoundAlertEnabled} onCheckedChange={(checked) => setLocalSettings({ ...localSettings, isSoundAlertEnabled: checked })}/>
+                                    <Switch id="sound-alert" checked={settings.isSoundAlertEnabled} onCheckedChange={(checked) => onSettingsChange({ ...settings, isSoundAlertEnabled: checked })}/>
                                 </div>
                             </CardContent>
                         </Card>
-                        <div className="flex justify-end pt-4"><Button onClick={() => onSettingsChange(localSettings)}>Değişiklikleri Kaydet</Button></div>
                     </div>
                 </TabsContent>
             </Tabs>
@@ -721,7 +706,7 @@ export function DashboardClient({
                     <div
                       className={cn(
                         "text-2xl font-bold",
-                        deviation >= localSettings.anomalyThreshold && "text-red-400"
+                        deviation >= settings.anomalyThreshold && "text-red-400"
                       )}
                     >
                       {deviation.toFixed(2)} mm
@@ -804,14 +789,11 @@ export function SettingsContent({
 
   const handleSave = () => {
     onOperatorsChange(currentOperators);
-    toast({
-        title: "Operatörler Kaydedildi",
-        description: "Değişiklikler başarıyla kaydedildi.",
-    });
   };
 
   const handleAddNew = () => {
     setCurrentOperator({});
+    setIsEditing(null);
     setOpenAddDialog(true);
   };
   
@@ -822,7 +804,13 @@ export function SettingsContent({
   };
 
   const handleDelete = (id: string) => {
-    setCurrentOperators(prev => prev.filter(op => op.id !== id));
+    const updatedOperators = currentOperators.filter(op => op.id !== id);
+    setCurrentOperators(updatedOperators);
+    onOperatorsChange(updatedOperators);
+    toast({
+        title: "Operatör Silindi",
+        description: "Operatör başarıyla listeden kaldırıldı.",
+    });
   };
   
   const handleSaveOperator = () => {
@@ -831,21 +819,34 @@ export function SettingsContent({
       return;
     }
     
+    let updatedOperators;
     if (isEditing) {
-      setCurrentOperators(prev => prev.map(op => op.id === isEditing ? {...op, ...currentOperator} as Operator : op));
+      updatedOperators = currentOperators.map(op => op.id === isEditing ? {...op, ...currentOperator} as Operator : op);
+      toast({ title: "Operatör Güncellendi" });
     } else {
       const newOperator: Operator = {
         id: (Date.now() + Math.random()).toString(36),
         name: currentOperator.name,
         email: currentOperator.email,
       };
-      setCurrentOperators(prev => [...prev, newOperator]);
+      updatedOperators = [...currentOperators, newOperator];
+      toast({ title: "Operatör Eklendi" });
     }
     
+    setCurrentOperators(updatedOperators);
+    onOperatorsChange(updatedOperators);
     setOpenAddDialog(false);
     setIsEditing(null);
     setCurrentOperator({});
   };
+
+  const handleCloseDialog = (isOpen: boolean) => {
+    if (!isOpen) {
+        setIsEditing(null);
+        setCurrentOperator({});
+    }
+    setOpenAddDialog(isOpen);
+  }
 
 
   return (
@@ -904,7 +905,7 @@ export function SettingsContent({
             </Card>
         )}
 
-        <Dialog open={openAddDialog} onOpenChange={(isOpen) => { setOpenAddDialog(isOpen); if (!isOpen) setIsEditing(null); }}>
+        <Dialog open={openAddDialog} onOpenChange={handleCloseDialog}>
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>{isEditing ? 'Operatörü Düzenle' : 'Yeni Operatör Ekle'}</DialogTitle>
@@ -920,17 +921,11 @@ export function SettingsContent({
                     </div>
                 </div>
                 <DialogFooter>
-                    <Button type="button" variant="outline" onClick={() => { setOpenAddDialog(false); setIsEditing(null); }}>İptal</Button>
+                    <Button type="button" variant="outline" onClick={() => handleCloseDialog(false)}>İptal</Button>
                     <Button onClick={handleSaveOperator}>{isEditing ? 'Değişiklikleri Kaydet' : 'Operatör Ekle'}</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
-
-        {activeSection === 'operators' && (
-            <div className="flex justify-end pt-4">
-                 <Button onClick={handleSave}>Değişiklikleri Kaydet</Button>   
-            </div>
-        )}
     </div>
   );
 }

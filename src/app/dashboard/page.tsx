@@ -102,30 +102,26 @@ function PageContent() {
       setOperators(newOperators);
       if(isClient){
         localStorage.setItem("konveyorAIOperators", JSON.stringify(newOperators));
+        toast({
+            title: "Operatörler Güncellendi",
+            description: "Operatör listesi başarıyla kaydedildi.",
+        });
       }
-    }, [isClient]);
+    }, [isClient, toast]);
 
     const saveStations = useCallback((newStations: Station[]) => {
       setStations(newStations);
       if (isClient) {
         localStorage.setItem("konveyorAIStations", JSON.stringify(newStations));
-        toast({
-            title: "İstasyonlar Güncellendi",
-            description: "İstasyon yapılandırması başarıyla kaydedildi.",
-        });
       }
-    }, [isClient, toast]);
+    }, [isClient]);
 
     const saveSettings = useCallback((newSettings: AppSettings) => {
         setSettings(newSettings);
         if (isClient) {
           localStorage.setItem("konveyorAISettings", JSON.stringify(newSettings));
-           toast({
-                title: "Ayarlar Kaydedildi",
-                description: "Yeni AI yapılandırmanız başarıyla kaydedildi.",
-            });
         }
-    }, [isClient, toast]);
+    }, [isClient]);
 
     const currentStationId = searchParams.get('station') || (stations.length > 0 ? stations[0].id : null);
     const isSettingsView = view === 'settings';
