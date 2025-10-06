@@ -196,11 +196,6 @@ function PageContent() {
                             İstasyon bulunamadı.
                         </div>
                     )}
-                     <SidebarMenuItem>
-                        <SidebarMenuButton asChild variant="ghost" size="sm" className="w-full justify-start h-8 text-base">
-                           <Link href="/dashboard?view=settings&section=stations"><Settings className="mr-2 h-4 w-4" />İstasyonları Yönet</Link>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarMenuItem>
           </SidebarMenu>

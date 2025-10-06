@@ -126,9 +126,7 @@ export function DashboardClient({
 
   const [currentSettings, setCurrentSettings] = useState(settings);
   const [currentStations, setCurrentStations] = useState(stations);
-  const [isAddStationDialogOpen, setIsAddStationDialogOpen] = useState(false);
-
-
+  
   const videoSource = selectedStation?.source || '/conveyor-video.mp4';
   const isWebcam = videoSource === 'webcam';
   const isAnomaly = status === "ANOMALİ";
@@ -869,5 +867,3 @@ function AddStationDialog({ children, onAddStation }: { children: React.ReactNod
     </Dialog>
   )
 }
-
-    
