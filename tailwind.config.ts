@@ -1,5 +1,8 @@
 import type {Config} from 'tailwindcss';
 
+const { screens } = require('tailwindcss/defaultTheme');
+
+
 export default {
   darkMode: ['class'],
   content: [
@@ -8,6 +11,10 @@ export default {
     './app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
+    screens: {
+      xs: '475px',
+      ...screens
+    },
     extend: {
       fontFamily: {
         body: ['Poppins', 'sans-serif'],
