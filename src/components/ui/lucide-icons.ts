@@ -14,7 +14,7 @@ export {
     Download,
     FileText,
     Github,
-    Info,
+    KeyRound,
     Layers,
     LayoutDashboard,
     Loader,

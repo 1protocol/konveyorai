@@ -1,7 +1,7 @@
 
 "use client";
 import Link from 'next/link';
-import { ArrowRight, Bot, Cpu, Layers, ShieldCheck, Video, BrainCircuit, Bell, FileText, Download, Github, User, Rocket } from '@/components/ui/lucide-icons';
+import { ArrowRight, Bot, Cpu, Layers, ShieldCheck, Video, BrainCircuit, Bell, FileText, Download, Github, User, Rocket, TrainTrack, KeyRound } from '@/components/ui/lucide-icons';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/icons';
@@ -28,7 +28,7 @@ export default function LandingPage() {
             <div>
                 <div className="magic-card p-6 border-white/10">
                     <CardHeader className="p-0 mb-4">
-                        <CardTitle className="flex items-center gap-3 text-2xl">
+                        <CardTitle className="flex items-center gap-3 text-xl">
                             <User className="text-accent"/>
                             <span>Mustafa USLU</span>
                         </CardTitle>
@@ -38,17 +38,23 @@ export default function LandingPage() {
                     </CardHeader>
                     <CardContent className="p-0 space-y-4">
                         <div className="space-y-2">
-                             <h4 className="font-semibold flex items-center gap-2"><Rocket className="text-accent/80 w-5 h-5"/>Proje Sunumu</h4>
+                             <h4 className="font-semibold flex items-center gap-2 text-xl"><Rocket className="text-accent/60 w-5 h-5"/>Proje Sunumu</h4>
                              <p className="text-muted-foreground text-base">
                                 "Bu proje, endüstriyel verimliliği ve iş güvenliğini bir araya getiren bir mühendislik vizyonunun somut bir çıktısıdır. Konveyor AI ile amacım, reaktif bakımın getirdiği üretim kayıplarını ortadan kaldırmak ve yapay zeka destekli proaktif analizlerle 'sıfır duruş' hedefine bir adım daha yaklaşmaktır. Bu sistem, sadece bir anomali tespit aracı değil, aynı zamanda daha akıllı ve öngörülebilir bir üretim geleceğine atılan bir adımdır."
                              </p>
                         </div>
                     </CardContent>
-                    <CardFooter className="p-0 pt-6">
+                    <CardFooter className="p-0 pt-6 flex flex-wrap gap-4">
                         <Button asChild variant="outline">
                             <Link href="/README.md" target="_blank">
                                 <FileText className="mr-2"/>
                                 Proje Raporunu İncele
+                            </Link>
+                        </Button>
+                        <Button asChild variant="outline">
+                            <Link href="https://aistudio.google.com/app/apikey" target="_blank">
+                                <KeyRound className="mr-2"/>
+                                API Anahtarı Al
                             </Link>
                         </Button>
                     </CardFooter>
@@ -63,7 +69,7 @@ export default function LandingPage() {
             <div className="card-3d group">
                 <div className="card-3d-inner p-8 text-center">
                     <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 border-4 border-primary/20 shadow-lg card-icon">
-                        <Bot className="h-12 w-12 text-primary" />
+                        <TrainTrack className="h-12 w-12 text-primary" />
                     </div>
                     <h1 className="text-4xl md:text-5xl font-extrabold tracking-tighter mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
                         Konveyor AI: Endüstriyel Konveyör Analizi
@@ -150,12 +156,9 @@ export default function LandingPage() {
 
         {/* Final CTA */}
         <section className="py-16 text-center">
-             <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
-                Değeri oluşturan deneyimleriniz. Her bir yorumunuz geleceğe atılan bir imza!
+             <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-8">
+                Yorumunuz deneyim için bir rota. Gelişim için yenilik anahtarı.
             </h2>
-            <p className="max-w-xl mx-auto text-muted-foreground mb-8">
-                Konveyor AI'nin üretim süreçlerinizi nasıl daha akıllı ve güvenli hale getirebileceğini görmek için kontrol paneline geçiş yapın.
-            </p>
              <Button size="lg" asChild className="h-14 text-lg font-semibold group">
                 <Link href="/dashboard">
                     Kontrol Panelini Keşfet
@@ -173,4 +176,5 @@ export default function LandingPage() {
   );
 }
 
+    
     
