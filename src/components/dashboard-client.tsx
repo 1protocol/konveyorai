@@ -3,6 +3,8 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import Link from 'next/link';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import {
@@ -108,25 +110,19 @@ export type Station = {
 interface DashboardClientProps {
   stations: Station[];
   settings: AppSettings;
-  onStationsChange: (stations: Station[]) => void;
-  onSettingsChange: (settings: AppSettings) => void;
   calibratingStationId: string | null;
-  calibrationProgress: number;
-  onCalibrate: (stationId: string) => void;
   audioRef: React.RefObject<HTMLAudioElement>;
 }
 
 export function DashboardClient({ 
   stations, 
-  settings,
-  onStationsChange,
-  onSettingsChange,
+  settings, 
   calibratingStationId,
-  calibrationProgress,
-  onCalibrate,
   audioRef
 }: DashboardClientProps) {
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
   const selectedStationId = searchParams.get('station') || (stations.length > 0 ? stations[0].id : null);
   
   const selectedStation = stations.find(s => s.id === selectedStationId) || (stations.length > 0 ? stations[0] : null);
@@ -152,26 +148,6 @@ export function DashboardClient({
   const isAnomaly = status === "ANOMALİ";
   const isCalibrating = calibratingStationId === selectedStationId;
 
-  // Settings states
-  const [currentSettings, setCurrentSettings] = useState(settings);
-  const [currentStations, setCurrentStations] = useState(stations);
-
-  useEffect(() => {
-    setCurrentSettings(settings);
-  }, [settings]);
-
-  useEffect(() => {
-    setCurrentStations(stations);
-  }, [stations]);
-
-  const handleSaveAllChanges = () => {
-    onSettingsChange(currentSettings);
-    onStationsChange(currentStations);
-    toast({
-        title: "Ayarlar Kaydedildi",
-        description: "Tüm değişiklikler başarıyla kaydedildi.",
-    });
-  };
 
   useEffect(() => {
     setIsClient(true);
@@ -198,12 +174,12 @@ export function DashboardClient({
   }, [isClient]);
 
   const playAlertSound = useCallback(() => {
-    if (currentSettings.isSoundAlertEnabled && audioRef.current) {
+    if (settings.isSoundAlertEnabled && audioRef.current) {
         if (audioRef.current.src && !audioRef.current.src.endsWith('null')) {
             audioRef.current.play().catch(e => console.error("Ses çalma hatası:", e));
         }
     }
-  }, [currentSettings.isSoundAlertEnabled, audioRef]);
+  }, [settings.isSoundAlertEnabled, audioRef]);
 
   const stopCameraStream = () => {
     if (videoRef.current && videoRef.current.srcObject) {
@@ -218,7 +194,7 @@ export function DashboardClient({
     setStatus("NORMAL");
     setHasCameraPermission(null);
     setDeviationData([]);
-    stopCameraStream();
+    stopCameraStream(); // Stop any previous stream
 
     const videoElement = videoRef.current;
     if (!videoElement || !selectedStation) return;
@@ -230,7 +206,7 @@ export function DashboardClient({
           setHasCameraPermission(true);
           if (videoRef.current) {
             videoRef.current.srcObject = stream;
-            videoRef.current.src = "";
+            videoRef.current.src = ""; // Clear src for srcObject to work
             videoRef.current.play().catch(e => console.error("Webcam oynatma hatası:", e));
           }
         } catch (error) {
@@ -245,9 +221,9 @@ export function DashboardClient({
       };
       getCameraPermission();
     } else {
-        const videoUrl = videoSource.startsWith('http') || videoSource.startsWith('rtsp') ? videoSource : window.location.origin + videoSource;
+        const videoUrl = videoSource.startsWith('http') ? videoSource : window.location.origin + videoSource;
         if (videoRef.current.src !== videoUrl) {
-            videoRef.current.srcObject = null;
+            videoRef.current.srcObject = null; // Clear srcObject for src to work
             videoRef.current.src = videoUrl;
             videoRef.current.load();
             videoRef.current.play().catch(e => console.error("Video oynatma hatası:", e));
@@ -302,10 +278,10 @@ export function DashboardClient({
     
           const now = new Date();
           const newTime = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-          setDeviationData(prevData => [...prevData, { time: newTime, deviation: newDeviation }].slice(-30));
+          setDeviationData(prevData => [...prevData, { time: newTime, deviation: newDeviation }].slice(-30)); // Keep last 30 data points
 
 
-          if (newDeviation >= currentSettings.anomalyThreshold) {
+          if (newDeviation >= settings.anomalyThreshold) {
             if (status !== "ANOMALİ") {
               playAlertSound();
             }
@@ -337,8 +313,9 @@ export function DashboardClient({
   
     const interval = setInterval(analyzeFrame, 2000);
     return () => clearInterval(interval);
-  }, [isCalibrating, isProcessing, toast, currentSettings.anomalyThreshold, status, playAlertSound, selectedStation, logs, saveLogs, isWebcam, hasCameraPermission]);
+  }, [isCalibrating, isProcessing, toast, settings.anomalyThreshold, status, playAlertSound, selectedStation, logs, saveLogs, isWebcam, hasCameraPermission]);
 
+  // Effect to draw detection lines
   useEffect(() => {
     const overlay = overlayCanvasRef.current;
     const video = videoRef.current;
@@ -452,41 +429,10 @@ export function DashboardClient({
         <h2 className="text-2xl font-bold tracking-tight">
           İstasyon: {selectedStation.name}
         </h2>
-        <Dialog>
-          <DialogTrigger asChild>
-             <Button variant="outline"><Settings className="mr-2 h-4 w-4"/>Ayarlar</Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-4xl w-full h-auto max-h-[90vh] flex flex-col">
-              <DialogHeader>
-                <DialogTitle>Gelişmiş Ayarlar</DialogTitle>
-                <DialogDescription>
-                  Sistem ayarlarını, istasyonları ve bildirimleri buradan yönetin.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="flex-1 overflow-auto pr-2 -mr-2">
-                 <SettingsContent
-                    settings={currentSettings}
-                    onSettingsChange={setCurrentSettings}
-                    stations={currentStations}
-                    onStationsChange={setCurrentStations}
-                    calibratingStationId={calibratingStationId}
-                    calibrationProgress={calibrationProgress}
-                    onCalibrate={onCalibrate}
-                    audioRef={audioRef}
-                    activeSection="stations"
-                 />
-              </div>
-              <DialogFooter>
-                  <DialogClose asChild>
-                    <Button variant="outline">Kapat</Button>
-                  </DialogClose>
-                  <Button onClick={handleSaveAllChanges}>Değişiklikleri Kaydet</Button>
-              </DialogFooter>
-          </DialogContent>
-        </Dialog>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+        {/* Main Content Column */}
         <div className="lg:col-span-2 space-y-6 lg:space-y-8">
           <Card className="transition-all w-full duration-300 bg-card/60 backdrop-blur-lg border border-white/10 hover:border-accent/50">
             <CardHeader>
@@ -531,8 +477,7 @@ export function DashboardClient({
                 </div>
             </CardContent>
           </Card>
-
-          <Card className="transition-all mt-4 duration-300 bg-card/60 backdrop-blur-lg border border-white/10">
+          <Card className="transition-all duration-300 bg-card/60 backdrop-blur-lg border border-white/10 hover:border-accent/50">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base">
                     <AreaChart />
@@ -560,13 +505,14 @@ export function DashboardClient({
                             dot={false}
                             isAnimationActive={false}
                         />
-                        <ReferenceLine y={currentSettings.anomalyThreshold} label={{ value: 'Eşik', position: 'insideTopLeft', fill: 'hsl(var(--muted-foreground))' }} stroke="hsl(var(--destructive))" strokeDasharray="3 3" />
+                        <ReferenceLine y={settings.anomalyThreshold} label={{ value: 'Eşik', position: 'insideTopLeft', fill: 'hsl(var(--muted-foreground))' }} stroke="hsl(var(--destructive))" strokeDasharray="3 3" />
                     </LineChart>
                 </ResponsiveContainer>
             </CardContent>
-          </Card>
+        </Card>
         </div>
 
+        {/* Side Column */}
         <div className="lg:col-span-1 space-y-6 lg:space-y-8">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-6 lg:gap-8">
                 <Card className={cn("transition-all duration-300 bg-card/60 backdrop-blur-lg border border-white/10 hover:border-accent/50", isAnomaly && "bg-destructive/30 text-destructive-foreground border-destructive/50")}>
@@ -603,7 +549,7 @@ export function DashboardClient({
                     <div
                       className={cn(
                         "text-2xl font-bold",
-                        deviation >= currentSettings.anomalyThreshold && "text-red-400"
+                        deviation >= settings.anomalyThreshold && "text-red-400"
                       )}
                     >
                       {deviation.toFixed(2)} mm
@@ -618,7 +564,7 @@ export function DashboardClient({
                 <CardHeader>
                 <CardTitle>Anomali Kayıtları</CardTitle>
                 <CardDescription>
-                    Bu istasyonda tespit edilen son anomaliler
+                    Son tespit edilen anomaliler
                 </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -661,6 +607,7 @@ export function DashboardClient({
   );
 }
 
+type SettingsSection = 'ai' | 'stations' | 'notifications' | 'operators';
 
 interface SettingsContentProps {
     activeSection: string;
@@ -672,9 +619,10 @@ interface SettingsContentProps {
     calibratingStationId: string | null;
     calibrationProgress: number;
     onCalibrate: (stationId: string) => void;
+    calibratingStation: Station | undefined;
 }
 
-function SettingsContent({
+export function SettingsContent({
   activeSection,
   settings,
   onSettingsChange,
@@ -684,19 +632,34 @@ function SettingsContent({
   calibratingStationId,
   calibrationProgress,
   onCalibrate,
+  calibratingStation,
 }: SettingsContentProps) {
-  const { toast } = useToast();
-  const searchParams = useSearchParams();
-
+  const [currentSettings, setCurrentSettings] = useState(settings);
+  const [currentStations, setCurrentStations] = useState(stations);
+  const [selectedStationToCalibrate, setSelectedStationToCalibrate] = useState<string>("");
   const [isScanning, setIsScanning] = useState(false);
   const [discoveredCameras, setDiscoveredCameras] = useState<Partial<Station>[]>([]);
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [newStationName, setNewStationName] = useState("");
   const [newStationSource, setNewStationSource] = useState("");
+  const { toast } = useToast();
 
+  useEffect(() => {
+    setCurrentSettings(settings);
+    setCurrentStations(stations);
+  }, [settings, stations]);
 
+  const handleSave = () => {
+    onSettingsChange(currentSettings);
+    onStationsChange(currentStations);
+    toast({
+        title: "Ayarlar Kaydedildi",
+        description: "Yeni yapılandırmanız başarıyla kaydedildi.",
+    });
+  };
+  
   const handleSoundSwitchChange = (checked: boolean) => {
-    onSettingsChange({ ...settings, isSoundAlertEnabled: checked });
+    setCurrentSettings({ ...currentSettings, isSoundAlertEnabled: checked });
     if (checked && audioRef.current) {
         if (!audioRef.current.src || audioRef.current.src.endsWith('null')) {
             audioRef.current.src = "/alert-sound.mp3";
@@ -707,38 +670,38 @@ function SettingsContent({
   };
 
   const handleStationFieldChange = (id: string, field: 'name' | 'source', value: string) => {
-    onStationsChange(
-      stations.map(station => station.id === id ? {...station, [field]: value} : station)
+    setCurrentStations(prev => 
+      prev.map(station => station.id === id ? {...station, [field]: value} : station)
     );
   };
 
   const handleManualAddStation = () => {
-     if(!newStationName || !newStationSource) {
-        toast({
-            variant: 'destructive',
-            title: 'Eksik Bilgi',
-            description: 'Lütfen istasyon adı ve kaynağını girin.',
-        });
-        return;
-    }
-    const newId = (Date.now() + Math.random()).toString(36);
-    const newStation: Station = {
-        id: newId,
-        name: newStationName,
-        source: newStationSource,
-    };
-    onStationsChange([...stations, newStation]);
-    toast({
-        title: "İstasyon Eklendi",
-        description: `"${newStation.name}" eklendi. Değişiklikleri kaydetmeyi unutmayın.`,
-    });
-    setNewStationName("");
-    setNewStationSource("");
-    setOpenAddDialog(false);
-  };
+    if(!newStationName || !newStationSource) {
+       toast({
+           variant: 'destructive',
+           title: 'Eksik Bilgi',
+           description: 'Lütfen istasyon adı ve kaynağını girin.',
+       });
+       return;
+   }
+   const newId = (Date.now() + Math.random()).toString(36);
+   const newStation: Station = {
+       id: newId,
+       name: newStationName,
+       source: newStationSource,
+   };
+   setCurrentStations(prev => [...prev, newStation]);
+   toast({
+       title: "İstasyon Eklendi",
+       description: `"${newStation.name}" manuel olarak eklendi.`,
+   });
+   setNewStationName("");
+   setNewStationSource("");
+   setOpenAddDialog(false);
+ };
 
   const handleRemoveStation = (id: string) => {
-    if (stations.length <= 1) {
+    if (currentStations.length <= 1) {
         toast({
             variant: 'destructive',
             title: 'Son İstasyon Silinemez',
@@ -746,7 +709,7 @@ function SettingsContent({
         });
         return;
     }
-    onStationsChange(stations.filter(station => station.id !== id));
+    setCurrentStations(prev => prev.filter(station => station.id !== id));
   };
   
   const handleScanNetwork = () => {
@@ -756,6 +719,7 @@ function SettingsContent({
         const mockCameras = [
             { id: 'cam-1', name: 'Kamera - Üretim Hattı 1', source: 'rtsp://192.168.1.101/stream1' },
             { id: 'cam-2', name: 'Kamera - Paketleme Alanı', source: 'http://192.168.1.102/video.mjpg' },
+            { id: 'cam-3', name: 'Depo Giriş Kamerası', source: 'rtsp://192.168.1.103/stream' },
         ];
         setDiscoveredCameras(mockCameras);
         setIsScanning(false);
@@ -769,24 +733,30 @@ function SettingsContent({
         name: camera.name || `Yeni İstasyon`,
         source: camera.source || ''
     };
-    onStationsChange([...stations, newStation]);
+    setCurrentStations([...currentStations, newStation]);
     toast({
         title: "İstasyon Eklendi",
-        description: `"${newStation.name}" ağdan eklendi. Değişiklikleri kaydetmeyi unutmayın.`,
+        description: `"${newStation.name}" ağdan eklendi.`,
     });
   }
 
+  const handleStartCalibration = () => {
+    if (!selectedStationToCalibrate) {
+        toast({
+            variant: 'destructive',
+            title: 'İstasyon Seçilmedi',
+            description: 'Lütfen kalibre edilecek istasyonu seçin.',
+        });
+        return;
+    }
+    onCalibrate(selectedStationToCalibrate);
+  };
+
   return (
-    <Tabs defaultValue={activeSection || "ai"}>
-        <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="ai"><BrainCircuit className="mr-2 h-4 w-4"/>AI Yapılandırması</TabsTrigger>
-            <TabsTrigger value="stations"><Camera className="mr-2 h-4 w-4"/>İstasyonlar</TabsTrigger>
-            <TabsTrigger value="notifications"><Bell className="mr-2 h-4 w-4"/>Bildirimler</TabsTrigger>
-            <TabsTrigger value="operators"><Users className="mr-2 h-4 w-4"/>Operatörler</TabsTrigger>
-        </TabsList>
-        <TabsContent value="ai">
-            <div className="space-y-6 pt-6">
-                <Card>
+     <div className="space-y-8 max-w-4xl mx-auto">
+        {activeSection === 'ai' && (
+            <div className="space-y-8">
+                <Card className="bg-card/50 border-white/10">
                     <CardHeader>
                         <CardTitle className="text-lg">Algılama Hassasiyeti</CardTitle>
                         <CardDescription>
@@ -800,54 +770,67 @@ function SettingsContent({
                                 min={0.5}
                                 max={5.0}
                                 step={0.1}
-                                value={[settings.anomalyThreshold]}
+                                value={[currentSettings.anomalyThreshold]}
                                 onValueChange={(value) =>
-                                    onSettingsChange({ ...settings, anomalyThreshold: value[0] })
+                                    setCurrentSettings({ ...currentSettings, anomalyThreshold: value[0] })
                                 }
                                 className="flex-1"
                             />
                             <span className="w-28 rounded-md border text-center p-2 font-mono text-base bg-background/50 border-white/20">
-                                {settings.anomalyThreshold.toFixed(1)} mm
+                                {currentSettings.anomalyThreshold.toFixed(1)} mm
                             </span>
                         </div>
                     </CardContent>
                 </Card>
-                <Card>
+                <Card className="bg-card/50 border-white/10">
                     <CardHeader>
                         <CardTitle className="text-lg">AI Kalibrasyonu</CardTitle>
                         <CardDescription>
-                            Sistemin bu istasyondaki sapmaları doğru tespit etmesi için, bantta fiziksel bir değişiklik yapıldığında AI'ı yeniden kalibre edin.
+                            Sistemin sapmaları doğru tespit etmesi için, bantta fiziksel bir değişiklik yapıldığında AI'ı yeniden kalibre edin.
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                         {calibratingStationId ? (
+                        <div>
+                            <Label>Kalibre Edilecek İstasyon</Label>
+                             <Select onValueChange={setSelectedStationToCalibrate} value={selectedStationToCalibrate} disabled={!!calibratingStationId}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Bir istasyon seçin..." />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {stations.map(station => (
+                                        <SelectItem key={station.id} value={station.id}>{station.name}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        {calibratingStationId ? (
                            <div>
                              <p className="text-sm text-center text-muted-foreground mb-2">
-                               {stations.find(s => s.id === calibratingStationId)?.name || 'İstasyon'} kalibre ediliyor...
+                               {calibratingStation?.name || 'İstasyon'} kalibre ediliyor...
                              </p>
                              <Progress value={calibrationProgress} className="w-full" />
                            </div>
                         ) : (
-                           <Button
-                                onClick={() => onCalibrate(searchParams.get('station')!)}
-                                disabled={calibratingStationId !== null}
+                            <Button
+                                onClick={handleStartCalibration}
+                                disabled={!!calibratingStationId || !selectedStationToCalibrate}
                                 className="w-full"
                                 variant="outline"
                             >
                                 <SlidersHorizontal className="mr-2 h-4 w-4" />
-                                Bu İstasyonu Kalibre Et
+                                Kalibrasyonu Başlat
                             </Button>
                         )}
                     </CardContent>
                 </Card>
             </div>
-        </TabsContent>
-        <TabsContent value="stations">
-            <Card className="mt-6">
+        )}
+        {activeSection === 'stations' && (
+            <Card className="bg-card/50 border-white/10">
                 <CardHeader>
                     <CardTitle className="text-lg">İstasyon Yapılandırması</CardTitle>
                     <CardDescription>
-                         Mevcut istasyonları yönetin, ağdaki kameraları tarayın veya manuel olarak yeni istasyonlar ekleyin.
+                        Mevcut istasyonları yönetin veya ağdaki kameraları tarayarak ya da manuel olarak yenilerini ekleyin.
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
@@ -859,22 +842,23 @@ function SettingsContent({
                             </span>
                         </p>
                     </div>
-                    <div className="space-y-4 max-h-60 overflow-y-auto pr-2 -mr-2">
-                        {stations.map((station) => (
-                             <div key={station.id} className="flex items-center gap-2 p-3 rounded-lg border border-white/10">
-                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 flex-1">
+
+                    <div className="space-y-4 max-h-[25rem] overflow-y-auto pr-2 -mr-4">
+                        {currentStations.map((station) => (
+                            <div key={station.id} className="flex items-center gap-3 p-3 rounded-lg border border-white/10 bg-background/20">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 flex-1">
                                     <Input
                                         id={`station-${station.id}-name`}
                                         value={station.name}
                                         onChange={(e) => handleStationFieldChange(station.id, 'name', e.target.value)}
-                                        className="bg-background/50"
+                                        className="bg-background/70"
                                         placeholder="İstasyon Adı"
                                     />
                                     <Input
                                         id={`station-${station.id}-source`}
                                         value={station.source}
                                         onChange={(e) => handleStationFieldChange(station.id, 'source', e.target.value)}
-                                        className="bg-background/50"
+                                        className="bg-background/70"
                                         placeholder="Video Kaynağı"
                                     />
                                 </div>
@@ -902,7 +886,7 @@ function SettingsContent({
                                 </DialogHeader>
                                 <div className="py-4 space-y-4">
                                 {isScanning ? (
-                                    <div className="flex flex-col items-center justify-center space-y-2 h-32">
+                                    <div className="flex flex-col items-center justify-center space-y-2 h-40">
                                         <Loader className="w-8 h-8 animate-spin text-primary"/>
                                         <p className="text-muted-foreground">Ağ taranıyor, lütfen bekleyin...</p>
                                     </div>
@@ -919,9 +903,10 @@ function SettingsContent({
                                         ))}
                                     </div>
                                 ) : (
-                                     <div className="flex flex-col items-center justify-center space-y-2 h-32 text-center">
+                                     <div className="flex flex-col items-center justify-center space-y-2 h-40 text-center">
                                         <Network className="w-8 h-8 text-muted-foreground"/>
                                         <p className="text-muted-foreground">Başlamak için ağı tarayın.</p>
+                                        <p className="text-xs text-muted-foreground/70">(Bu özellik şu an için simülasyon amaçlıdır)</p>
                                     </div>
                                 )}
                                 </div>
@@ -988,10 +973,10 @@ function SettingsContent({
                     </div>
                 </CardContent>
             </Card>
-        </TabsContent>
-        <TabsContent value="notifications">
-             <div className="space-y-6 pt-6">
-                <Card>
+        )}
+        {activeSection === 'notifications' && (
+             <div className="space-y-8">
+                <Card className="bg-card/50 border-white/10">
                     <CardHeader>
                         <CardTitle className="text-lg">Gerçek Zamanlı Uyarılar</CardTitle>
                         <CardDescription>
@@ -1010,13 +995,13 @@ function SettingsContent({
                             </div>
                             <Switch
                                 id="sound-alert"
-                                checked={settings.isSoundAlertEnabled}
+                                checked={currentSettings.isSoundAlertEnabled}
                                 onCheckedChange={handleSoundSwitchChange}
                             />
                         </div>
                     </CardContent>
                 </Card>
-                <Card className="opacity-60">
+                <Card className="bg-card/50 border-white/10 opacity-60">
                     <CardHeader>
                         <CardTitle className="text-lg">Harici Bildirimler (Yakında)</CardTitle>
                         <CardDescription>
@@ -1043,10 +1028,10 @@ function SettingsContent({
                     </CardContent>
                 </Card>
             </div>
-        </TabsContent>
-        <TabsContent value="operators">
-             <Card className="mt-6">
-                <CardContent className="h-full flex flex-col justify-center items-center text-center p-8 min-h-[400px]">
+        )}
+        {activeSection === 'operators' && (
+             <Card className="bg-card/50 border-white/10 h-full">
+                <CardContent className="h-full flex flex-col justify-center items-center text-center p-8 min-h-[300px]">
                     <div className="p-4 bg-muted/50 rounded-full mb-4 border border-dashed border-white/20">
                         <Users className="mx-auto h-12 w-12 text-muted-foreground" />
                     </div>
@@ -1054,8 +1039,17 @@ function SettingsContent({
                     <p className="text-muted-foreground mt-2 max-w-sm">Bu özellik yakında eklenecektir. Bu bölümden, sisteme yeni operatörler ekleyebilecek, mevcutları yönetebilecek ve onlara özel bildirim atamaları yapabileceksiniz.</p>
                 </CardContent>
             </Card>
-        </TabsContent>
-    </Tabs>
+        )}
+
+        {(activeSection === 'ai' || activeSection === 'stations' || activeSection === 'notifications') && (
+            <div className="flex justify-end pt-4">
+                 <Button onClick={handleSave}>Değişiklikleri Kaydet</Button>   
+            </div>
+        )}
+    </div>
   );
 }
 
+
+
+    
