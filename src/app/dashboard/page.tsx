@@ -4,8 +4,8 @@
 
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { LayoutDashboard, Network, User } from '@/components/ui/lucide-icons';
-import { AppSettings, Station } from '@/components/dashboard-client';
+import { LayoutDashboard, Network, User, Settings } from '@/components/ui/lucide-icons';
+import { AppSettings, Station, DashboardClient } from '@/components/dashboard-client';
 
 import {
   Sidebar,
@@ -19,12 +19,11 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { Icons } from '@/components/icons';
-import { DashboardClient } from '@/components/dashboard-client';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-
+import { useToast } from '@/hooks/use-toast';
 
 const defaultSettings: AppSettings = {
   anomalyThreshold: 2.0,
@@ -42,6 +41,7 @@ export default function DashboardPage() {
 
 function PageContent() {
     const searchParams = useSearchParams();
+    const { toast } = useToast();
     
     const [stations, setStations] = useState<Station[]>([]);
     const [settings, setSettings] = useState<AppSettings>(defaultSettings);
@@ -86,6 +86,34 @@ function PageContent() {
         }
     }, []);
 
+    useEffect(() => {
+        const handleStorageChange = (event: StorageEvent) => {
+            if (event.key === 'konveyorAIStations') {
+                try {
+                    if (event.newValue) {
+                        setStations(JSON.parse(event.newValue));
+                    }
+                } catch (e) {
+                    console.error("Failed to parse stations from storage event", e);
+                }
+            }
+            if (event.key === 'konveyorAISettings') {
+                try {
+                    if (event.newValue) {
+                        setSettings(JSON.parse(event.newValue));
+                    }
+                } catch (e) {
+                    console.error("Failed to parse settings from storage event", e);
+                }
+            }
+        };
+
+        window.addEventListener('storage', handleStorageChange);
+        return () => {
+            window.removeEventListener('storage', handleStorageChange);
+        };
+    }, []);
+
     const saveSettings = useCallback((newSettings: AppSettings) => {
       setSettings(newSettings);
       if (isClient) {
@@ -103,6 +131,14 @@ function PageContent() {
     }, [isClient]);
 
     const handleCalibrate = (stationId: string) => {
+        if (!stationId) {
+            toast({
+                variant: 'destructive',
+                title: 'Kalibrasyon Hatası',
+                description: 'Kalibre edilecek bir istasyon seçilmedi veya bulunamadı.',
+            });
+            return;
+        }
         setCalibratingStationId(stationId);
         setCalibrationProgress(0);
         const progressInterval = setInterval(() => {
@@ -121,9 +157,8 @@ function PageContent() {
         }, 300);
     };
     
-    const { toast } = useToast();
     const currentStationId = searchParams.get('station') || (stations.length > 0 ? stations[0].id : '1');
-    
+
     return (
     <>
       <Sidebar>
@@ -140,7 +175,7 @@ function PageContent() {
         <SidebarContent>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/dashboard" isActive={!currentStationId} tooltip="Kontrol Paneli">
+              <SidebarMenuButton href="/dashboard" isActive={true} tooltip="Kontrol Paneli">
                 <LayoutDashboard className="size-5" />
                 <span className="group-data-[state=collapsed]:hidden">
                   Kontrol Paneli
@@ -149,10 +184,11 @@ function PageContent() {
             </SidebarMenuItem>
             
             <SidebarMenuItem>
-                 <div className="px-2 py-1 text-xs font-medium text-sidebar-foreground/70 group-data-[state=collapsed]:hidden">
-                    İstasyonlar
-                 </div>
-                <SidebarMenu className="p-0 pt-1 group-data-[state=collapsed]:hidden">
+                 <SidebarMenuButton tooltip="İstasyonlar" className="pointer-events-none data-[state=open]:bg-sidebar-accent">
+                    <Network className="size-5" />
+                    <span className="group-data-[state=collapsed]:hidden">İstasyonlar</span>
+                </SidebarMenuButton>
+                <SidebarMenu className="p-0 pl-7 pt-1 group-data-[state=collapsed]:hidden">
                      {!isClient ? (
                         <div className="space-y-2 p-2">
                             <Skeleton className="h-8 w-full" />
@@ -178,29 +214,6 @@ function PageContent() {
                         </div>
                     )}
                 </SidebarMenu>
-                 <SidebarMenu className="p-0 pt-1 group-data-[state=expanded]:hidden">
-                     {!isClient ? (
-                        <div className="space-y-2 p-2">
-                            <Skeleton className="h-10 w-10" />
-                        </div>
-                    ) : stations.length > 0 ? (
-                        stations.map(station => (
-                             <SidebarMenuButton 
-                                key={station.id}
-                                asChild
-                                variant="ghost" 
-                                size="sm" 
-                                className="w-full justify-start h-10 text-base" 
-                                isActive={currentStationId === station.id}
-                                tooltip={station.name}
-                                >
-                                <Link href={`/dashboard?station=${station.id}`}>
-                                    <Network className="size-5" />
-                                </Link>
-                            </SidebarMenuButton>
-                        ))
-                    ) : null }
-                 </SidebarMenu>
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarContent>
@@ -214,19 +227,16 @@ function PageContent() {
             </div>
           </div>
           <div className="flex flex-1 items-center justify-end gap-2">
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="rounded-full border w-9 h-9">
-                        <User className="h-5 w-5" />
-                        <span className="sr-only">Kullanıcı menüsünü aç</span>
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Hesabım</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem>Profil</DropdownMenuItem>
-                    <DropdownMenuItem>Çıkış Yap</DropdownMenuItem>
-                </DropdownMenuContent>
+             <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="rounded-full border w-9 h-9">
+                    <User className="h-5 w-5" />
+                    <span className="sr-only">Kullanıcı menüsünü aç</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Hesabım</DropdownMenuLabel>
+              </DropdownMenuContent>
             </DropdownMenu>
           </div>
         </header>
@@ -246,3 +256,4 @@ function PageContent() {
     </>
   );
 }
+
