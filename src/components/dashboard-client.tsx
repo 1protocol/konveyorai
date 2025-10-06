@@ -1,8 +1,10 @@
 
+
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useSearchParams } from 'next/navigation';
+import Link from 'next/link';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import {
@@ -22,7 +24,23 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger, DialogClose } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogTrigger,
+  DialogClose,
+} from "@/components/ui/dialog";
 import {
   LineChart,
   Line,
@@ -38,15 +56,22 @@ import {
   AlertTriangle,
   CheckCircle,
   Video,
+  Settings,
+  BrainCircuit,
+  Bell,
+  Users,
+  Camera,
   Loader,
   VideoOff,
   Scan,
   PlusCircle,
   Trash2,
+  ChevronDown,
   AreaChart,
   Network,
+  Check,
   Info,
-  BrainCircuit,
+  Pencil,
 } from "@/components/ui/lucide-icons";
 import { analyzeConveyorBelt } from "@/ai/flows/analyze-conveyor-flow";
 import { Label } from "@/components/ui/label";
@@ -54,6 +79,7 @@ import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "./ui/input";
 import { Separator } from "./ui/separator";
+
 
 type AnomalyLog = {
   timestamp: string;
@@ -77,37 +103,46 @@ export type Station = {
   source: string;
 };
 
+export type Operator = {
+  id: string;
+  name: string;
+  email: string;
+};
+
 interface DashboardClientProps {
-  initialStations: Station[];
-  initialSettings: AppSettings;
+  stations: Station[];
+  settings: AppSettings;
   audioRef: React.RefObject<HTMLAudioElement>;
 }
 
 export function DashboardClient({ 
-  initialStations, 
-  initialSettings, 
+  stations: initialStations, 
+  settings: initialSettings, 
   audioRef
 }: DashboardClientProps) {
   const searchParams = useSearchParams();
-  const { toast } = useToast();
+  const router = useRouter();
+  const pathname = usePathname();
   
   const [stations, setStations] = useState<Station[]>(initialStations);
   const [settings, setSettings] = useState<AppSettings>(initialSettings);
-  
+
   const selectedStationId = searchParams.get('station') || (stations.length > 0 ? stations[0].id : null);
   const selectedStation = stations.find(s => s.id === selectedStationId) || (stations.length > 0 ? stations[0] : null);
 
   const [isClient, setIsClient] = useState(false);
   const [deviation, setDeviation] = useState(0);
-  const [status, setStatus] = useState<"NORMAL" | "ANOMALİ" | "KALİBRE EDİLİYOR">("NORMAL");
+  const [status, setStatus] = useState<"NORMAL" | "ANOMALİ" | "KALİBRE EDİLİYOR">(
+    "NORMAL"
+  );
   const [logs, setLogs] = useState<AnomalyLog[]>([]);
   const [deviationData, setDeviationData] = useState<DeviationData[]>([]);
-  
+  const { toast } = useToast();
+
   const videoRef = useRef<HTMLVideoElement>(null);
   const captureCanvasRef = useRef<HTMLCanvasElement>(null);
   const overlayCanvasRef = useRef<HTMLCanvasElement>(null);
   const animationFrameId = useRef<number>();
-  
   const [isProcessing, setIsProcessing] = useState(false);
   const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
 
@@ -116,14 +151,16 @@ export function DashboardClient({
   
   const [isScanning, setIsScanning] = useState(false);
   const [discoveredCameras, setDiscoveredCameras] = useState<Partial<Station>[]>([]);
+  
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [newStationName, setNewStationName] = useState("");
   const [newStationSource, setNewStationSource] = useState("");
-
+  
   const videoSource = selectedStation?.source || '/conveyor-video.mp4';
   const isWebcam = videoSource === 'webcam';
   const isAnomaly = status === "ANOMALİ";
   const isCalibrating = calibratingStationId === selectedStationId;
+
 
   useEffect(() => {
     setIsClient(true);
@@ -135,7 +172,9 @@ export function DashboardClient({
     if (isClient) {
       try {
         const savedLogs = localStorage.getItem("konveyorAILogs");
-        if (savedLogs) setLogs(JSON.parse(savedLogs));
+        if (savedLogs) {
+          setLogs(JSON.parse(savedLogs));
+        }
       } catch (error) {
         console.error("Yerel depolamadan kayıtlar okunurken hata oluştu:", error);
       }
@@ -144,7 +183,9 @@ export function DashboardClient({
   
   const saveLogs = useCallback((newLogs: AnomalyLog[]) => {
     setLogs(newLogs);
-    if (isClient) localStorage.setItem("konveyorAILogs", JSON.stringify(newLogs));
+    if (isClient) {
+        localStorage.setItem("konveyorAILogs", JSON.stringify(newLogs));
+    }
   }, [isClient]);
 
   const saveStations = useCallback((newStations: Station[]) => {
@@ -163,15 +204,19 @@ export function DashboardClient({
     }
   }, [isClient]);
 
+
   const playAlertSound = useCallback(() => {
-    if (settings.isSoundAlertEnabled && audioRef.current && audioRef.current.src && !audioRef.current.src.endsWith('null')) {
-        audioRef.current.play().catch(e => console.error("Ses çalma hatası:", e));
+    if (settings.isSoundAlertEnabled && audioRef.current) {
+        if (audioRef.current.src && !audioRef.current.src.endsWith('null')) {
+            audioRef.current.play().catch(e => console.error("Ses çalma hatası:", e));
+        }
     }
   }, [settings.isSoundAlertEnabled, audioRef]);
 
   const stopCameraStream = () => {
     if (videoRef.current && videoRef.current.srcObject) {
-      (videoRef.current.srcObject as MediaStream).getTracks().forEach(track => track.stop());
+      const stream = videoRef.current.srcObject as MediaStream;
+      stream.getTracks().forEach(track => track.stop());
       videoRef.current.srcObject = null;
     }
   };
@@ -181,22 +226,22 @@ export function DashboardClient({
     setStatus("NORMAL");
     setHasCameraPermission(null);
     setDeviationData([]);
-    stopCameraStream();
+    stopCameraStream(); // Stop any previous stream
 
     const videoElement = videoRef.current;
     if (!videoElement || !selectedStation) return;
 
     if (isWebcam) {
-      navigator.mediaDevices.getUserMedia({ video: true })
-        .then(stream => {
+      const getCameraPermission = async () => {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ video: true });
           setHasCameraPermission(true);
           if (videoRef.current) {
             videoRef.current.srcObject = stream;
-            videoRef.current.src = "";
+            videoRef.current.src = ""; // Clear src for srcObject to work
             videoRef.current.play().catch(e => console.error("Webcam oynatma hatası:", e));
           }
-        })
-        .catch(error => {
+        } catch (error) {
           console.error('Kamera erişim hatası:', error);
           setHasCameraPermission(false);
           toast({
@@ -204,11 +249,13 @@ export function DashboardClient({
             title: 'Kamera Erişimi Reddedildi',
             description: 'Bu özelliği kullanmak için tarayıcı ayarlarından kamera izinlerini etkinleştirin.',
           });
-        });
+        }
+      };
+      getCameraPermission();
     } else {
-        const videoUrl = videoSource.startsWith('http') ? videoSource : videoSource;
+        const videoUrl = videoSource.startsWith('http') ? videoSource : window.location.origin + videoSource;
         if (videoRef.current.src !== videoUrl) {
-            videoRef.current.srcObject = null;
+            videoRef.current.srcObject = null; // Clear srcObject for src to work
             videoRef.current.src = videoUrl;
             videoRef.current.load();
             videoRef.current.play().catch(e => console.error("Video oynatma hatası:", e));
@@ -222,12 +269,13 @@ export function DashboardClient({
   }, [selectedStation, isWebcam, toast, videoSource]);
 
    useEffect(() => {
-    if (isCalibrating) {
+    if (calibratingStationId === selectedStationId) {
       setStatus("KALİBRE EDİLİYOR");
     } else if (status === "KALİBRE EDİLİYOR") {
       setStatus("NORMAL");
     }
-  }, [isCalibrating, status]);
+  }, [calibratingStationId, selectedStationId, status]);
+
 
   useEffect(() => {
     const analyzeFrame = async () => {
@@ -236,7 +284,12 @@ export function DashboardClient({
       setIsProcessing(true);
   
       const video = videoRef.current;
-      if (video.paused || video.ended || video.readyState < 3 || (isWebcam && hasCameraPermission === false)) { 
+      if (video.paused || video.ended || video.readyState < 3) { 
+        setIsProcessing(false);
+        return;
+      }
+      
+      if (isWebcam && hasCameraPermission === false) {
         setIsProcessing(false);
         return;
       }
@@ -257,10 +310,13 @@ export function DashboardClient({
     
           const now = new Date();
           const newTime = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-          setDeviationData(prevData => [...prevData, { time: newTime, deviation: newDeviation }].slice(-30));
+          setDeviationData(prevData => [...prevData, { time: newTime, deviation: newDeviation }].slice(-30)); // Keep last 30 data points
+
 
           if (newDeviation >= settings.anomalyThreshold) {
-            if (status !== "ANOMALİ") playAlertSound();
+            if (status !== "ANOMALİ") {
+              playAlertSound();
+            }
             setStatus("ANOMALİ");
             const newLog: AnomalyLog = { 
                 timestamp: now.toISOString(), 
@@ -268,12 +324,17 @@ export function DashboardClient({
                 stationId: selectedStation.id
             };
             saveLogs([newLog, ...logs].slice(0, 100));
+
           } else {
              setStatus("NORMAL");
           }
         } catch (error) {
           console.error("Yapay zeka analizi hatası:", error);
-           toast({ variant: "destructive", title: "Analiz Hatası", description: "Görüntü işlenirken bir hata oluştu." });
+           toast({
+            variant: "destructive",
+            title: "Analiz Hatası",
+            description: "Görüntü işlenirken bir hata oluştu.",
+          });
         } finally {
            setIsProcessing(false);
         }
@@ -286,6 +347,7 @@ export function DashboardClient({
     return () => clearInterval(interval);
   }, [calibratingStationId, isProcessing, toast, settings.anomalyThreshold, status, playAlertSound, selectedStation, logs, saveLogs, isWebcam, hasCameraPermission]);
 
+  // Effect to draw detection lines
   useEffect(() => {
     const overlay = overlayCanvasRef.current;
     const video = videoRef.current;
@@ -310,7 +372,7 @@ export function DashboardClient({
 
         ctx.clearRect(0, 0, overlay.width, overlay.height);
 
-        if (calibratingStationId === selectedStationId) {
+        if (isCalibrating) {
             animationFrameId.current = requestAnimationFrame(draw);
             return;
         }
@@ -377,9 +439,11 @@ export function DashboardClient({
     animationFrameId.current = requestAnimationFrame(draw);
 
     return () => {
-        if (animationFrameId.current) cancelAnimationFrame(animationFrameId.current);
+        if (animationFrameId.current) {
+            cancelAnimationFrame(animationFrameId.current);
+        }
     };
-  }, [deviation, isAnomaly, calibratingStationId, selectedStationId]);
+}, [deviation, isAnomaly, isCalibrating]);
   
   const filteredLogs = selectedStationId ? logs.filter(log => log.stationId === selectedStationId) : [];
 
@@ -432,7 +496,8 @@ export function DashboardClient({
        toast({ variant: 'destructive', title: 'Eksik Bilgi', description: 'Lütfen istasyon adı ve kaynağını girin.' });
        return;
    }
-   setStations(prev => [...prev, { id: (Date.now() + Math.random()).toString(36), name: newStationName, source: newStationSource }]);
+   const newStation: Station = { id: (Date.now() + Math.random()).toString(36), name: newStationName, source: newStationSource };
+   setStations(prev => [...prev, newStation]);
    toast({ title: "İstasyon Eklendi", description: `"${newStationName}" manuel olarak eklendi. Değişiklikleri kaydetmeyi unutmayın.` });
    setNewStationName("");
    setNewStationSource("");
@@ -457,33 +522,61 @@ export function DashboardClient({
   };
 
   if (!isClient || !selectedStation) {
-      return <div className="flex items-center justify-center h-full"><Loader className="h-16 w-16 animate-spin text-primary" /></div>;
+      return (
+        <div className="flex items-center justify-center h-full">
+            <Loader className="h-16 w-16 animate-spin text-primary" />
+        </div>
+      );
   }
 
   return (
     <div className="space-y-6 lg:space-y-8 w-full overflow-x-hidden">
        <div className="flex flex-wrap justify-between items-center gap-4">
-        <h2 className="text-2xl font-bold tracking-tight">İstasyon: {selectedStation.name}</h2>
+        <h2 className="text-2xl font-bold tracking-tight">
+          İstasyon: {selectedStation.name}
+        </h2>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+        {/* Main Content Column */}
         <div className="lg:col-span-2 space-y-6 lg:space-y-8">
           <Card className="transition-all w-full duration-300 bg-card/60 backdrop-blur-lg border border-white/10 hover:border-accent/50">
-            <CardHeader><CardTitle className="flex items-center gap-2"><Video />Canlı İzleme{isProcessing && <Scan className="h-5 w-5 text-primary animate-pulse" />}</CardTitle></CardHeader>
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                    <Video />
+                    Canlı İzleme
+                    {isProcessing && <Scan className="h-5 w-5 text-primary animate-pulse" />}
+                </CardTitle>
+            </CardHeader>
             <CardContent>
                 <div className="relative aspect-video w-full rounded-md bg-black/50 overflow-hidden border border-white/10">
-                    <video ref={videoRef} className="w-full h-full object-cover" autoPlay muted playsInline loop={!isWebcam} crossOrigin="anonymous" key={videoSource + selectedStation.id}/>
+                    <video 
+                      ref={videoRef} 
+                      className="w-full h-full object-cover" 
+                      autoPlay 
+                      muted 
+                      playsInline 
+                      loop={!isWebcam}
+                      crossOrigin="anonymous"
+                      key={videoSource + selectedStation.id}
+                    />
                     <canvas ref={captureCanvasRef} className="hidden" />
                     <canvas ref={overlayCanvasRef} className="absolute inset-0 w-full h-full pointer-events-none" />
+                    
                     {isWebcam && hasCameraPermission === false && (
                         <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center text-center text-white p-4">
-                            <VideoOff className="h-16 w-16 mb-4" /><h3 className="text-xl font-semibold">Kamera Erişimi Gerekli</h3>
-                            <p className="text-muted-foreground text-white/80">Canlı görüntüyü başlatmak için lütfen tarayıcınızın ayarlarından kamera izni verin.</p>
+                            <VideoOff className="h-16 w-16 mb-4" />
+                            <h3 className="text-xl font-semibold">Kamera Erişimi Gerekli</h3>
+                            <p className="text-muted-foreground text-white/80">
+                               Canlı görüntüyü başlatmak için lütfen tarayıcınızın ayarlarından kamera izni verin.
+                            </p>
                         </div>
                     )}
+
                     {isProcessing && !isCalibrating && (
                       <div className="absolute top-2 left-2 bg-black/50 text-white text-xs font-medium rounded-md px-2 py-1 flex items-center gap-1">
-                        <Loader className="w-3 h-3 animate-spin"/><span>Analiz ediliyor...</span>
+                        <Loader className="w-3 h-3 animate-spin"/>
+                        <span>Analiz ediliyor...</span>
                       </div>
                     )}
                      <audio ref={audioRef} src="/alert-sound.mp3" preload="auto"></audio>
@@ -492,7 +585,7 @@ export function DashboardClient({
           </Card>
           
             <Tabs defaultValue="data" className="w-full">
-                <TabsList className="grid w-full grid-cols-3">
+                <TabsList>
                     <TabsTrigger value="data"><AreaChart className="mr-2"/>Canlı Veri</TabsTrigger>
                     <TabsTrigger value="station-settings"><Network className="mr-2"/>İstasyon Ayarları</TabsTrigger>
                     <TabsTrigger value="ai-config"><BrainCircuit className="mr-2"/>AI Yapılandırması</TabsTrigger>
@@ -602,27 +695,90 @@ export function DashboardClient({
             </Tabs>
         </div>
 
+        {/* Side Column */}
         <div className="lg:col-span-1 space-y-6 lg:space-y-8">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-6 lg:gap-8">
                 <Card className={cn("transition-all duration-300 bg-card/60 backdrop-blur-lg border border-white/10 hover:border-accent/50", isAnomaly && "bg-destructive/30 text-destructive-foreground border-destructive/50")}>
-                  <CardHeader className="pb-2"><CardTitle className="text-sm font-medium flex items-center justify-between">Sistem Durumu{status === "NORMAL" ? <CheckCircle className="h-5 w-5 text-green-400" /> : status === "ANOMALİ" ? <AlertTriangle className="h-5 w-5 text-red-400 animate-pulse" /> : <SlidersHorizontal className="h-5 w-5 text-ring" />}</CardTitle></CardHeader>
-                  <CardContent><div className="text-2xl font-bold">{status}</div><p className={cn("text-xs text-muted-foreground", isAnomaly && "text-red-200")}>{isAnomaly ? `Sapma eşiği aşıldı.` : status === "NORMAL" ? "Parametreler dahilinde." : "Referans oluşturuluyor..."}</p></CardContent>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium flex items-center justify-between">
+                      Sistem Durumu
+                      {status === "NORMAL" && <CheckCircle className="h-5 w-5 text-green-400" />}
+                      {status === "ANOMALİ" && <AlertTriangle className="h-5 w-5 text-red-400 animate-pulse" />}
+                      {status === "KALİBRE EDİLİYOR" && <SlidersHorizontal className="h-5 w-5 text-ring" />}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">
+                       {status}
+                    </div>
+                    <p className={cn("text-xs text-muted-foreground", isAnomaly && "text-red-200")}>
+                      {isAnomaly
+                        ? `Sapma eşiği aşıldı.`
+                        : status === "NORMAL"
+                        ? "Parametreler dahilinde."
+                        : "Referans oluşturuluyor..."}
+                    </p>
+                  </CardContent>
                 </Card>
+
                 <Card className="transition-all duration-300 bg-card/60 backdrop-blur-lg border border-white/10 hover:border-accent/50">
-                  <CardHeader className="pb-2"><CardTitle className="text-sm font-medium flex items-center justify-between">Mevcut Sapma<span className="text-muted-foreground">(AI)</span></CardTitle></CardHeader>
-                  <CardContent><div className={cn("text-2xl font-bold", deviation >= settings.anomalyThreshold && "text-red-400")}>{deviation.toFixed(2)} mm</div><p className="text-xs text-muted-foreground">Gerçek zamanlı ölçüm</p></CardContent>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium flex items-center justify-between">
+                      Mevcut Sapma
+                      <span className="text-muted-foreground">(AI)</span>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div
+                      className={cn(
+                        "text-2xl font-bold",
+                        deviation >= settings.anomalyThreshold && "text-red-400"
+                      )}
+                    >
+                      {deviation.toFixed(2)} mm
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Gerçek zamanlı ölçüm
+                    </p>
+                  </CardContent>
                 </Card>
             </div>
             <Card className="transition-all duration-300 bg-card/60 backdrop-blur-lg border border-white/10 hover:border-accent/50">
-                <CardHeader><CardTitle>Anomali Kayıtları</CardTitle><CardDescription>Son tespit edilen anomaliler</CardDescription></CardHeader>
+                <CardHeader>
+                <CardTitle>Anomali Kayıtları</CardTitle>
+                <CardDescription>
+                    Son tespit edilen anomaliler
+                </CardDescription>
+                </CardHeader>
                 <CardContent>
                 <div className="relative max-h-[calc(100vh-42rem)] overflow-y-auto">
                     <Table>
-                    <TableHeader className="sticky top-0 bg-card/80 backdrop-blur-sm"><TableRow><TableHead>Zaman</TableHead><TableHead className="text-right">Sapma</TableHead></TableRow></TableHeader>
+                    <TableHeader className="sticky top-0 bg-card/80 backdrop-blur-sm">
+                        <TableRow>
+                        <TableHead>Zaman</TableHead>
+                        <TableHead className="text-right">Sapma</TableHead>
+                        </TableRow>
+                    </TableHeader>
                     <TableBody>
                         {filteredLogs.length > 0 ? (
-                        filteredLogs.map((log, index) => <TableRow key={index} className="hover:bg-white/5"><TableCell>{new Date(log.timestamp).toLocaleTimeString('tr-TR')}</TableCell><TableCell className="text-right font-medium text-red-400">{log.deviation.toFixed(2)} mm</TableCell></TableRow>)
-                        ) : (<TableRow><TableCell colSpan={2} className="h-24 text-center text-muted-foreground">Henüz anomali yok.</TableCell></TableRow>)}
+                        filteredLogs.map((log, index) => (
+                            <TableRow key={index} className="hover:bg-white/5">
+                            <TableCell>{new Date(log.timestamp).toLocaleTimeString('tr-TR')}</TableCell>
+                            <TableCell className="text-right font-medium text-red-400">
+                                {log.deviation.toFixed(2)} mm
+                            </TableCell>
+                            </TableRow>
+                        ))
+                        ) : (
+                        <TableRow>
+                            <TableCell
+                            colSpan={2}
+                            className="h-24 text-center text-muted-foreground"
+                            >
+                            Henüz anomali yok.
+                            </TableCell>
+                        </TableRow>
+                        )}
                     </TableBody>
                     </Table>
                 </div>
@@ -634,8 +790,158 @@ export function DashboardClient({
   );
 }
 
-// This is a placeholder for the component that was previously in this file.
-// All its logic has been moved into the DashboardClient component.
-export function SettingsContent() {
-  return null;
+
+interface SettingsContentProps {
+    activeSection: string;
+    operators: Operator[];
+    onOperatorsChange: (operators: Operator[]) => void;
+}
+
+export function SettingsContent({
+  activeSection,
+  operators,
+  onOperatorsChange,
+}: SettingsContentProps) {
+  const [currentOperators, setCurrentOperators] = useState(operators);
+  const [isEditing, setIsEditing] = useState<string | null>(null);
+  const [openAddDialog, setOpenAddDialog] = useState(false);
+  const [currentOperator, setCurrentOperator] = useState<Partial<Operator>>({});
+
+  const { toast } = useToast();
+
+  useEffect(() => {
+    setCurrentOperators(operators);
+  }, [operators]);
+
+  const handleSave = () => {
+    onOperatorsChange(currentOperators);
+    toast({
+        title: "Operatörler Kaydedildi",
+        description: "Değişiklikler başarıyla kaydedildi.",
+    });
+  };
+
+  const handleAddNew = () => {
+    setCurrentOperator({});
+    setOpenAddDialog(true);
+  };
+  
+  const handleEdit = (operator: Operator) => {
+    setCurrentOperator(operator);
+    setIsEditing(operator.id);
+    setOpenAddDialog(true);
+  };
+
+  const handleDelete = (id: string) => {
+    setCurrentOperators(prev => prev.filter(op => op.id !== id));
+  };
+  
+  const handleSaveOperator = () => {
+    if (!currentOperator.name || !currentOperator.email) {
+      toast({ variant: 'destructive', title: 'Eksik Bilgi', description: 'Lütfen operatör adı ve e-posta adresini girin.' });
+      return;
+    }
+    
+    if (isEditing) {
+      setCurrentOperators(prev => prev.map(op => op.id === isEditing ? {...op, ...currentOperator} : op));
+    } else {
+      const newOperator: Operator = {
+        id: (Date.now() + Math.random()).toString(36),
+        name: currentOperator.name,
+        email: currentOperator.email,
+      };
+      setCurrentOperators(prev => [...prev, newOperator]);
+    }
+    
+    setOpenAddDialog(false);
+    setIsEditing(null);
+    setCurrentOperator({});
+  };
+
+
+  return (
+     <div className="space-y-8 max-w-4xl mx-auto">
+        {activeSection === 'operators' && (
+             <Card className="bg-card/50 border-white/10 h-full">
+                <CardHeader>
+                    <div className="flex justify-between items-start">
+                        <div>
+                            <CardTitle className="text-lg">Operatör Yönetimi</CardTitle>
+                            <CardDescription>
+                                Sisteme yeni operatörler ekleyin, mevcutları düzenleyin ve yönetin.
+                            </CardDescription>
+                        </div>
+                        <Button variant="outline" onClick={handleAddNew} className="shrink-0">
+                            <PlusCircle className="mr-2 h-4 w-4" />
+                            Yeni Operatör Ekle
+                        </Button>
+                    </div>
+                </CardHeader>
+                <CardContent>
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>İsim</TableHead>
+                                <TableHead>E-posta</TableHead>
+                                <TableHead className="text-right">Eylemler</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {currentOperators.length > 0 ? (
+                                currentOperators.map(op => (
+                                    <TableRow key={op.id}>
+                                        <TableCell className="font-medium">{op.name}</TableCell>
+                                        <TableCell>{op.email}</TableCell>
+                                        <TableCell className="text-right space-x-2">
+                                            <Button variant="ghost" size="icon" onClick={() => handleEdit(op)}>
+                                                <Pencil className="h-4 w-4" />
+                                            </Button>
+                                            <Button variant="ghost" size="icon" className="text-destructive/80 hover:text-destructive" onClick={() => handleDelete(op.id)}>
+                                                <Trash2 className="h-4 w-4" />
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            ) : (
+                                <TableRow>
+                                    <TableCell colSpan={3} className="h-24 text-center">
+                                        Henüz operatör eklenmemiş.
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
+                </CardContent>
+            </Card>
+        )}
+
+        <Dialog open={openAddDialog} onOpenChange={setOpenAddDialog}>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>{isEditing ? 'Operatörü Düzenle' : 'Yeni Operatör Ekle'}</DialogTitle>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                    <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="op-name" className="text-right">İsim</Label>
+                        <Input id="op-name" value={currentOperator.name || ''} onChange={(e) => setCurrentOperator({...currentOperator, name: e.target.value})} className="col-span-3" />
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="op-email" className="text-right">E-posta</Label>
+                        <Input id="op-email" type="email" value={currentOperator.email || ''} onChange={(e) => setCurrentOperator({...currentOperator, email: e.target.value})} className="col-span-3" />
+                    </div>
+                </div>
+                <DialogFooter>
+                    <Button type="button" variant="outline" onClick={() => { setOpenAddDialog(false); setIsEditing(null); }}>İptal</Button>
+                    <Button onClick={handleSaveOperator}>{isEditing ? 'Değişiklikleri Kaydet' : 'Operatör Ekle'}</Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+
+        {activeSection === 'operators' && (
+            <div className="flex justify-end pt-4">
+                 <Button onClick={handleSave}>Değişiklikleri Kaydet</Button>   
+            </div>
+        )}
+    </div>
+  );
 }
