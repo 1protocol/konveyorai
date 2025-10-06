@@ -4,9 +4,8 @@
 
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { LayoutDashboard, Network, User, Settings, BrainCircuit, Camera, Bell, Users } from '@/components/ui/lucide-icons';
-import { AppSettings, Station, SettingsContent } from '@/components/dashboard-client';
-
+import { LayoutDashboard, Network, User, Settings } from '@/components/ui/lucide-icons';
+import { AppSettings, Station } from '@/components/dashboard-client';
 import {
   Sidebar,
   SidebarContent,
@@ -38,12 +37,8 @@ export default function DashboardPage() {
   );
 }
 
-
 function PageContent() {
     const searchParams = useSearchParams();
-    const view = searchParams.get('view');
-    const section = searchParams.get('section');
-
     const [stations, setStations] = useState<Station[]>([]);
     const [settings, setSettings] = useState<AppSettings>(defaultSettings);
     const [isClient, setIsClient] = useState(false);
@@ -51,7 +46,6 @@ function PageContent() {
     const audioRef = useRef<HTMLAudioElement>(null);
     const [calibratingStationId, setCalibratingStationId] = useState<string | null>(null);
     const [calibrationProgress, setCalibrationProgress] = useState(0);
-
 
     useEffect(() => {
         setIsClient(true);
@@ -147,7 +141,6 @@ function PageContent() {
     };
     
     const currentStationId = searchParams.get('station') || (stations.length > 0 ? stations[0].id : '1');
-    const isSettingsView = view === 'settings';
 
     return (
     <>
@@ -165,7 +158,7 @@ function PageContent() {
         <SidebarContent>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/dashboard" isActive={!view} tooltip="Kontrol Paneli">
+              <SidebarMenuButton href="/dashboard" isActive={!currentStationId} tooltip="Kontrol Paneli">
                 <LayoutDashboard className="size-5" />
                 <span className="group-data-[state=collapsed]:hidden">
                   Kontrol Paneli
@@ -192,7 +185,7 @@ function PageContent() {
                                     variant="ghost" 
                                     size="sm" 
                                     className="w-full justify-start h-8 text-base" 
-                                    isActive={!isSettingsView && currentStationId === station.id} 
+                                    isActive={currentStationId === station.id} 
                                     >
                                     <Link href={`/dashboard?station=${station.id}`}>{station.name}</Link>
                                 </SidebarMenuButton>
@@ -203,33 +196,9 @@ function PageContent() {
                             İstasyon bulunamadı.
                         </div>
                     )}
-                </SidebarMenu>
-            </SidebarMenuItem>
-
-            <SidebarMenuItem>
-                 <SidebarMenuButton tooltip="Ayarlar" className="pointer-events-none">
-                    <Settings className="size-5" />
-                    <span className="group-data-[state=collapsed]:hidden">Ayarlar</span>
-                </SidebarMenuButton>
-                <SidebarMenu className="p-0 pl-7 pt-1 group-data-[state=collapsed]:hidden">
-                    <SidebarMenuItem>
-                        <SidebarMenuButton asChild variant="ghost" size="sm" className="w-full justify-start h-8 text-base" isActive={isSettingsView && section === 'ai'}>
-                           <Link href="/dashboard?view=settings&section=ai"><BrainCircuit className="mr-2 h-4 w-4" />Yapay Zeka</Link>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
                      <SidebarMenuItem>
-                        <SidebarMenuButton asChild variant="ghost" size="sm" className="w-full justify-start h-8 text-base" isActive={isSettingsView && section === 'stations'}>
-                           <Link href="/dashboard?view=settings&section=stations"><Camera className="mr-2 h-4 w-4" />İstasyonlar</Link>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                     <SidebarMenuItem>
-                        <SidebarMenuButton asChild variant="ghost" size="sm" className="w-full justify-start h-8 text-base" isActive={isSettingsView && section === 'notifications'}>
-                           <Link href="/dashboard?view=settings&section=notifications"><Bell className="mr-2 h-4 w-4" />Bildirimler</Link>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                     <SidebarMenuItem>
-                        <SidebarMenuButton asChild variant="ghost" size="sm" className="w-full justify-start h-8 text-base" isActive={isSettingsView && section === 'operators'}>
-                           <Link href="/dashboard?view=settings&section=operators"><Users className="mr-2 h-4 w-4" />Operatörler</Link>
+                        <SidebarMenuButton asChild variant="ghost" size="sm" className="w-full justify-start h-8 text-base">
+                           <Link href="/dashboard?view=settings&section=stations"><Settings className="mr-2 h-4 w-4" />İstasyonları Yönet</Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 </SidebarMenu>
@@ -242,7 +211,7 @@ function PageContent() {
           <div className="flex flex-1 items-center gap-4">
             <SidebarTrigger className="md:hidden" />
              <div className="hidden sm:flex">
-              <h1 className="font-bold text-lg">{isSettingsView ? 'Gelişmiş Ayarlar' : 'Kontrol Paneli'}</h1>
+              <h1 className="font-bold text-lg">Kontrol Paneli</h1>
             </div>
           </div>
           <div className="flex flex-1 items-center justify-end gap-2">
@@ -260,26 +229,16 @@ function PageContent() {
           </div>
         </header>
         <main className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8">
-            {isSettingsView ? (
-                 <SettingsContent
-                    activeSection={section || 'ai'}
-                    settings={settings} 
-                    onSettingsChange={saveSettings} 
-                    stations={stations}
-                    onStationsChange={saveStations}
-                    audioRef={audioRef}
-                    calibratingStationId={calibratingStationId}
-                    calibrationProgress={calibrationProgress}
-                    onCalibrate={handleCalibrate}
-                 />
-            ) : (
-                <DashboardClient 
-                    stations={stations} 
-                    settings={settings}
-                    calibratingStationId={calibratingStationId}
-                    audioRef={audioRef}
-                />
-            )}
+          <DashboardClient 
+              stations={stations} 
+              settings={settings}
+              onStationsChange={saveStations}
+              onSettingsChange={saveSettings}
+              calibratingStationId={calibratingStationId}
+              calibrationProgress={calibrationProgress}
+              onCalibrate={handleCalibrate}
+              audioRef={audioRef}
+          />
         </main>
       </SidebarInset>
     </>

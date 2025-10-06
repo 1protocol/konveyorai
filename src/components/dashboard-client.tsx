@@ -3,8 +3,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import Link from 'next/link';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import {
@@ -38,28 +37,19 @@ import {
   AlertTriangle,
   CheckCircle,
   Video,
-  Settings,
-  BrainCircuit,
-  Bell,
-  Users,
-  Camera,
   Loader,
   VideoOff,
   Scan,
-  PlusCircle,
-  Trash2,
-  ChevronDown,
   AreaChart,
-  Network,
-  Check,
+  PlusCircle,
+  Trash2
 } from "@/components/ui/lucide-icons";
 import { analyzeConveyorBelt } from "@/ai/flows/analyze-conveyor-flow";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import { Switch } from "@/components/ui/switch";
 import { Input } from "./ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { Separator } from "./ui/separator";
-
 
 type AnomalyLog = {
   timestamp: string;
@@ -86,19 +76,25 @@ export type Station = {
 interface DashboardClientProps {
   stations: Station[];
   settings: AppSettings;
+  onStationsChange: (stations: Station[]) => void;
+  onSettingsChange: (settings: AppSettings) => void;
   calibratingStationId: string | null;
+  calibrationProgress: number;
+  onCalibrate: (stationId: string) => void;
   audioRef: React.RefObject<HTMLAudioElement>;
 }
 
 export function DashboardClient({ 
   stations, 
   settings, 
+  onStationsChange,
+  onSettingsChange,
   calibratingStationId,
+  calibrationProgress,
+  onCalibrate,
   audioRef
 }: DashboardClientProps) {
   const searchParams = useSearchParams();
-  const router = useRouter();
-  const pathname = usePathname();
   const selectedStationId = searchParams.get('station') || (stations.length > 0 ? stations[0].id : null);
   
   const selectedStation = stations.find(s => s.id === selectedStationId) || (stations.length > 0 ? stations[0] : null);
@@ -118,7 +114,10 @@ export function DashboardClient({
   const animationFrameId = useRef<number>();
   const [isProcessing, setIsProcessing] = useState(false);
   const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
-  
+
+  const [currentSettings, setCurrentSettings] = useState(settings);
+  const [currentStations, setCurrentStations] = useState(stations);
+
   const videoSource = selectedStation?.source || '/conveyor-video.mp4';
   const isWebcam = videoSource === 'webcam';
   const isAnomaly = status === "ANOMALİ";
@@ -127,6 +126,14 @@ export function DashboardClient({
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  useEffect(() => {
+    setCurrentSettings(settings);
+  }, [settings]);
+
+  useEffect(() => {
+    setCurrentStations(stations);
+  }, [stations]);
 
   useEffect(() => {
     if (isClient) {
@@ -219,7 +226,6 @@ export function DashboardClient({
     }
   }, [isCalibrating, status]);
 
-
   useEffect(() => {
     const analyzeFrame = async () => {
       if (isCalibrating || isProcessing || !videoRef.current || !captureCanvasRef.current || !selectedStation) return;
@@ -254,7 +260,6 @@ export function DashboardClient({
           const now = new Date();
           const newTime = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
           setDeviationData(prevData => [...prevData, { time: newTime, deviation: newDeviation }].slice(-30)); // Keep last 30 data points
-
 
           if (newDeviation >= settings.anomalyThreshold) {
             if (status !== "ANOMALİ") {
@@ -335,7 +340,6 @@ export function DashboardClient({
         ctx.stroke();
         ctx.setLineDash([]);
 
-
         if (Math.abs(deviation) > 0.1) {
             if (isAnomaly) {
                 pulseOpacity += pulseDirection * 0.05;
@@ -390,7 +394,43 @@ export function DashboardClient({
     };
 }, [deviation, isAnomaly, isCalibrating, status]);
   
-  const filteredLogs = selectedStationId ? logs.filter(log => log.stationId === selectedStationId) : [];
+  const handleSave = () => {
+    onSettingsChange(currentSettings);
+    onStationsChange(currentStations);
+    toast({
+        title: "Ayarlar Kaydedildi",
+        description: "Yeni yapılandırmanız başarıyla kaydedildi.",
+    });
+  };
+
+  const handleStationFieldChange = (id: string, field: 'name' | 'source', value: string) => {
+    setCurrentStations(prev => 
+      prev.map(station => station.id === id ? {...station, [field]: value} : station)
+    );
+  };
+  
+  const handleAddStation = () => {
+    const newId = (Date.now() + Math.random()).toString(36);
+    const newStation: Station = {
+        id: newId,
+        name: `Yeni İstasyon ${currentStations.length + 1}`,
+        source: '/conveyor-video.mp4'
+    };
+    setCurrentStations(prev => [...prev, newStation]);
+  };
+
+  const handleRemoveStation = (id: string) => {
+    if (currentStations.length <= 1) {
+        toast({
+            variant: 'destructive',
+            title: 'Son İstasyon Silinemez',
+            description: 'Sistemde en az bir istasyon bulunmalıdır.',
+        });
+        return;
+    }
+    setCurrentStations(prev => prev.filter(station => station.id !== id));
+  };
+
 
   if (!isClient || !selectedStation) {
       return (
@@ -399,6 +439,8 @@ export function DashboardClient({
         </div>
       );
   }
+
+  const filteredLogs = selectedStationId ? logs.filter(log => log.stationId === selectedStationId) : [];
 
   return (
     <div className="space-y-6 lg:space-y-8 w-full overflow-x-hidden">
@@ -409,7 +451,6 @@ export function DashboardClient({
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-        {/* Main Content Column */}
         <div className="lg:col-span-2 space-y-6 lg:space-y-8">
           <Card className="transition-all w-full duration-300 bg-card/60 backdrop-blur-lg border border-white/10 hover:border-accent/50">
             <CardHeader>
@@ -454,42 +495,8 @@ export function DashboardClient({
                 </div>
             </CardContent>
           </Card>
-          <Card className="transition-all duration-300 bg-card/60 backdrop-blur-lg border border-white/10 hover:border-accent/50">
-            <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-base">
-                    <AreaChart />
-                    Gerçek Zamanlı Sapma Grafiği (mm)
-                </CardTitle>
-            </CardHeader>
-            <CardContent className="h-60 sm:h-80">
-                <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={deviationData} margin={{ top: 5, right: 20, left: -20, bottom: 5 }}>
-                        <XAxis dataKey="time" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
-                        <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
-                        <Tooltip
-                            contentStyle={{
-                                backgroundColor: 'hsl(var(--background) / 0.8)',
-                                borderColor: 'hsl(var(--border))',
-                                backdropFilter: 'blur(4px)',
-                            }}
-                            labelStyle={{color: 'hsl(var(--foreground))'}}
-                        />
-                        <Line 
-                            type="monotone" 
-                            dataKey="deviation" 
-                            stroke={isAnomaly ? "hsl(var(--destructive))" : "hsl(var(--ring))"}
-                            strokeWidth={2} 
-                            dot={false}
-                            isAnimationActive={false}
-                        />
-                        <ReferenceLine y={settings.anomalyThreshold} label={{ value: 'Eşik', position: 'insideTopLeft', fill: 'hsl(var(--muted-foreground))' }} stroke="hsl(var(--destructive))" strokeDasharray="3 3" />
-                    </LineChart>
-                </ResponsiveContainer>
-            </CardContent>
-        </Card>
         </div>
 
-        {/* Side Column */}
         <div className="lg:col-span-1 space-y-6 lg:space-y-8">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-6 lg:gap-8">
                 <Card className={cn("transition-all duration-300 bg-card/60 backdrop-blur-lg border border-white/10 hover:border-accent/50", isAnomaly && "bg-destructive/30 text-destructive-foreground border-destructive/50")}>
@@ -537,155 +544,147 @@ export function DashboardClient({
                   </CardContent>
                 </Card>
             </div>
-            <Card className="transition-all duration-300 bg-card/60 backdrop-blur-lg border border-white/10 hover:border-accent/50">
-                <CardHeader>
-                <CardTitle>Anomali Kayıtları</CardTitle>
-                <CardDescription>
-                    Son tespit edilen anomaliler
-                </CardDescription>
-                </CardHeader>
-                <CardContent>
-                <div className="relative max-h-[calc(100vh-42rem)] overflow-y-auto">
-                    <Table>
-                    <TableHeader className="sticky top-0 bg-card/80 backdrop-blur-sm">
-                        <TableRow>
-                        <TableHead>Zaman</TableHead>
-                        <TableHead className="text-right">Sapma</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {filteredLogs.length > 0 ? (
-                        filteredLogs.map((log, index) => (
-                            <TableRow key={index} className="hover:bg-white/5">
-                            <TableCell>{new Date(log.timestamp).toLocaleTimeString('tr-TR')}</TableCell>
-                            <TableCell className="text-right font-medium text-red-400">
-                                {log.deviation.toFixed(2)} mm
-                            </TableCell>
-                            </TableRow>
-                        ))
-                        ) : (
-                        <TableRow>
-                            <TableCell
-                            colSpan={2}
-                            className="h-24 text-center text-muted-foreground"
-                            >
-                            Henüz anomali yok.
-                            </TableCell>
-                        </TableRow>
-                        )}
-                    </TableBody>
-                    </Table>
-                </div>
-                </CardContent>
-            </Card>
         </div>
       </div>
-    </div>
-  );
-}
-
-type SettingsSection = 'ai' | 'stations' | 'notifications' | 'operators';
-
-interface SettingsContentProps {
-    activeSection: string;
-    settings: AppSettings;
-    onSettingsChange: (settings: AppSettings) => void;
-    stations: Station[];
-    onStationsChange: (stations: Station[]) => void;
-    audioRef: React.RefObject<HTMLAudioElement>;
-    calibratingStationId: string | null;
-    calibrationProgress: number;
-    onCalibrate: (stationId: string) => void;
-}
-
-export function SettingsContent({
-  activeSection,
-  settings,
-  onSettingsChange,
-  stations,
-  onStationsChange,
-  audioRef,
-  calibratingStationId,
-  calibrationProgress,
-  onCalibrate,
-}: SettingsContentProps) {
-  const [currentSettings, setCurrentSettings] = useState(settings);
-  const [currentStations, setCurrentStations] = useState(stations);
-  const { toast } = useToast();
-
-  useEffect(() => {
-    setCurrentSettings(settings);
-    setCurrentStations(stations);
-  }, [settings, stations]);
-
-  const handleSave = () => {
-    onSettingsChange(currentSettings);
-    onStationsChange(currentStations);
-    toast({
-        title: "Ayarlar Kaydedildi",
-        description: "Yeni yapılandırmanız başarıyla kaydedildi.",
-    });
-  };
-  
-  const handleSoundSwitchChange = (checked: boolean) => {
-    setCurrentSettings({ ...currentSettings, isSoundAlertEnabled: checked });
-    if (checked && audioRef.current) {
-        if (!audioRef.current.src || audioRef.current.src.endsWith('null')) {
-            audioRef.current.src = "/alert-sound.mp3";
-            audioRef.current.load();
-        }
-        audioRef.current.play().catch(e => console.error("Test sesi çalınamadı:", e));
-    }
-  };
-
-  const handleStationFieldChange = (id: string, field: 'name' | 'source', value: string) => {
-    setCurrentStations(prev => 
-      prev.map(station => station.id === id ? {...station, [field]: value} : station)
-    );
-  };
-
-  const handleAddStation = () => {
-    const newId = (Date.now() + Math.random()).toString(36);
-    const newStation: Station = {
-        id: newId,
-        name: `Yeni İstasyon ${currentStations.length + 1}`,
-        source: '/conveyor-video.mp4'
-    };
-    setCurrentStations(prev => [...prev, newStation]);
-  };
-
-  const handleRemoveStation = (id: string) => {
-    if (currentStations.length <= 1) {
-        toast({
-            variant: 'destructive',
-            title: 'Son İstasyon Silinemez',
-            description: 'Sistemde en az bir istasyon bulunmalıdır.',
-        });
-        return;
-    }
-    setCurrentStations(prev => prev.filter(station => station.id !== id));
-  };
-  
-  const handleScanNetwork = () => {
-    toast({
-        title: "Özellik Yakında",
-        description: "Ağdaki kameraları otomatik bulma özelliği geliştirme aşamasındadır.",
-    });
-  }
-
-  return (
-     <div className="space-y-8 max-w-4xl mx-auto">
-        {activeSection === 'ai' && (
-            <div className="space-y-8">
-                <Card className="bg-card/50 border-white/10">
+      
+      <Tabs defaultValue="live-data" className="w-full">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="live-data">Canlı Veri</TabsTrigger>
+          <TabsTrigger value="station-settings">İstasyon Ayarları</TabsTrigger>
+          <TabsTrigger value="ai-config">AI Yapılandırması</TabsTrigger>
+        </TabsList>
+        <TabsContent value="live-data" className="mt-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+                <Card className="transition-all duration-300 bg-card/60 backdrop-blur-lg border border-white/10 hover:border-accent/50">
                     <CardHeader>
-                        <CardTitle className="text-lg">Algılama Hassasiyeti</CardTitle>
-                        <CardDescription>
-                            Bu değerin üzerindeki sapmalar "Anomali" olarak kabul edilecektir. Düşük değerler hassasiyeti artırır.
-                        </CardDescription>
+                        <CardTitle className="flex items-center gap-2 text-base">
+                            <AreaChart />
+                            Gerçek Zamanlı Sapma Grafiği (mm)
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent className="h-60 sm:h-80">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <LineChart data={deviationData} margin={{ top: 5, right: 20, left: -20, bottom: 5 }}>
+                                <XAxis dataKey="time" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
+                                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
+                                <Tooltip
+                                    contentStyle={{
+                                        backgroundColor: 'hsl(var(--background) / 0.8)',
+                                        borderColor: 'hsl(var(--border))',
+                                        backdropFilter: 'blur(4px)',
+                                    }}
+                                    labelStyle={{color: 'hsl(var(--foreground))'}}
+                                />
+                                <Line 
+                                    type="monotone" 
+                                    dataKey="deviation" 
+                                    stroke={isAnomaly ? "hsl(var(--destructive))" : "hsl(var(--ring))"}
+                                    strokeWidth={2} 
+                                    dot={false}
+                                    isAnimationActive={false}
+                                />
+                                <ReferenceLine y={settings.anomalyThreshold} label={{ value: 'Eşik', position: 'insideTopLeft', fill: 'hsl(var(--muted-foreground))' }} stroke="hsl(var(--destructive))" strokeDasharray="3 3" />
+                            </LineChart>
+                        </ResponsiveContainer>
+                    </CardContent>
+                </Card>
+                <Card className="transition-all duration-300 bg-card/60 backdrop-blur-lg border border-white/10 hover:border-accent/50">
+                    <CardHeader>
+                    <CardTitle>Anomali Kayıtları</CardTitle>
+                    <CardDescription>
+                        Bu istasyonda son tespit edilen anomaliler
+                    </CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <div className="flex items-center gap-4">
+                    <div className="relative max-h-[calc(100vh-42rem)] overflow-y-auto">
+                        <Table>
+                        <TableHeader className="sticky top-0 bg-card/80 backdrop-blur-sm">
+                            <TableRow>
+                            <TableHead>Zaman</TableHead>
+                            <TableHead className="text-right">Sapma</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {filteredLogs.length > 0 ? (
+                            filteredLogs.map((log, index) => (
+                                <TableRow key={index} className="hover:bg-white/5">
+                                <TableCell>{new Date(log.timestamp).toLocaleTimeString('tr-TR')}</TableCell>
+                                <TableCell className="text-right font-medium text-red-400">
+                                    {log.deviation.toFixed(2)} mm
+                                </TableCell>
+                                </TableRow>
+                            ))
+                            ) : (
+                            <TableRow>
+                                <TableCell
+                                colSpan={2}
+                                className="h-24 text-center text-muted-foreground"
+                                >
+                                Henüz anomali yok.
+                                </TableCell>
+                            </TableRow>
+                            )}
+                        </TableBody>
+                        </Table>
+                    </div>
+                    </CardContent>
+                </Card>
+            </div>
+        </TabsContent>
+        <TabsContent value="station-settings" className="mt-6">
+            <Card className="bg-card/50 border-white/10 max-w-2xl mx-auto">
+                <CardHeader>
+                    <CardTitle>İstasyon Ayarları</CardTitle>
+                    <CardDescription>
+                        Bu istasyonun adını ve video kaynağını düzenleyin. Diğer istasyonları eklemek/çıkarmak için kenar çubuğunu kullanın.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                    <div className="space-y-2">
+                        <Label htmlFor="station-name">İstasyon Adı</Label>
+                        <Input
+                            id="station-name"
+                            value={currentStations.find(s => s.id === selectedStation.id)?.name || ''}
+                            onChange={(e) => handleStationFieldChange(selectedStation.id, 'name', e.target.value)}
+                            className="bg-background/50"
+                            placeholder="İstasyon Adı"
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="station-source">Video Kaynağı</Label>
+                        <Input
+                            id="station-source"
+                            value={currentStations.find(s => s.id === selectedStation.id)?.source || ''}
+                            onChange={(e) => handleStationFieldChange(selectedStation.id, 'source', e.target.value)}
+                            className="bg-background/50"
+                            placeholder="Video Kaynağı (URL veya 'webcam')"
+                        />
+                         <p className="text-sm text-muted-foreground pt-1">
+                            Video dosyası için yolu (örn: `/video.mp4`), cihaz kamerası için `webcam` yazın.
+                        </p>
+                    </div>
+                    <Separator />
+                     <div className="flex justify-end">
+                        <Button onClick={handleSave}>İstasyon Ayarlarını Kaydet</Button>   
+                    </div>
+                </CardContent>
+            </Card>
+        </TabsContent>
+        <TabsContent value="ai-config" className="mt-6">
+             <Card className="bg-card/50 border-white/10 max-w-2xl mx-auto">
+                <CardHeader>
+                    <CardTitle>AI Yapılandırması ve Kalibrasyon</CardTitle>
+                    <CardDescription>
+                        Bu istasyon için yapay zeka hassasiyetini ayarlayın ve gerekirse yeniden kalibre edin.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-8">
+                     <div>
+                        <Label>Algılama Hassasiyeti (Anomali Eşiği)</Label>
+                        <p className="text-sm text-muted-foreground pb-2">
+                            Bu değerin üzerindeki sapmalar "Anomali" olarak kabul edilecektir. Düşük değerler hassasiyeti artırır.
+                        </p>
+                        <div className="flex items-center gap-4 pt-2">
                             <Slider
                                 id="anomaly-threshold"
                                 min={0.5}
@@ -701,159 +700,43 @@ export function SettingsContent({
                                 {currentSettings.anomalyThreshold.toFixed(1)} mm
                             </span>
                         </div>
-                    </CardContent>
-                </Card>
-            </div>
-        )}
-        {activeSection === 'stations' && (
-            <Card className="bg-card/50 border-white/10">
-                <CardHeader>
-                    <div className="flex justify-between items-start">
-                        <div>
-                            <CardTitle className="text-lg">İstasyon Yapılandırması ve Kalibrasyon</CardTitle>
-                            <CardDescription>
-                                Her bir konveyör bandı için video kaynağı tanımlayın ve AI modelini kalibre edin.
-                            </CardDescription>
-                        </div>
-                        <Button variant="outline" onClick={handleScanNetwork} className="shrink-0">
-                            <Scan className="mr-2 h-4 w-4" />
-                            Ağı Tara
-                        </Button>
                     </div>
-                </CardHeader>
-                <CardContent>
-                    <p className="text-sm text-muted-foreground pb-4">
-                        Video dosyası için yolu (örn: `/video.mp4`), cihaz kamerası için `webcam` anahtar kelimesini girin.
-                    </p>
-                    <div className="space-y-4 max-h-[24rem] overflow-y-auto pr-2">
-                        {currentStations.map((station) => (
-                           <div key={station.id} className="p-4 rounded-lg border border-white/10 space-y-4">
-                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
-                                    <Label htmlFor={`station-${station.id}-name`} className="text-xs text-muted-foreground">İstasyon Adı</Label>
-                                    <Input
-                                        id={`station-${station.id}-name`}
-                                        value={station.name}
-                                        onChange={(e) => handleStationFieldChange(station.id, 'name', e.target.value)}
-                                        className="bg-background/50 mt-1"
-                                        placeholder="İstasyon Adı"
-                                    />
-                                </div>
-                                <div>
-                                    <Label htmlFor={`station-${station.id}-source`} className="text-xs text-muted-foreground">Video Kaynağı</Label>
-                                    <Input
-                                        id={`station-${station.id}-source`}
-                                        value={station.source}
-                                        onChange={(e) => handleStationFieldChange(station.id, 'source', e.target.value)}
-                                        className="bg-background/50 mt-1"
-                                        placeholder="URL veya 'webcam'"
-                                    />
-                                </div>
-                             </div>
-                             <div className="space-y-2">
-                                <Label className="text-xs text-muted-foreground">AI Kalibrasyonu</Label>
-                                {calibratingStationId === station.id ? (
-                                    <Progress value={calibrationProgress} className="w-full" />
-                                ) : (
-                                    <Button
-                                        onClick={() => onCalibrate(station.id)}
-                                        disabled={!!calibratingStationId}
-                                        className="w-full"
-                                        variant="outline"
-                                    >
-                                        <SlidersHorizontal className="mr-2 h-4 w-4" />
-                                        Kalibrasyonu Başlat
-                                    </Button>
-                                )}
-                             </div>
-                             <div className="pt-2 flex justify-end">
-                                <Button variant="ghost" size="sm" onClick={() => handleRemoveStation(station.id)} className="text-muted-foreground hover:text-destructive gap-1">
-                                    <Trash2 className="h-4 w-4"/> İstasyonu Sil
+                    <div>
+                        <Label>AI Kalibrasyonu</Label>
+                         <p className="text-sm text-muted-foreground pb-2">
+                            Sistemin sapmaları doğru tespit etmesi için, bantta fiziksel bir değişiklik yapıldığında AI'ı yeniden kalibre edin.
+                        </p>
+                       <div className="pt-2">
+                        {isCalibrating ? (
+                                <Progress value={calibrationProgress} className="w-full" />
+                            ) : (
+                                <Button
+                                    onClick={() => onCalibrate(selectedStation.id)}
+                                    disabled={!!calibratingStationId}
+                                    className="w-full"
+                                    variant="outline"
+                                >
+                                    <SlidersHorizontal className="mr-2 h-4 w-4" />
+                                    Bu İstasyon İçin Kalibrasyonu Başlat
                                 </Button>
-                             </div>
-                           </div>
-                        ))}
+                            )}
+                        </div>
                     </div>
-                     <Separator className="my-6" />
-                     <Button variant="outline" onClick={handleAddStation} className="w-full">
-                        <PlusCircle className="mr-2 h-4 w-4" />
-                        Yeni İstasyon Ekle
-                    </Button>
+                     <Separator />
+                     <div className="flex justify-end">
+                        <Button onClick={handleSave}>AI Ayarlarını Kaydet</Button>   
+                    </div>
                 </CardContent>
             </Card>
-        )}
-        {activeSection === 'notifications' && (
-             <div className="space-y-8">
-                <Card className="bg-card/50 border-white/10">
-                    <CardHeader>
-                        <CardTitle className="text-lg">Gerçek Zamanlı Uyarılar</CardTitle>
-                        <CardDescription>
-                            Anomali durumlarında sistemin nasıl tepki vereceğini yönetin.
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div className="flex items-center justify-between rounded-lg border p-4 border-white/10 bg-background/30">
-                            <div className="space-y-0.5">
-                                <Label htmlFor="sound-alert" className="text-base">
-                                    Sesli Uyarı
-                                </Label>
-                                <p className="text-sm text-muted-foreground">
-                                    Anomali tespit edildiğinde sesli bir uyarı çal.
-                                </p>
-                            </div>
-                            <Switch
-                                id="sound-alert"
-                                checked={currentSettings.isSoundAlertEnabled}
-                                onCheckedChange={handleSoundSwitchChange}
-                            />
-                        </div>
-                    </CardContent>
-                </Card>
-                <Card className="bg-card/50 border-white/10 opacity-60">
-                    <CardHeader>
-                        <CardTitle className="text-lg">Harici Bildirimler (Yakında)</CardTitle>
-                        <CardDescription>
-                            Kritik anomalilerde tanımlı operatörlere harici bildirimler gönderin.
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div className="flex items-center justify-between rounded-lg border p-4 border-dashed border-white/20 bg-transparent">
-                            <div className="space-y-0.5">
-                                <Label htmlFor="email-alert" className="text-base">
-                                    E-posta Bildirimi
-                                </Label>
-                            </div>
-                            <Switch id="email-alert" disabled />
-                        </div>
-                        <div className="flex items-center justify-between rounded-lg border p-4 border-dashed border-white/20 bg-transparent">
-                            <div className="space-y-0.5">
-                                <Label htmlFor="sms-alert" className="text-base">
-                                    SMS & WhatsApp
-                                </Label>
-                            </div>
-                            <Switch id="sms-alert" disabled />
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
-        )}
-        {activeSection === 'operators' && (
-             <Card className="bg-card/50 border-white/10 h-full">
-                <CardContent className="h-full flex flex-col justify-center items-center text-center p-8 min-h-[300px]">
-                    <div className="p-4 bg-muted/50 rounded-full mb-4 border border-dashed border-white/20">
-                        <Users className="mx-auto h-12 w-12 text-muted-foreground" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-foreground">Operatör Yönetimi</h3>
-                    <p className="text-muted-foreground mt-2 max-w-sm">Bu özellik yakında eklenecektir. Bu bölümden, sisteme yeni operatörler ekleyebilecek, mevcutları yönetebilecek ve onlara özel bildirim atamaları yapabileceksiniz.</p>
-                </CardContent>
-            </Card>
-        )}
-
-        {(activeSection === 'ai' || activeSection === 'stations' || activeSection === 'notifications') && (
-            <div className="flex justify-end pt-4">
-                 <Button onClick={handleSave}>Değişiklikleri Kaydet</Button>   
-            </div>
-        )}
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
+
+// This component is now removed as its functionality is merged into the DashboardClient
+/*
+export function SettingsContent(...) {
+  ...
+}
+*/
