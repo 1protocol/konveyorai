@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
@@ -479,7 +480,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
         <div className="flex items-center gap-4">
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="lg" className="min-w-56 justify-between text-base bg-background/80 backdrop-blur-xl border-white/10 hover:bg-background/90 transition-all duration-300">
+                    <Button variant="outline" size="lg" className="min-w-56 justify-between text-base bg-card/60 backdrop-blur-lg border-white/10 hover:bg-card/80 transition-all duration-300">
                        <span className="flex items-center gap-2">
                          <Network className="h-5 w-5 text-muted-foreground" />
                          {selectedStation.name}
@@ -487,7 +488,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
                        <ChevronDown className="h-5 w-5" />
                     </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-64 text-base p-2 bg-background/80 backdrop-blur-xl border-white/10 shadow-2xl transition-all duration-300">
+                <DropdownMenuContent className="w-64 text-base p-2 bg-popover/80 backdrop-blur-xl border-white/10 shadow-2xl transition-all duration-300">
                     {stations.map(station => (
                          <DropdownMenuItem key={station.id} onSelect={() => handleStationSelect(station.id)} className="p-2 cursor-pointer">
                            <Network className="mr-2 h-5 w-5" />
@@ -510,10 +511,10 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
         {/* Main Content Column */}
-        <div className="lg:col-span-3 space-y-6 lg:space-y-8">
-          <Card className="transition-all duration-300 bg-background/30 backdrop-blur-xl border border-white/10 hover:border-white/20">
+        <div className="lg:col-span-2 space-y-6 lg:space-y-8">
+          <Card className="transition-all duration-300 bg-card/60 backdrop-blur-lg border border-white/10 hover:border-accent/50">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                     <Video />
@@ -556,14 +557,14 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
                 </div>
             </CardContent>
           </Card>
-          <Card className="transition-all duration-300 bg-background/30 backdrop-blur-xl border border-white/10 hover:border-white/20">
+          <Card className="transition-all duration-300 bg-card/60 backdrop-blur-lg border border-white/10 hover:border-accent/50">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base">
                     <AreaChart />
                     Gerçek Zamanlı Sapma Grafiği (mm)
                 </CardTitle>
             </CardHeader>
-            <CardContent className="h-64 sm:h-auto sm:aspect-[16/6]">
+            <CardContent className="h-60 sm:h-80">
                 <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={deviationData} margin={{ top: 5, right: 20, left: -20, bottom: 5 }}>
                         <XAxis dataKey="time" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
@@ -579,7 +580,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
                         <Line 
                             type="monotone" 
                             dataKey="deviation" 
-                            stroke={isAnomaly ? "hsl(var(--destructive))" : "hsl(var(--accent))"}
+                            stroke={isAnomaly ? "hsl(var(--destructive))" : "hsl(var(--ring))"}
                             strokeWidth={2} 
                             dot={false}
                             isAnimationActive={false}
@@ -592,22 +593,22 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
         </div>
 
         {/* Side Column */}
-        <div className="lg:col-span-2 space-y-6 lg:space-y-8">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
-                <Card className={cn("transition-all duration-300 bg-background/30 backdrop-blur-xl border border-white/10", isAnomaly && "bg-destructive/30 text-white border-red-500/50")}>
+        <div className="lg:col-span-1 space-y-6 lg:space-y-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-6 lg:gap-8">
+                <Card className={cn("transition-all duration-300 bg-card/60 backdrop-blur-lg border border-white/10 hover:border-accent/50", isAnomaly && "bg-destructive/30 text-destructive-foreground border-destructive/50")}>
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm font-medium flex items-center justify-between">
                       Sistem Durumu
                       {status === "NORMAL" && <CheckCircle className="h-5 w-5 text-green-400" />}
                       {status === "ANOMALİ" && <AlertTriangle className="h-5 w-5 text-red-400 animate-pulse" />}
-                      {status === "KALİBRE EDİLİYOR" && <SlidersHorizontal className="h-5 w-5 text-accent" />}
+                      {status === "KALİBRE EDİLİYOR" && <SlidersHorizontal className="h-5 w-5 text-ring" />}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold">
                        {status}
                     </div>
-                    <p className={cn("text-xs", isAnomaly ? "text-red-200" : "text-muted-foreground")}>
+                    <p className={cn("text-xs text-muted-foreground", isAnomaly && "text-red-200")}>
                       {isAnomaly
                         ? `Sapma eşiği aşıldı.`
                         : status === "NORMAL"
@@ -617,7 +618,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
                   </CardContent>
                 </Card>
 
-                <Card className="bg-background/30 backdrop-blur-xl border border-white/10 transition-all duration-300">
+                <Card className="transition-all duration-300 bg-card/60 backdrop-blur-lg border border-white/10 hover:border-accent/50">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm font-medium flex items-center justify-between">
                       Mevcut Sapma
@@ -639,7 +640,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
                   </CardContent>
                 </Card>
             </div>
-            <Card className="transition-all duration-300 bg-background/30 backdrop-blur-xl border border-white/10 hover:border-white/20">
+            <Card className="transition-all duration-300 bg-card/60 backdrop-blur-lg border border-white/10 hover:border-accent/50">
                 <CardHeader>
                 <CardTitle>Anomali Kayıtları</CardTitle>
                 <CardDescription>
@@ -647,7 +648,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
                 </CardDescription>
                 </CardHeader>
                 <CardContent>
-                <div className="relative max-h-[calc(100vh-38rem)] overflow-y-auto">
+                <div className="relative max-h-[calc(100vh-42rem)] overflow-y-auto">
                     <Table>
                     <TableHeader className="sticky top-0 bg-card/80 backdrop-blur-sm">
                         <TableRow>
@@ -787,7 +788,7 @@ function SettingsDialog({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="lg" className="text-base bg-background/80 backdrop-blur-xl border-white/10 hover:bg-background/90 transition-all duration-300">
+        <Button variant="outline" size="lg" className="text-base bg-card/60 backdrop-blur-lg border-white/10 hover:bg-card/80 transition-all duration-300">
           <Settings className="mr-2 h-5 w-5" />
           Gelişmiş Ayarlar
         </Button>
