@@ -3,8 +3,8 @@
 
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { LayoutDashboard, Network, User } from '@/components/ui/lucide-icons';
-import { AppSettings, Station } from '@/components/dashboard-client';
+import { LayoutDashboard, Network, User, Settings, BrainCircuit, Camera, Bell, Users } from '@/components/ui/lucide-icons';
+import { AppSettings, Station, SettingsContent } from '@/components/dashboard-client';
 
 import {
   Sidebar,
@@ -22,7 +22,7 @@ import { DashboardClient } from '@/components/dashboard-client';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 const defaultSettings: AppSettings = {
   anomalyThreshold: 2.0,
@@ -40,7 +40,7 @@ export default function DashboardPage() {
 
 function PageContent() {
     const searchParams = useSearchParams();
-    
+
     const [stations, setStations] = useState<Station[]>([]);
     const [settings, setSettings] = useState<AppSettings>(defaultSettings);
     const [isClient, setIsClient] = useState(false);
@@ -108,9 +108,9 @@ function PageContent() {
             window.removeEventListener('storage', handleStorageChange);
         };
     }, []);
-    
-    const currentStationId = searchParams.get('station') || (stations.length > 0 ? stations[0].id : '1');
 
+    const currentStationId = searchParams.get('station') || (stations.length > 0 ? stations[0].id : '1');
+    
     return (
     <>
       <Sidebar>
@@ -127,7 +127,7 @@ function PageContent() {
         <SidebarContent>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/dashboard" isActive={true} tooltip="Kontrol Paneli">
+              <SidebarMenuButton href="/dashboard" isActive={!currentStationId} tooltip="Kontrol Paneli">
                 <LayoutDashboard className="size-5" />
                 <span className="group-data-[state=collapsed]:hidden">
                   Kontrol Paneli
@@ -203,5 +203,3 @@ function PageContent() {
     </>
   );
 }
-
-    

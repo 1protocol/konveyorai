@@ -5,14 +5,51 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useSearchParams } from 'next/navigation';
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger, DialogClose } from "@/components/ui/dialog";
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  ReferenceLine,
+} from 'recharts';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { SlidersHorizontal, AlertTriangle, CheckCircle, Video, Loader, VideoOff, Scan, PlusCircle, Trash2, AreaChart, Network, Check, Info, BrainCircuit, Bell } from "@/components/ui/lucide-icons";
+import {
+  SlidersHorizontal,
+  AlertTriangle,
+  CheckCircle,
+  Video,
+  Loader,
+  VideoOff,
+  Scan,
+  PlusCircle,
+  Trash2,
+  AreaChart,
+  Network,
+  Check,
+  Info,
+  BrainCircuit,
+  Bell,
+} from "@/components/ui/lucide-icons";
 import { analyzeConveyorBelt } from "@/ai/flows/analyze-conveyor-flow";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
@@ -599,4 +636,8 @@ export function DashboardClient({
   );
 }
 
-    
+// This is a placeholder for the component that was previously in this file.
+// All its logic has been moved into the DashboardClient component.
+export function SettingsContent() {
+  return null;
+}
