@@ -3,8 +3,8 @@
 
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { LayoutDashboard, Network, User, Settings, BrainCircuit, Camera, Bell, Users } from '@/components/ui/lucide-icons';
-import { AppSettings, Station, SettingsContent } from '@/components/dashboard-client';
+import { LayoutDashboard, Network, User } from '@/components/ui/lucide-icons';
+import { AppSettings, Station } from '@/components/dashboard-client';
 
 import {
   Sidebar,
@@ -22,7 +22,7 @@ import { DashboardClient } from '@/components/dashboard-client';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 const defaultSettings: AppSettings = {
   anomalyThreshold: 2.0,
@@ -40,7 +40,7 @@ export default function DashboardPage() {
 
 function PageContent() {
     const searchParams = useSearchParams();
-
+    
     const [stations, setStations] = useState<Station[]>([]);
     const [settings, setSettings] = useState<AppSettings>(defaultSettings);
     const [isClient, setIsClient] = useState(false);

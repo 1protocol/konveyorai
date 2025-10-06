@@ -45,10 +45,8 @@ import {
   Trash2,
   AreaChart,
   Network,
-  Check,
   Info,
   BrainCircuit,
-  Bell,
 } from "@/components/ui/lucide-icons";
 import { analyzeConveyorBelt } from "@/ai/flows/analyze-conveyor-flow";
 import { Label } from "@/components/ui/label";
@@ -426,7 +424,7 @@ export function DashboardClient({
         source: camera.source || ''
     };
     setStations(prev => [...prev, newStation]);
-    toast({ title: "İstasyon Eklendi", description: `"${newStation.name}" ağdan eklendi.` });
+    toast({ title: "İstasyon Eklendi", description: `"${newStation.name}" ağdan eklendi. Değişiklikleri kaydetmeyi unutmayın.` });
   };
   
   const handleManualAddStation = () => {
@@ -435,7 +433,7 @@ export function DashboardClient({
        return;
    }
    setStations(prev => [...prev, { id: (Date.now() + Math.random()).toString(36), name: newStationName, source: newStationSource }]);
-   toast({ title: "İstasyon Eklendi", description: `"${newStationName}" manuel olarak eklendi.` });
+   toast({ title: "İstasyon Eklendi", description: `"${newStationName}" manuel olarak eklendi. Değişiklikleri kaydetmeyi unutmayın.` });
    setNewStationName("");
    setNewStationSource("");
    setOpenAddDialog(false);

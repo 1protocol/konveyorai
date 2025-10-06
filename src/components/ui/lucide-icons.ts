@@ -34,5 +34,3 @@ export {
     VideoOff,
     PanelLeftOpen
 } from 'lucide-react'
-
-    
