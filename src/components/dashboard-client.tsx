@@ -66,7 +66,7 @@ import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "./ui/input";
 import { Separator } from "./ui/separator";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "./ui/dialog";
 
 
 type AnomalyLog = {
@@ -627,11 +627,19 @@ export function SettingsContent({
 
   useEffect(() => {
     setCurrentSettings(settings);
+  }, [settings]);
+
+  useEffect(() => {
     setCurrentStations(stations);
-    if (stations.length > 0 && !selectedStationToCalibrate) {
+  }, [stations]);
+
+  useEffect(() => {
+    // Ensure a station is always selected for calibration if list is not empty
+    if (stations.length > 0 && !stations.find(s => s.id === selectedStationToCalibrate)) {
         setSelectedStationToCalibrate(stations[0].id);
     }
-  }, [settings, stations, selectedStationToCalibrate]);
+  }, [stations, selectedStationToCalibrate]);
+
 
   const handleSave = () => {
     onSettingsChange(currentSettings);
@@ -705,9 +713,10 @@ export function SettingsContent({
   const handleAddDiscovered = (camera: Omit<Station, 'id'>) => {
     const newId = (Date.now() + Math.random()).toString(36);
     setCurrentStations(prev => [...prev, {id: newId, ...camera}]);
+    setDiscoveredCameras(prev => prev.filter(c => c.source !== camera.source));
     toast({
         title: "İstasyon Eklendi",
-        description: `${camera.name} başarıyla eklendi.`,
+        description: `${camera.name} başarıyla eklendi. Değişiklikleri kaydetmeyi unutmayın.`,
     });
   };
 
@@ -833,7 +842,7 @@ export function SettingsContent({
                     </div>
                     <Separator />
                      <div>
-                        <div className="flex justify-between items-center mb-2">
+                        <div className="flex justify-between items-center mb-4">
                             <Label>Yeni İstasyon Ekle</Label>
                              <Dialog>
                                 <DialogTrigger asChild>
@@ -851,6 +860,7 @@ export function SettingsContent({
                                     <DialogFooter>
                                          <Button onClick={() => {
                                              handleAddStation();
+                                             toast({ title: "Örnek İstasyon Eklendi", description: "Değişiklikleri kaydetmeyi unutmayın." });
                                          }}>Örnek İstasyon Ekle</Button>
                                     </DialogFooter>
                                 </DialogContent>
@@ -869,7 +879,7 @@ export function SettingsContent({
                             </CardHeader>
                             <CardContent className="p-4 pt-0 min-h-[150px]">
                                 {isScanning && (
-                                    <div className="flex items-center justify-center h-full text-muted-foreground">
+                                    <div className="flex items-center justify-center h-full text-muted-foreground pt-4">
                                         <p>Kameralar aranıyor, lütfen bekleyin...</p>
                                     </div>
                                 )}
@@ -974,3 +984,4 @@ export function SettingsContent({
     </div>
   );
 }
+
