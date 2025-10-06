@@ -475,7 +475,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
   }
 
   return (
-    <div className="space-y-6 lg:space-y-8">
+    <div className="space-y-6 lg:space-y-8 w-full overflow-x-hidden">
        <div className="flex flex-wrap justify-between items-center gap-4">
         <div className="flex items-center gap-4">
             <DropdownMenu>
@@ -514,7 +514,7 @@ export function DashboardClient({ stations, onStationsChange }: { stations: Stat
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
         {/* Main Content Column */}
         <div className="lg:col-span-2 space-y-6 lg:space-y-8">
-          <Card className="transition-all duration-300 bg-card/60 backdrop-blur-lg border border-white/10 hover:border-accent/50">
+          <Card className="transition-all w-full duration-300 bg-card/60 backdrop-blur-lg border border-white/10 hover:border-accent/50">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                     <Video />
@@ -1002,6 +1002,3 @@ function SettingsDialog({
     </Dialog>
   );
 }
-
-
-    
