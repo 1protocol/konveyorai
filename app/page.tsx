@@ -28,7 +28,7 @@ export default function LandingPage() {
             <div>
                 <div className="magic-card p-6 border-white/10">
                     <CardHeader className="p-0 mb-4">
-                        <CardTitle className="flex items-center gap-3 text-2xl">
+                        <CardTitle className="flex items-center gap-3 text-xl">
                             <User className="text-accent"/>
                             <span>Mustafa USLU</span>
                         </CardTitle>
