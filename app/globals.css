@@ -1,0 +1,149 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 224 71% 4%;
+    --foreground: 210 40% 98%;
+    --card: 224 71% 10%;
+    --card-foreground: 210 40% 98%;
+    --popover: 224 71% 4%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222 47% 11%;
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 32 95% 54%;
+    --accent-foreground: 32 50% 10%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 32 95% 54%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+    --sidebar-background: 224 71% 6%;
+    --sidebar-foreground: 210 29% 80%;
+    --sidebar-primary: 210 40% 98%;
+    --sidebar-primary-foreground: 222 47% 11%;
+    --sidebar-accent: 217 33% 20%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 217 33% 17%;
+    --sidebar-ring: 32 95% 54%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-body), sans-serif;
+  }
+}
+
+@layer utilities {
+    @keyframes opacity-pulse {
+      '0%, 100%' = { opacity: 0.2 }
+      '50%' = { opacity: 1 }
+    }
+    @keyframes animation-delay-3000 {
+        '0%' = { animation-delay: 0s; }
+        '100%' = { animation-delay: 3s; }
+    }
+
+    @keyframes move-glow {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+    
+    .magic-card {
+        @apply relative overflow-hidden bg-card rounded-lg border;
+    }
+    
+    .magic-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: 
+          radial-gradient(circle at 10% 20%, hsla(220, 70%, 50%, 0.4), transparent 25%),
+          radial-gradient(circle at 90% 10%, hsla(350, 70%, 50%, 0.2), transparent 25%),
+          radial-gradient(circle at 80% 90%, hsla(0, 0%, 0%, 0.4), transparent 25%),
+          radial-gradient(circle at 30% 80%, hsla(200, 70%, 50%, 0.3), transparent 25%);
+        background-size: 300% 300%;
+        animation: move-glow 8s linear infinite;
+        z-index: 0;
+        will-change: background-position;
+        transition: opacity 0.4s ease-in-out;
+        opacity: 0;
+    }
+    
+    .magic-card:hover::before {
+        opacity: 1;
+    }
+    
+    .magic-card > * {
+        z-index: 1;
+        position: relative;
+    }
+
+    @keyframes border-glow {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* 3D Card styles */
+    .card-3d {
+      transform-style: preserve-3d;
+      @apply relative overflow-hidden rounded-lg border-transparent bg-transparent p-[2px];
+    }
+    
+    .card-3d::after {
+        content: '';
+        position: absolute;
+        top: -50%; left: -50%;
+        width: 200%; height: 200%;
+        background: conic-gradient(
+            from 180deg at 50% 50%,
+            hsla(var(--primary), 0.5), transparent, hsla(var(--accent), 0.5), transparent, hsla(var(--primary), 0.5)
+        );
+        animation: border-glow 6s linear infinite;
+        z-index: 1;
+        opacity: 0.8;
+        transition: opacity 0.5s ease-in-out;
+    }
+    
+    .card-3d:hover {
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    
+    .card-3d .card-3d-inner {
+      @apply relative w-full h-full bg-background/50 backdrop-blur-xl rounded-md overflow-hidden;
+      z-index: 2;
+    }
+
+    .card-3d .card-icon {
+      transform: translateZ(50px); /* Move icon even more forward */
+      filter: drop-shadow(0 5px 15px hsla(var(--primary), 0.4));
+    }
+}
+
+    
