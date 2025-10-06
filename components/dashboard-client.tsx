@@ -25,6 +25,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import {
   LineChart,
   Line,
   XAxis,
@@ -86,18 +93,14 @@ export type Station = {
 interface DashboardClientProps {
   stations: Station[];
   settings: AppSettings;
-  isCalibrating: boolean;
-  setIsCalibrating: (isCalibrating: boolean) => void;
-  setCalibrationProgress: (progress: number) => void;
+  calibratingStationId: string | null;
   audioRef: React.RefObject<HTMLAudioElement>;
 }
 
 export function DashboardClient({ 
   stations, 
   settings, 
-  isCalibrating, 
-  setIsCalibrating, 
-  setCalibrationProgress,
+  calibratingStationId,
   audioRef
 }: DashboardClientProps) {
   const searchParams = useSearchParams();
@@ -126,6 +129,8 @@ export function DashboardClient({
   const videoSource = selectedStation?.source || '/conveyor-video.mp4';
   const isWebcam = videoSource === 'webcam';
   const isAnomaly = status === "ANOMALİ";
+  const isCalibrating = calibratingStationId === selectedStationId;
+
 
   useEffect(() => {
     setIsClient(true);
@@ -170,8 +175,6 @@ export function DashboardClient({
   useEffect(() => {
     setDeviation(0);
     setStatus("NORMAL");
-    setIsCalibrating(false);
-    setCalibrationProgress(0);
     setHasCameraPermission(null);
     setDeviationData([]);
     stopCameraStream(); // Stop any previous stream
@@ -214,7 +217,15 @@ export function DashboardClient({
       stopCameraStream();
     }
 
-  }, [selectedStation, isWebcam, toast, videoSource, setIsCalibrating, setCalibrationProgress]);
+  }, [selectedStation, isWebcam, toast, videoSource]);
+
+   useEffect(() => {
+    if (isCalibrating) {
+      setStatus("KALİBRE EDİLİYOR");
+    } else if (status === "KALİBRE EDİLİYOR") {
+      setStatus("NORMAL");
+    }
+  }, [isCalibrating, status]);
 
 
   useEffect(() => {
@@ -588,9 +599,10 @@ interface SettingsContentProps {
     stations: Station[];
     onStationsChange: (stations: Station[]) => void;
     audioRef: React.RefObject<HTMLAudioElement>;
-    isCalibrating: boolean;
+    calibratingStationId: string | null;
     calibrationProgress: number;
-    onCalibrate: () => void;
+    onCalibrate: (stationId: string) => void;
+    calibratingStation: Station | undefined;
 }
 
 export function SettingsContent({
@@ -600,12 +612,14 @@ export function SettingsContent({
   stations,
   onStationsChange,
   audioRef,
-  isCalibrating,
+  calibratingStationId,
   calibrationProgress,
   onCalibrate,
+  calibratingStation,
 }: SettingsContentProps) {
   const [currentSettings, setCurrentSettings] = useState(settings);
   const [currentStations, setCurrentStations] = useState(stations);
+  const [selectedStationToCalibrate, setSelectedStationToCalibrate] = useState<string>("");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -668,6 +682,18 @@ export function SettingsContent({
     });
   }
 
+  const handleStartCalibration = () => {
+    if (!selectedStationToCalibrate) {
+        toast({
+            variant: 'destructive',
+            title: 'İstasyon Seçilmedi',
+            description: 'Lütfen kalibre edilecek istasyonu seçin.',
+        });
+        return;
+    }
+    onCalibrate(selectedStationToCalibrate);
+  };
+
   return (
      <div className="space-y-8 max-w-4xl mx-auto">
         {activeSection === 'ai' && (
@@ -702,18 +728,34 @@ export function SettingsContent({
                     <CardHeader>
                         <CardTitle className="text-lg">AI Kalibrasyonu</CardTitle>
                         <CardDescription>
-                            {isCalibrating
-                                ? "AI modeli, konveyör bandının mevcut durumunu yeni referans olarak ayarlıyor..."
-                                : "Sistemin sapmaları doğru tespit etmesi için, bantta fiziksel bir değişiklik yapıldığında AI'ı yeniden kalibre edin."}
+                            Sistemin sapmaları doğru tespit etmesi için, bantta fiziksel bir değişiklik yapıldığında AI'ı yeniden kalibre edin.
                         </CardDescription>
                     </CardHeader>
-                    <CardContent>
-                        {isCalibrating ? (
-                            <Progress value={calibrationProgress} className="w-full" />
+                    <CardContent className="space-y-4">
+                        <div>
+                            <Label>Kalibre Edilecek İstasyon</Label>
+                             <Select onValueChange={setSelectedStationToCalibrate} value={selectedStationToCalibrate} disabled={!!calibratingStationId}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Bir istasyon seçin..." />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {stations.map(station => (
+                                        <SelectItem key={station.id} value={station.id}>{station.name}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        {calibratingStationId ? (
+                           <div>
+                             <p className="text-sm text-center text-muted-foreground mb-2">
+                               {calibratingStation?.name || 'İstasyon'} kalibre ediliyor...
+                             </p>
+                             <Progress value={calibrationProgress} className="w-full" />
+                           </div>
                         ) : (
                             <Button
-                                onClick={onCalibrate}
-                                disabled={isCalibrating}
+                                onClick={handleStartCalibration}
+                                disabled={!!calibratingStationId || !selectedStationToCalibrate}
                                 className="w-full"
                                 variant="outline"
                             >
@@ -851,3 +893,4 @@ export function SettingsContent({
     </div>
   );
 }
+

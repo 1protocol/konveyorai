@@ -49,7 +49,7 @@ function PageContent() {
     const [isClient, setIsClient] = useState(false);
     
     const audioRef = useRef<HTMLAudioElement>(null);
-    const [isCalibrating, setIsCalibrating] = useState(false);
+    const [calibratingStationId, setCalibratingStationId] = useState<string | null>(null);
     const [calibrationProgress, setCalibrationProgress] = useState(0);
 
 
@@ -131,14 +131,14 @@ function PageContent() {
       }
     }, [isClient]);
 
-    const handleCalibrate = () => {
-        setIsCalibrating(true);
+    const handleCalibrate = (stationId: string) => {
+        setCalibratingStationId(stationId);
         setCalibrationProgress(0);
         const progressInterval = setInterval(() => {
           setCalibrationProgress((prev) => {
             if (prev >= 100) {
               clearInterval(progressInterval);
-              setIsCalibrating(false);
+              setCalibratingStationId(null);
               return 100;
             }
             return prev + 10;
@@ -148,6 +148,7 @@ function PageContent() {
     
     const currentStationId = searchParams.get('station') || (stations.length > 0 ? stations[0].id : '1');
     const isSettingsView = view === 'settings';
+    const calibratingStation = stations.find(s => s.id === calibratingStationId);
 
     return (
     <>
@@ -165,7 +166,7 @@ function PageContent() {
         <SidebarContent>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/dashboard" isActive={!view} tooltip="Kontrol Paneli">
+              <SidebarMenuButton href="/dashboard" isActive={!isSettingsView && !currentStationId} tooltip="Kontrol Paneli">
                 <LayoutDashboard className="size-5" />
                 <span className="group-data-[state=collapsed]:hidden">
                   Kontrol Paneli
@@ -268,17 +269,16 @@ function PageContent() {
                     stations={stations}
                     onStationsChange={saveStations}
                     audioRef={audioRef}
-                    isCalibrating={isCalibrating}
+                    calibratingStationId={calibratingStationId}
                     calibrationProgress={calibrationProgress}
                     onCalibrate={handleCalibrate}
+                    calibratingStation={calibratingStation}
                  />
             ) : (
                 <DashboardClient 
                     stations={stations} 
                     settings={settings}
-                    isCalibrating={isCalibrating}
-                    setIsCalibrating={setIsCalibrating}
-                    setCalibrationProgress={setCalibrationProgress}
+                    calibratingStationId={calibratingStationId}
                     audioRef={audioRef}
                 />
             )}
@@ -287,3 +287,4 @@ function PageContent() {
     </>
   );
 }
+
