@@ -19,16 +19,10 @@ import {
 } from '@/components/ui/sidebar';
 import { Icons } from '@/components/icons';
 import { DashboardClient, SettingsDialog } from '@/components/dashboard-client';
-import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
-  } from "@/components/ui/accordion"
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 const defaultSettings: AppSettings = {
   anomalyThreshold: 2.0,
@@ -173,51 +167,47 @@ function PageContent() {
         <SidebarContent>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/dashboard" isActive={true} tooltip="Kontrol Paneli">
+              <SidebarMenuButton href="/dashboard" isActive={!searchParams.get('station')} tooltip="Kontrol Paneli">
                 <LayoutDashboard className="size-5" />
                 <span className="group-data-[state=collapsed]:hidden">
                   Kontrol Paneli
                 </span>
               </SidebarMenuButton>
             </SidebarMenuItem>
-            <Accordion type="single" collapsible defaultValue="item-1" className="w-full px-2 group-data-[state=collapsed]:hidden">
-                <AccordionItem value="item-1" className="border-none">
-                    <AccordionTrigger className="hover:no-underline hover:bg-sidebar-accent rounded-md px-2 py-1.5 text-base w-full justify-start data-[state=open]:bg-sidebar-accent">
-                        <div className="flex items-center gap-2.5">
-                            <Network className="size-5" />
-                            <span>İstasyonlar</span>
+            
+            <SidebarMenuItem>
+                 <SidebarMenuButton tooltip="İstasyonlar" className="pointer-events-none data-[state=open]:bg-sidebar-accent">
+                    <Network className="size-5" />
+                    <span className="group-data-[state=collapsed]:hidden">İstasyonlar</span>
+                </SidebarMenuButton>
+                <SidebarMenu className="p-0 pl-7 pt-1 group-data-[state=collapsed]:hidden">
+                     {!isClient ? (
+                        <div className="space-y-2 p-2">
+                            <Skeleton className="h-8 w-full" />
+                            <Skeleton className="h-8 w-full" />
                         </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="pl-4 pt-1">
-                        <SidebarMenu className="p-0">
-                            {!isClient ? (
-                                <div className="space-y-2 p-2">
-                                    <Skeleton className="h-8 w-full" />
-                                    <Skeleton className="h-8 w-full" />
-                                </div>
-                            ) : stations.length > 0 ? (
-                                stations.map(station => (
-                                    <SidebarMenuItem key={station.id}>
-                                        <SidebarMenuButton 
-                                            asChild
-                                            variant="ghost" 
-                                            size="sm" 
-                                            className="w-full justify-start h-8 text-base" 
-                                            isActive={currentStationId === station.id} 
-                                            >
-                                            <Link href={`/dashboard?station=${station.id}`}>{station.name}</Link>
-                                        </SidebarMenuButton>
-                                    </SidebarMenuItem>
-                                ))
-                            ) : (
-                                <div className="text-center text-xs text-sidebar-foreground/70 p-4">
-                                    İstasyon bulunamadı.
-                                </div>
-                            )}
-                        </SidebarMenu>
-                    </AccordionContent>
-                </AccordionItem>
-            </Accordion>
+                    ) : stations.length > 0 ? (
+                        stations.map(station => (
+                            <SidebarMenuItem key={station.id}>
+                                <SidebarMenuButton 
+                                    asChild
+                                    variant="ghost" 
+                                    size="sm" 
+                                    className="w-full justify-start h-8 text-base" 
+                                    isActive={currentStationId === station.id} 
+                                    >
+                                    <Link href={`/dashboard?station=${station.id}`}>{station.name}</Link>
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>
+                        ))
+                    ) : (
+                        <div className="text-center text-xs text-sidebar-foreground/70 p-4">
+                            İstasyon bulunamadı.
+                        </div>
+                    )}
+                </SidebarMenu>
+            </SidebarMenuItem>
+
           </SidebarMenu>
         </SidebarContent>
       </Sidebar>
