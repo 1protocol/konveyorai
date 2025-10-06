@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { LayoutDashboard, Network, User, Settings } from '@/components/ui/lucide-icons';
-import { Station, AppSettings, SettingsDialog } from '@/components/dashboard-client';
+import type { Station, AppSettings } from '@/components/dashboard-client';
 
 import {
   Sidebar,
@@ -18,7 +18,7 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { Icons } from '@/components/icons';
-import { DashboardClient } from '@/components/dashboard-client';
+import { DashboardClient, SettingsDialog } from '@/components/dashboard-client';
 import {
     Accordion,
     AccordionContent,
@@ -136,6 +136,23 @@ function PageContent() {
           window.dispatchEvent(new StorageEvent('storage', { key: 'konveyorAIStations', newValue: JSON.stringify(newStations) }));
       }
     }, [isClient]);
+
+    const handleCalibrate = () => {
+        setIsCalibrating(true);
+        setCalibrationProgress(0);
+        // This is a simplified version of what was in dashboard-client
+        const progressInterval = setInterval(() => {
+          setCalibrationProgress((prev) => {
+            if (prev >= 100) {
+              clearInterval(progressInterval);
+              setIsCalibrating(false);
+              // Potentially show a toast notification for completion
+              return 100;
+            }
+            return prev + 10;
+          });
+        }, 300);
+    };
     
     // Determine the default station ID if none is selected
     const currentStationId = searchParams.get('station') || (stations.length > 0 ? stations[0].id : '1');
@@ -221,21 +238,7 @@ function PageContent() {
                 audioRef={audioRef}
                 isCalibrating={isCalibrating}
                 calibrationProgress={calibrationProgress}
-                onCalibrate={() => {
-                  setIsCalibrating(true);
-                  setCalibrationProgress(0);
-                  // This is a simplified version of what was in dashboard-client
-                  const progressInterval = setInterval(() => {
-                    setCalibrationProgress((prev) => {
-                      if (prev >= 100) {
-                        clearInterval(progressInterval);
-                        setIsCalibrating(false);
-                        return 100;
-                      }
-                      return prev + 10;
-                    });
-                  }, 300);
-                }}
+                onCalibrate={handleCalibrate}
               />
              <DropdownMenu>
               <DropdownMenuTrigger asChild>
