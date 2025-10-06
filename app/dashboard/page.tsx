@@ -1,10 +1,11 @@
 
+
 "use client";
 
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { LayoutDashboard, Network, User, Settings } from '@/components/ui/lucide-icons';
-import type { Station, AppSettings } from '@/components/dashboard-client';
+import { LayoutDashboard, Network, User, Settings, BrainCircuit, Camera, Bell, Users } from '@/components/ui/lucide-icons';
+import { AppSettings, Station, SettingsContent } from '@/components/dashboard-client';
 
 import {
   Sidebar,
@@ -18,11 +19,11 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { Icons } from '@/components/icons';
-import { DashboardClient, SettingsDialog } from '@/components/dashboard-client';
+import { DashboardClient } from '@/components/dashboard-client';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 const defaultSettings: AppSettings = {
   anomalyThreshold: 2.0,
@@ -40,12 +41,13 @@ export default function DashboardPage() {
 
 function PageContent() {
     const searchParams = useSearchParams();
+    const view = searchParams.get('view');
+    const section = searchParams.get('section');
 
     const [stations, setStations] = useState<Station[]>([]);
     const [settings, setSettings] = useState<AppSettings>(defaultSettings);
     const [isClient, setIsClient] = useState(false);
     
-    // Refs for dialog to access
     const audioRef = useRef<HTMLAudioElement>(null);
     const [isCalibrating, setIsCalibrating] = useState(false);
     const [calibrationProgress, setCalibrationProgress] = useState(0);
@@ -60,7 +62,6 @@ function PageContent() {
                 if(Array.isArray(parsedStations) && parsedStations.length > 0) {
                    setStations(parsedStations);
                 } else {
-                  // If localStorage is corrupt or empty, set a default
                   const defaultStations: Station[] = [{ id: '1', name: 'Bant 1', source: '/conveyor-video.mp4' }];
                   setStations(defaultStations);
                   localStorage.setItem("konveyorAIStations", JSON.stringify(defaultStations));
@@ -86,7 +87,6 @@ function PageContent() {
         }
     }, []);
 
-    // Listen for storage changes to update stations list dynamically
     useEffect(() => {
         const handleStorageChange = (event: StorageEvent) => {
             if (event.key === 'konveyorAIStations') {
@@ -134,13 +134,11 @@ function PageContent() {
     const handleCalibrate = () => {
         setIsCalibrating(true);
         setCalibrationProgress(0);
-        // This is a simplified version of what was in dashboard-client
         const progressInterval = setInterval(() => {
           setCalibrationProgress((prev) => {
             if (prev >= 100) {
               clearInterval(progressInterval);
               setIsCalibrating(false);
-              // Potentially show a toast notification for completion
               return 100;
             }
             return prev + 10;
@@ -148,8 +146,8 @@ function PageContent() {
         }, 300);
     };
     
-    // Determine the default station ID if none is selected
     const currentStationId = searchParams.get('station') || (stations.length > 0 ? stations[0].id : '1');
+    const isSettingsView = view === 'settings';
 
     return (
     <>
@@ -167,7 +165,7 @@ function PageContent() {
         <SidebarContent>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/dashboard" isActive={!searchParams.get('station')} tooltip="Kontrol Paneli">
+              <SidebarMenuButton href="/dashboard" isActive={!view} tooltip="Kontrol Paneli">
                 <LayoutDashboard className="size-5" />
                 <span className="group-data-[state=collapsed]:hidden">
                   Kontrol Paneli
@@ -194,7 +192,7 @@ function PageContent() {
                                     variant="ghost" 
                                     size="sm" 
                                     className="w-full justify-start h-8 text-base" 
-                                    isActive={currentStationId === station.id} 
+                                    isActive={!isSettingsView && currentStationId === station.id} 
                                     >
                                     <Link href={`/dashboard?station=${station.id}`}>{station.name}</Link>
                                 </SidebarMenuButton>
@@ -208,6 +206,34 @@ function PageContent() {
                 </SidebarMenu>
             </SidebarMenuItem>
 
+            <SidebarMenuItem>
+                 <SidebarMenuButton tooltip="Ayarlar" className="pointer-events-none">
+                    <Settings className="size-5" />
+                    <span className="group-data-[state=collapsed]:hidden">Ayarlar</span>
+                </SidebarMenuButton>
+                <SidebarMenu className="p-0 pl-7 pt-1 group-data-[state=collapsed]:hidden">
+                    <SidebarMenuItem>
+                        <SidebarMenuButton asChild variant="ghost" size="sm" className="w-full justify-start h-8 text-base" isActive={isSettingsView && section === 'ai'}>
+                           <Link href="/dashboard?view=settings&section=ai"><BrainCircuit className="mr-2 h-4 w-4" />Yapay Zeka</Link>
+                        </SidebarMenuButton>
+                    </SidebarMenuItem>
+                     <SidebarMenuItem>
+                        <SidebarMenuButton asChild variant="ghost" size="sm" className="w-full justify-start h-8 text-base" isActive={isSettingsView && section === 'stations'}>
+                           <Link href="/dashboard?view=settings&section=stations"><Camera className="mr-2 h-4 w-4" />İstasyonlar</Link>
+                        </SidebarMenuButton>
+                    </SidebarMenuItem>
+                     <SidebarMenuItem>
+                        <SidebarMenuButton asChild variant="ghost" size="sm" className="w-full justify-start h-8 text-base" isActive={isSettingsView && section === 'notifications'}>
+                           <Link href="/dashboard?view=settings&section=notifications"><Bell className="mr-2 h-4 w-4" />Bildirimler</Link>
+                        </SidebarMenuButton>
+                    </SidebarMenuItem>
+                     <SidebarMenuItem>
+                        <SidebarMenuButton asChild variant="ghost" size="sm" className="w-full justify-start h-8 text-base" isActive={isSettingsView && section === 'operators'}>
+                           <Link href="/dashboard?view=settings&section=operators"><Users className="mr-2 h-4 w-4" />Operatörler</Link>
+                        </SidebarMenuButton>
+                    </SidebarMenuItem>
+                </SidebarMenu>
+            </SidebarMenuItem>
           </SidebarMenu>
         </SidebarContent>
       </Sidebar>
@@ -216,20 +242,10 @@ function PageContent() {
           <div className="flex flex-1 items-center gap-4">
             <SidebarTrigger className="md:hidden" />
              <div className="hidden sm:flex">
-              <h1 className="font-bold text-lg">Kontrol Paneli</h1>
+              <h1 className="font-bold text-lg">{isSettingsView ? 'Gelişmiş Ayarlar' : 'Kontrol Paneli'}</h1>
             </div>
           </div>
           <div className="flex flex-1 items-center justify-end gap-2">
-             <SettingsDialog 
-                settings={settings} 
-                onSettingsChange={saveSettings} 
-                stations={stations}
-                onStationsChange={saveStations}
-                audioRef={audioRef}
-                isCalibrating={isCalibrating}
-                calibrationProgress={calibrationProgress}
-                onCalibrate={handleCalibrate}
-              />
              <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="rounded-full border w-9 h-9">
@@ -244,14 +260,28 @@ function PageContent() {
           </div>
         </header>
         <main className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8">
-          <DashboardClient 
-            stations={stations} 
-            settings={settings}
-            isCalibrating={isCalibrating}
-            setIsCalibrating={setIsCalibrating}
-            setCalibrationProgress={setCalibrationProgress}
-            audioRef={audioRef}
-          />
+            {isSettingsView ? (
+                 <SettingsContent
+                    activeSection={section || 'ai'}
+                    settings={settings} 
+                    onSettingsChange={saveSettings} 
+                    stations={stations}
+                    onStationsChange={saveStations}
+                    audioRef={audioRef}
+                    isCalibrating={isCalibrating}
+                    calibrationProgress={calibrationProgress}
+                    onCalibrate={handleCalibrate}
+                 />
+            ) : (
+                <DashboardClient 
+                    stations={stations} 
+                    settings={settings}
+                    isCalibrating={isCalibrating}
+                    setIsCalibrating={setIsCalibrating}
+                    setCalibrationProgress={setCalibrationProgress}
+                    audioRef={audioRef}
+                />
+            )}
         </main>
       </SidebarInset>
     </>
