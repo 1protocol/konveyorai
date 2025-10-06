@@ -1,7 +1,7 @@
 
 "use client";
 import Link from 'next/link';
-import { ArrowRight, Bot, Cpu, Layers, ShieldCheck, Video, BrainCircuit, Bell, FileText, Download, Github, User, Rocket } from '@/components/ui/lucide-icons';
+import { ArrowRight, Bot, Cpu, Layers, ShieldCheck, Video, BrainCircuit, Bell, FileText, Download, Github, User, Rocket, TrainTrack } from '@/components/ui/lucide-icons';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/icons';
@@ -63,7 +63,7 @@ export default function LandingPage() {
             <div className="card-3d group">
                 <div className="card-3d-inner p-8 text-center">
                     <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 border-4 border-primary/20 shadow-lg card-icon">
-                        <Bot className="h-12 w-12 text-primary" />
+                        <TrainTrack className="h-12 w-12 text-primary" />
                     </div>
                     <h1 className="text-4xl md:text-5xl font-extrabold tracking-tighter mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
                         Konveyor AI: Endüstriyel Konveyör Analizi
@@ -172,5 +172,3 @@ export default function LandingPage() {
     </div>
   );
 }
-
-    

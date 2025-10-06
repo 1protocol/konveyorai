@@ -26,6 +26,7 @@ export {
     ShieldCheck,
     SlidersHorizontal,
     Trash2,
+    TrainTrack,
     User,
     Users,
     Video,
