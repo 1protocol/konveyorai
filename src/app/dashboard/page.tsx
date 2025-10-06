@@ -19,12 +19,6 @@ import {
 } from '@/components/ui/sidebar';
 import { Icons } from '@/components/icons';
 import { DashboardClient, SettingsDialog } from '@/components/dashboard-client';
-import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
-  } from "@/components/ui/accordion"
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
@@ -182,7 +176,7 @@ function PageContent() {
             </SidebarMenuItem>
             
             <SidebarMenuItem>
-                 <SidebarMenuButton tooltip="İstasyonlar" className="pointer-events-none data-[state=open]:bg-sidebar-accent">
+                 <SidebarMenuButton tooltip="İstasyonlar" className="pointer-events-none">
                     <Network className="size-5" />
                     <span className="group-data-[state=collapsed]:hidden">İstasyonlar</span>
                 </SidebarMenuButton>
@@ -226,7 +220,7 @@ function PageContent() {
             </div>
           </div>
           <div className="flex flex-1 items-center justify-end gap-2">
-             <SettingsDialog 
+            <SettingsDialog 
                 settings={settings} 
                 onSettingsChange={saveSettings} 
                 stations={stations}
@@ -236,25 +230,25 @@ function PageContent() {
                 calibrationProgress={calibrationProgress}
                 onCalibrate={handleCalibrate}
               >
-                 <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="rounded-full border w-9 h-9">
-                        <User className="h-5 w-5" />
-                        <span className="sr-only">Kullanıcı menüsünü aç</span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Hesabım</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild>
-                         <SettingsDialog.Trigger>
-                            <Settings className="mr-2 h-4 w-4" />
-                            <span>Ayarlar</span>
-                        </SettingsDialog.Trigger>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="rounded-full border w-9 h-9">
+                      <User className="h-5 w-5" />
+                      <span className="sr-only">Kullanıcı menüsünü aç</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>Hesabım</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <SettingsDialog.Trigger asChild>
+                    <DropdownMenuItem>
+                      <Settings className="mr-2 h-4 w-4" />
+                      <span>Ayarlar</span>
                     </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </SettingsDialog>
+                  </SettingsDialog.Trigger>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </SettingsDialog>
           </div>
         </header>
         <main className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8">

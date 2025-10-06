@@ -625,7 +625,7 @@ const settingsNavItems = [
 
 type SettingsSection = (typeof settingsNavItems)[number]['id'];
 
-function SettingsDialog({
+export function SettingsDialog({
   settings,
   onSettingsChange,
   stations,
@@ -718,7 +718,7 @@ function SettingsDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        {children}
+      {children}
       <DialogContent className="max-w-4xl w-[90vw] h-[90vh] flex flex-col bg-background/80 backdrop-blur-xl border-white/10 p-0">
         <DialogHeader className="p-6 pb-0">
           <DialogTitle className="text-xl">Gelişmiş Ayarlar</DialogTitle>
@@ -928,5 +928,5 @@ function SettingsDialog({
     </Dialog>
   );
 }
-SettingsDialog.Trigger = DialogTrigger;
 
+SettingsDialog.Trigger = DialogTrigger;
