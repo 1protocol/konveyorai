@@ -24,6 +24,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
   LineChart,
   Line,
   XAxis,
@@ -117,6 +126,8 @@ export function DashboardClient({
 
   const [currentSettings, setCurrentSettings] = useState(settings);
   const [currentStations, setCurrentStations] = useState(stations);
+  const [isAddStationDialogOpen, setIsAddStationDialogOpen] = useState(false);
+
 
   const videoSource = selectedStation?.source || '/conveyor-video.mp4';
   const isWebcam = videoSource === 'webcam';
@@ -408,15 +419,20 @@ export function DashboardClient({
       prev.map(station => station.id === id ? {...station, [field]: value} : station)
     );
   };
-  
-  const handleAddStation = () => {
+
+  const handleAddStation = (station: Omit<Station, 'id'>) => {
     const newId = (Date.now() + Math.random()).toString(36);
     const newStation: Station = {
         id: newId,
-        name: `Yeni İstasyon ${currentStations.length + 1}`,
-        source: '/conveyor-video.mp4'
+        ...station
     };
-    setCurrentStations(prev => [...prev, newStation]);
+    const updatedStations = [...currentStations, newStation];
+    setCurrentStations(updatedStations);
+    onStationsChange(updatedStations);
+    toast({
+        title: "İstasyon Eklendi",
+        description: `${newStation.name} başarıyla eklendi.`,
+    });
   };
 
   const handleRemoveStation = (id: string) => {
@@ -428,7 +444,9 @@ export function DashboardClient({
         });
         return;
     }
-    setCurrentStations(prev => prev.filter(station => station.id !== id));
+     const updatedStations = currentStations.filter(station => station.id !== id);
+    setCurrentStations(updatedStations);
+    onStationsChange(updatedStations);
   };
 
 
@@ -632,40 +650,49 @@ export function DashboardClient({
             </div>
         </TabsContent>
         <TabsContent value="station-settings" className="mt-6">
-            <Card className="bg-card/50 border-white/10 max-w-2xl mx-auto">
+            <Card className="bg-card/50 border-white/10 max-w-4xl mx-auto">
                 <CardHeader>
-                    <CardTitle>İstasyon Ayarları</CardTitle>
-                    <CardDescription>
-                        Bu istasyonun adını ve video kaynağını düzenleyin. Diğer istasyonları eklemek/çıkarmak için kenar çubuğunu kullanın.
-                    </CardDescription>
+                     <div className="flex justify-between items-start">
+                        <div>
+                            <CardTitle>İstasyon Yönetimi</CardTitle>
+                            <CardDescription>
+                                Mevcut istasyonları düzenleyin veya ağınızdaki yeni kameraları tarayarak ekleyin.
+                            </CardDescription>
+                        </div>
+                        <AddStationDialog onAddStation={handleAddStation}>
+                             <Button variant="outline">
+                                <PlusCircle className="mr-2 h-4 w-4" />
+                                Yeni İstasyon Ekle
+                            </Button>
+                        </AddStationDialog>
+                    </div>
                 </CardHeader>
-                <CardContent className="space-y-6">
-                    <div className="space-y-2">
-                        <Label htmlFor="station-name">İstasyon Adı</Label>
-                        <Input
-                            id="station-name"
-                            value={currentStations.find(s => s.id === selectedStation.id)?.name || ''}
-                            onChange={(e) => handleStationFieldChange(selectedStation.id, 'name', e.target.value)}
-                            className="bg-background/50"
-                            placeholder="İstasyon Adı"
-                        />
+                <CardContent className="space-y-4">
+                     <div className="space-y-4 max-h-80 overflow-y-auto pr-2 border rounded-md p-4">
+                        {currentStations.map((station) => (
+                            <div key={station.id} className="grid grid-cols-12 items-center gap-2">
+                                <Input
+                                    id={`station-${station.id}-name`}
+                                    value={station.name}
+                                    onChange={(e) => handleStationFieldChange(station.id, 'name', e.target.value)}
+                                    className="col-span-4 bg-background/50"
+                                    placeholder="İstasyon Adı"
+                                />
+                                <Input
+                                    id={`station-${station.id}-source`}
+                                    value={station.source}
+                                    onChange={(e) => handleStationFieldChange(station.id, 'source', e.target.value)}
+                                    className="col-span-7 bg-background/50"
+                                    placeholder="Video Kaynağı (URL veya 'webcam')"
+                                />
+                                <Button variant="ghost" size="icon" onClick={() => handleRemoveStation(station.id)} className="col-span-1 text-muted-foreground hover:text-destructive">
+                                    <Trash2 className="h-4 w-4"/>
+                                </Button>
+                            </div>
+                        ))}
                     </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="station-source">Video Kaynağı</Label>
-                        <Input
-                            id="station-source"
-                            value={currentStations.find(s => s.id === selectedStation.id)?.source || ''}
-                            onChange={(e) => handleStationFieldChange(selectedStation.id, 'source', e.target.value)}
-                            className="bg-background/50"
-                            placeholder="Video Kaynağı (URL veya 'webcam')"
-                        />
-                         <p className="text-sm text-muted-foreground pt-1">
-                            Video dosyası için yolu (örn: `/video.mp4`), cihaz kamerası için `webcam` yazın.
-                        </p>
-                    </div>
-                    <Separator />
-                     <div className="flex justify-end">
-                        <Button onClick={handleSave}>İstasyon Ayarlarını Kaydet</Button>   
+                    <div className="flex justify-end pt-4">
+                        <Button onClick={handleSave}>İstasyonları Kaydet</Button>   
                     </div>
                 </CardContent>
             </Card>
@@ -734,9 +761,113 @@ export function DashboardClient({
   );
 }
 
-// This component is now removed as its functionality is merged into the DashboardClient
-/*
-export function SettingsContent(...) {
-  ...
+
+function AddStationDialog({ children, onAddStation }: { children: React.ReactNode; onAddStation: (station: Omit<Station, 'id'>) => void; }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isScanning, setIsScanning] = useState(false);
+  const [discoveredCameras, setDiscoveredCameras] = useState<Omit<Station, 'id'>[]>([]);
+  const [name, setName] = useState("");
+  const [source, setSource] = useState("");
+  const { toast } = useToast();
+
+  const handleScanNetwork = () => {
+    setIsScanning(true);
+    setDiscoveredCameras([]);
+    setTimeout(() => {
+      setDiscoveredCameras([
+        { name: 'Kamera - Üretim Hattı 1', source: 'rtsp://192.168.1.101/stream1' },
+        { name: 'Kamera - Paketleme Alanı', source: 'rtsp://192.168.1.102/stream1' },
+        { name: 'Depo Giriş Kamerası', source: 'rtsp://192.168.1.103/stream1' },
+      ]);
+      setIsScanning(false);
+      toast({
+        title: "Tarama Tamamlandı",
+        description: "Ağda 3 yeni potansiyel kamera bulundu.",
+      });
+    }, 2500);
+  };
+
+  const handleAddDiscovered = (camera: Omit<Station, 'id'>) => {
+    onAddStation(camera);
+    setIsOpen(false);
+  };
+  
+  const handleAddManual = () => {
+      if(!name || !source) {
+          toast({
+              variant: 'destructive',
+              title: 'Eksik Bilgi',
+              description: 'Lütfen istasyon adı ve kaynağı alanlarını doldurun.',
+          });
+          return;
+      }
+      onAddStation({ name, source });
+      setName("");
+      setSource("");
+      setIsOpen(false);
+  }
+
+  return (
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogContent className="sm:max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>Yeni İstasyon Ekle</DialogTitle>
+          <DialogDescription>
+            Ağı tarayarak yeni kameralar bulun veya video kaynağını manuel olarak ekleyin.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-4">
+            <div className="space-y-4">
+                <h4 className="font-semibold text-foreground">Manuel Ekle</h4>
+                <div className="space-y-2">
+                    <Label htmlFor="station-name">İstasyon Adı</Label>
+                    <Input id="station-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Bant 3" />
+                </div>
+                 <div className="space-y-2">
+                    <Label htmlFor="station-source">Video Kaynağı</Label>
+                    <Input id="station-source" value={source} onChange={(e) => setSource(e.target.value)} placeholder="/video.mp4 veya webcam" />
+                </div>
+                 <Button onClick={handleAddManual} className="w-full">
+                    <PlusCircle className="mr-2 h-4 w-4" /> Manuel Olarak Ekle
+                </Button>
+            </div>
+             <div className="space-y-4">
+                 <h4 className="font-semibold text-foreground">Otomatik Bul</h4>
+                 <Button onClick={handleScanNetwork} disabled={isScanning} className="w-full" variant="outline">
+                    {isScanning ? <Loader className="mr-2 h-4 w-4 animate-spin"/> : <Scan className="mr-2 h-4 w-4" />}
+                    {isScanning ? 'Ağ Taranıyor...' : 'Ağı Tara'}
+                 </Button>
+                 <div className="space-y-2 pt-2 min-h-[140px]">
+                     {isScanning && (
+                         <div className="flex items-center justify-center h-full text-muted-foreground">
+                            <span>Kameralar aranıyor...</span>
+                         </div>
+                     )}
+                     {!isScanning && discoveredCameras.length === 0 && (
+                          <div className="flex items-center justify-center h-full text-center text-muted-foreground text-sm p-4 border border-dashed rounded-md">
+                            Ağdaki kameraları bulmak için taramayı başlatın.
+                         </div>
+                     )}
+                     {discoveredCameras.length > 0 && (
+                         <div className="space-y-2">
+                             {discoveredCameras.map((cam, index) => (
+                                 <div key={index} className="flex items-center justify-between gap-2 p-2 border rounded-md bg-background/50">
+                                    <div className="truncate">
+                                        <p className="font-medium text-sm truncate">{cam.name}</p>
+                                        <p className="text-xs text-muted-foreground truncate">{cam.source}</p>
+                                    </div>
+                                    <Button size="sm" onClick={() => handleAddDiscovered(cam)}>Ekle</Button>
+                                 </div>
+                             ))}
+                         </div>
+                     )}
+                 </div>
+            </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  )
 }
-*/
+
+    
