@@ -625,7 +625,7 @@ const settingsNavItems = [
 
 type SettingsSection = (typeof settingsNavItems)[number]['id'];
 
-export function SettingsDialog({
+function SettingsDialog({
   settings,
   onSettingsChange,
   stations,
@@ -634,6 +634,7 @@ export function SettingsDialog({
   isCalibrating,
   calibrationProgress,
   onCalibrate,
+  children
 }: {
   settings: AppSettings;
   onSettingsChange: (settings: AppSettings) => void;
@@ -643,6 +644,7 @@ export function SettingsDialog({
   isCalibrating: boolean;
   calibrationProgress: number;
   onCalibrate: () => void;
+  children: React.ReactNode;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<SettingsSection>("ai");
@@ -716,12 +718,7 @@ export function SettingsDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <Button variant="ghost" size="icon" className="h-9 w-9">
-          <Settings className="h-5 w-5" />
-           <span className="sr-only">Gelişmiş Ayarlar</span>
-        </Button>
-      </DialogTrigger>
+        {children}
       <DialogContent className="max-w-4xl w-[90vw] h-[90vh] flex flex-col bg-background/80 backdrop-blur-xl border-white/10 p-0">
         <DialogHeader className="p-6 pb-0">
           <DialogTitle className="text-xl">Gelişmiş Ayarlar</DialogTitle>
@@ -931,3 +928,5 @@ export function SettingsDialog({
     </Dialog>
   );
 }
+SettingsDialog.Trigger = DialogTrigger;
+
