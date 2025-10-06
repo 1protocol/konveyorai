@@ -5,7 +5,7 @@
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { LayoutDashboard, Network, User, Settings, BrainCircuit, Camera, Bell, Users } from '@/components/ui/lucide-icons';
-import { AppSettings, Station, SettingsContent } from '@/components/dashboard-client';
+import { AppSettings, Station, Operator } from '@/components/dashboard-client';
 
 import {
   Sidebar,
@@ -19,7 +19,7 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { Icons } from '@/components/icons';
-import { DashboardClient } from '@/components/dashboard-client';
+import { DashboardClient, SettingsContent } from '@/components/dashboard-client';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
@@ -46,13 +46,11 @@ function PageContent() {
 
     const [stations, setStations] = useState<Station[]>([]);
     const [settings, setSettings] = useState<AppSettings>(defaultSettings);
+    const [operators, setOperators] = useState<Operator[]>([]);
     const [isClient, setIsClient] = useState(false);
     
     const audioRef = useRef<HTMLAudioElement>(null);
-    const [calibratingStationId, setCalibratingStationId] = useState<string | null>(null);
-    const [calibrationProgress, setCalibrationProgress] = useState(0);
-
-
+    
     useEffect(() => {
         setIsClient(true);
         try {
@@ -78,77 +76,35 @@ function PageContent() {
             } else {
               localStorage.setItem("konveyorAISettings", JSON.stringify(defaultSettings));
             }
+            
+            const savedOperators = localStorage.getItem("konveyorAIOperators");
+            if(savedOperators) {
+              setOperators(JSON.parse(savedOperators));
+            } else {
+              const defaultOperators: Operator[] = [{id: '1', name: 'Mustafa Uslu', email: 'mustafa@example.com'}];
+              setOperators(defaultOperators);
+              localStorage.setItem("konveyorAIOperators", JSON.stringify(defaultOperators));
+            }
 
         } catch (e) {
             console.error("Failed to load data from localStorage", e);
             const defaultStations: Station[] = [{ id: '1', name: 'Bant 1', source: '/conveyor-video.mp4' }];
             setStations(defaultStations);
             setSettings(defaultSettings);
+            const defaultOperators: Operator[] = [{id: '1', name: 'Mustafa Uslu', email: 'mustafa@example.com'}];
+            setOperators(defaultOperators);
         }
     }, []);
 
-    useEffect(() => {
-        const handleStorageChange = (event: StorageEvent) => {
-            if (event.key === 'konveyorAIStations') {
-                try {
-                    if (event.newValue) {
-                        setStations(JSON.parse(event.newValue));
-                    }
-                } catch (e) {
-                    console.error("Failed to parse stations from storage event", e);
-                }
-            }
-            if (event.key === 'konveyorAISettings') {
-                try {
-                    if (event.newValue) {
-                        setSettings(JSON.parse(event.newValue));
-                    }
-                } catch (e) {
-                    console.error("Failed to parse settings from storage event", e);
-                }
-            }
-        };
-
-        window.addEventListener('storage', handleStorageChange);
-        return () => {
-            window.removeEventListener('storage', handleStorageChange);
-        };
-    }, []);
-
-    const saveSettings = useCallback((newSettings: AppSettings) => {
-      setSettings(newSettings);
-      if (isClient) {
-          localStorage.setItem("konveyorAISettings", JSON.stringify(newSettings));
-           window.dispatchEvent(new StorageEvent('storage', { key: 'konveyorAISettings', newValue: JSON.stringify(newSettings) }));
-      }
-    }, [isClient]);
-  
-    const saveStations = useCallback((newStations: Station[]) => {
-      setStations(newStations);
-      if (isClient) {
-          localStorage.setItem("konveyorAIStations", JSON.stringify(newStations));
-          window.dispatchEvent(new StorageEvent('storage', { key: 'konveyorAIStations', newValue: JSON.stringify(newStations) }));
+    const saveOperators = useCallback((newOperators: Operator[]) => {
+      setOperators(newOperators);
+      if(isClient){
+        localStorage.setItem("konveyorAIOperators", JSON.stringify(newOperators));
       }
     }, [isClient]);
 
-    const handleCalibrate = (stationId: string) => {
-        setCalibratingStationId(stationId);
-        setCalibrationProgress(0);
-        const progressInterval = setInterval(() => {
-          setCalibrationProgress((prev) => {
-            if (prev >= 100) {
-              clearInterval(progressInterval);
-              setCalibratingStationId(null);
-              return 100;
-            }
-            return prev + 10;
-          });
-        }, 300);
-    };
-    
     const currentStationId = searchParams.get('station') || (stations.length > 0 ? stations[0].id : '1');
     const isSettingsView = view === 'settings';
-    const calibratingStation = stations.find(s => s.id === calibratingStationId);
 
     return (
     <>
@@ -213,21 +169,6 @@ function PageContent() {
                     <span className="group-data-[state=collapsed]:hidden">Ayarlar</span>
                 </SidebarMenuButton>
                 <SidebarMenu className="p-0 pl-7 pt-1 group-data-[state=collapsed]:hidden">
-                    <SidebarMenuItem>
-                        <SidebarMenuButton asChild variant="ghost" size="sm" className="w-full justify-start h-8 text-base" isActive={isSettingsView && section === 'ai'}>
-                           <Link href="/dashboard?view=settings&section=ai"><BrainCircuit className="mr-2 h-4 w-4" />AI</Link>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                     <SidebarMenuItem>
-                        <SidebarMenuButton asChild variant="ghost" size="sm" className="w-full justify-start h-8 text-base" isActive={isSettingsView && section === 'stations'}>
-                           <Link href="/dashboard?view=settings&section=stations"><Camera className="mr-2 h-4 w-4" />İstasyonlar</Link>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                     <SidebarMenuItem>
-                        <SidebarMenuButton asChild variant="ghost" size="sm" className="w-full justify-start h-8 text-base" isActive={isSettingsView && section === 'notifications'}>
-                           <Link href="/dashboard?view=settings&section=notifications"><Bell className="mr-2 h-4 w-4" />Bildirimler</Link>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
                      <SidebarMenuItem>
                         <SidebarMenuButton asChild variant="ghost" size="sm" className="w-full justify-start h-8 text-base" isActive={isSettingsView && section === 'operators'}>
                            <Link href="/dashboard?view=settings&section=operators"><Users className="mr-2 h-4 w-4" />Operatörler</Link>
@@ -243,7 +184,7 @@ function PageContent() {
           <div className="flex flex-1 items-center gap-4">
             <SidebarTrigger className="md:hidden" />
              <div className="hidden sm:flex">
-              <h1 className="font-bold text-lg">{isSettingsView ? 'Gelişmiş Ayarlar' : 'Kontrol Paneli'}</h1>
+              <h1 className="font-bold text-lg">{isSettingsView ? 'Operatör Yönetimi' : 'Kontrol Paneli'}</h1>
             </div>
           </div>
           <div className="flex flex-1 items-center justify-end gap-2">
@@ -263,22 +204,14 @@ function PageContent() {
         <main className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8">
             {isSettingsView ? (
                  <SettingsContent
-                    activeSection={section || 'ai'}
-                    settings={settings} 
-                    onSettingsChange={saveSettings} 
-                    stations={stations}
-                    onStationsChange={saveStations}
-                    audioRef={audioRef}
-                    calibratingStationId={calibratingStationId}
-                    calibrationProgress={calibrationProgress}
-                    onCalibrate={handleCalibrate}
-                    calibratingStation={calibratingStation}
+                    activeSection={section || 'operators'}
+                    operators={operators}
+                    onOperatorsChange={saveOperators}
                  />
             ) : (
                 <DashboardClient 
                     stations={stations} 
                     settings={settings}
-                    calibratingStationId={calibratingStationId}
                     audioRef={audioRef}
                 />
             )}
@@ -287,4 +220,3 @@ function PageContent() {
     </>
   );
 }
-
