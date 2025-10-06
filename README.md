@@ -20,7 +20,7 @@ Geleneksel denetim yöntemleri (gözle kontrol, periyodik bakım vb.), bu tür m
 
 ### Çözüm ve Amaç
 
-Bu projenin temel amacı, bu soruna modern bir çözüm sunmaktır. **Konveyor AI**, kamera görüntülerini (canlı IP kamera, video dosyası vb.) gerçek zamanlı olarak analiz ederek konveyör bantlarındaki hizalama bozukluklarını ve sapmaları milimetrik düzeyde tespit eder.
+Bu projenin temel amacı, bu soruna modern bir çözüm sunmaktır. **Konveyor AI**, kamera görüntülerini (canlı IP kamera, video dosyası, USB kamera vb.) gerçek zamanlı olarak analiz ederek konveyör bantlarındaki hizalama bozukluklarını ve sapmaları milimetrik düzeyde tespit eder.
 
 **Sistemin ana hedefleri:**
 - Üretim süreçlerinde **öngörülebilir bakım** altyapısı oluşturmak.
@@ -42,11 +42,12 @@ Proje, modern ve ölçeklenebilir teknolojiler kullanılarak inşa edilmiştir:
 
 ### Temel Yetenekler
 
+- **Bağlama Duyarlı Kontrol Paneli:** Her istasyon, kendi özel kontrol merkezine sahiptir. Canlı izleme ekranının altındaki sekmeli yapı sayesinde, o istasyona özel **Canlı Veri**, **İstasyon Ayarları** ve **AI Yapılandırması** gibi tüm kritik araçlara anında erişim sağlanır.
 - **Gerçek Zamanlı AI Analizi:** Canlı video akışları veya video dosyaları üzerinden anlık görüntü işleme ve sapma tespiti.
-- **Proaktif Anomali Tespiti:** Önceden belirlenmiş bir eşik değerini (örn: 2mm) aşan sapmaları "anomali" olarak sınıflandırma.
-- **Merkezi Yönetim Paneli:** Tüm konveyör istasyonlarını tek bir arayüzden izleme, yapılandırma ve yönetme imkanı.
-- **Anlık Uyarı Mekanizması:** Anomali durumunda operatörleri bilgilendirmek için sesli ve görsel bildirimler.
-- **Esnek Kaynak Desteği:** IP kameralar ve video dosyaları gibi farklı video kaynaklarıyla uyumluluk.
+- **Proaktif Anomali Tespiti:** Her istasyon için ayrı ayrı yapılandırılabilen bir eşik değerini aşan sapmaları "anomali" olarak sınıflandırma.
+- **Akıllı İstasyon Yönetimi:** Ağdaki kameraları otomatik olarak "tarama" ve sisteme tek tıkla ekleme yeteneği. Ayrıca, farklı kaynak türleri (IP Kamera, Webcam, Video Dosyası) için gelişmiş manuel ekleme seçenekleri.
+- **Anlık Uyarı Mekanizması:** Anomali durumunda operatörleri bilgilendirmek için sesli bildirimler.
+- **Esnek Kaynak Desteği:** IP kameralar (RTSP/HTTP), USB/Dahili web kameraları ve video dosyaları gibi çok çeşitli video kaynaklarıyla tam uyumluluk.
 
 ## 3. Geliştirici Kılavuzu
 
@@ -54,12 +55,18 @@ Proje, modern ve ölçeklenebilir teknolojiler kullanılarak inşa edilmiştir:
 
 Projeyi yerel geliştirme ortamınızda başlatmak için aşağıdaki adımları izleyebilirsiniz:
 
-1.  **Bağımlılıkları Yükleyin:**
+1.  **API Anahtarını Yapılandırın:**
+    Projenin ana dizininde `.env` adında bir dosya oluşturun. İçine, [Google AI Studio](https://aistudio.google.com/app/apikey) adresinden alacağınız Gemini API anahtarınızı aşağıdaki formatta ekleyin:
+    ```
+    GEMINI_API_KEY=YENI_API_ANAHTARINIZ
+    ```
+
+2.  **Bağımlılıkları Yükleyin:**
     ```bash
     npm install
     ```
 
-2.  **Geliştirme Sunucusunu Başlatın:**
+3.  **Geliştirme Sunucusunu Başlatın:**
     ```bash
     npm run dev
     ```
@@ -68,6 +75,7 @@ Bu komutlardan sonra uygulama `http://localhost:9002` adresinde çalışmaya ba�
 
 ### Teknik Notlar
 
+- **Merkezi Bileşen Mimarisi:** Kontrol panelinin tüm mantığı `src/components/dashboard-client.tsx` dosyasındaki `DashboardClient` bileşeni tarafından yönetilir. Bu bileşen, istasyon ve ayar durumlarını yönetir, video analizini tetikler ve kullanıcı arayüzünü günceller.
 - **Yapay Zeka Akışı:** Görüntü analizi yapan Genkit akışı `src/ai/flows/analyze-conveyor-flow.ts` dosyasında tanımlanmıştır. Bu akış, bir görüntü verisini (data URI) alıp, içerisindeki konveyör sapma miktarını milimetre cinsinden döndüren bir Gemini modelini kullanır.
-- **Arayüz (Frontend):** Kontrol paneli `src/app/dashboard/page.tsx` dosyasında yer alır ve ana mantığı yöneten istemci bileşeni `src/components/dashboard-client.tsx` dosyasıdır.
-- **Yapılandırma:** Anomali eşiği, sesli uyarı durumu ve istasyon (kamera/video) ayarları gibi temel konfigürasyonlar, kontrol panelindeki "Gelişmiş Ayarlar" bölümünden yönetilir. Bu ayarlar, tarayıcının `localStorage`'ında saklanarak kalıcılık sağlanır.
+- **Bağlama Duyarlı Yapılandırma:** Tüm ayarlar (anomali eşiği, istasyon kaynakları, sesli uyarı durumu vb.), artık her istasyonun kendi panelindeki sekmeler (`İstasyon Ayarları`, `AI Yapılandırması`) üzerinden yönetilir. Bu, global bir ayarlar sayfasını ortadan kaldırarak daha modüler ve sezgisel bir yönetim sağlar. Tüm yapılandırmalar, tarayıcının `localStorage`'ında saklanarak kalıcılık sağlanır.
+- **Akıllı İstasyon Yönetimi:** Ağ tarama ve manuel istasyon ekleme özellikleri, `Dialog` bileşenleri kullanılarak modern ve etkileşimli bir kullanıcı deneyimi sunar. Bu mantık da `DashboardClient` içerisinde yönetilmektedir.
