@@ -24,6 +24,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { useToast } from '@/hooks/use-toast';
 
 const defaultSettings: AppSettings = {
   anomalyThreshold: 2.0,
@@ -43,6 +44,7 @@ function PageContent() {
     const searchParams = useSearchParams();
     const view = searchParams.get('view');
     const section = searchParams.get('section');
+    const { toast } = useToast();
 
     const [stations, setStations] = useState<Station[]>([]);
     const [settings, setSettings] = useState<AppSettings>(defaultSettings);
@@ -103,7 +105,29 @@ function PageContent() {
       }
     }, [isClient]);
 
-    const currentStationId = searchParams.get('station') || (stations.length > 0 ? stations[0].id : '1');
+    const saveStations = useCallback((newStations: Station[]) => {
+      setStations(newStations);
+      if (isClient) {
+        localStorage.setItem("konveyorAIStations", JSON.stringify(newStations));
+        toast({
+            title: "İstasyonlar Güncellendi",
+            description: "İstasyon yapılandırması başarıyla kaydedildi.",
+        });
+      }
+    }, [isClient, toast]);
+
+    const saveSettings = useCallback((newSettings: AppSettings) => {
+        setSettings(newSettings);
+        if (isClient) {
+          localStorage.setItem("konveyorAISettings", JSON.stringify(newSettings));
+           toast({
+                title: "Ayarlar Kaydedildi",
+                description: "Yeni AI yapılandırmanız başarıyla kaydedildi.",
+            });
+        }
+    }, [isClient, toast]);
+
+    const currentStationId = searchParams.get('station') || (stations.length > 0 ? stations[0].id : null);
     const isSettingsView = view === 'settings';
 
     return (
@@ -121,19 +145,10 @@ function PageContent() {
         </SidebarHeader>
         <SidebarContent>
           <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton href="/dashboard" isActive={!isSettingsView && !currentStationId} tooltip="Kontrol Paneli">
-                <LayoutDashboard className="size-5" />
-                <span className="group-data-[state=collapsed]:hidden">
-                  Kontrol Paneli
-                </span>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            
-            <SidebarMenuItem>
-                 <SidebarMenuButton tooltip="İstasyonlar" className="pointer-events-none data-[state=open]:bg-sidebar-accent">
-                    <Network className="size-5" />
-                    <span className="group-data-[state=collapsed]:hidden">İstasyonlar</span>
+             <SidebarMenuItem>
+                 <SidebarMenuButton tooltip="Kontrol Paneli" className="data-[state=open]:bg-sidebar-accent pointer-events-none">
+                    <LayoutDashboard className="size-5" />
+                    <span className="group-data-[state=collapsed]:hidden">Kontrol Paneli</span>
                 </SidebarMenuButton>
                 <SidebarMenu className="p-0 pl-7 pt-1 group-data-[state=collapsed]:hidden">
                      {!isClient ? (
@@ -157,7 +172,7 @@ function PageContent() {
                         ))
                     ) : (
                         <div className="text-center text-xs text-sidebar-foreground/70 p-4">
-                            İstasyon bulunamadı.
+                            İstasyon yok.
                         </div>
                     )}
                 </SidebarMenu>
@@ -212,6 +227,8 @@ function PageContent() {
                 <DashboardClient 
                     stations={stations} 
                     settings={settings}
+                    onStationsChange={saveStations}
+                    onSettingsChange={saveSettings}
                     audioRef={audioRef}
                 />
             )}
