@@ -162,7 +162,7 @@ export default function LandingPage() {
         {/* Final CTA */}
         <section className="py-16 text-center">
              <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-8">
-                Yorumunuz deneyim için bir rota.Gelişim için yeniliğe giden anahtar.
+                Yorumunuz deneyim için bir rota.Gelişim için yeniliği açan anahtar.
             </h2>
              <Button size="lg" asChild className="h-14 text-lg font-semibold group">
                 <Link href="/dashboard">
