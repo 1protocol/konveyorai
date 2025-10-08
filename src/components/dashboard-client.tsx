@@ -94,6 +94,11 @@ export type Operator = {
   id: string;
   name: string;
   email: string;
+  title: string;
+  phone: string;
+  lastLogin?: string;
+  sessionDuration?: string;
+  lastActions?: string[];
 };
 
 interface DashboardClientProps {
@@ -426,7 +431,6 @@ export function DashboardClient({
     }
     const updatedStations = stations.filter(station => station.id !== id);
     onStationsChange(updatedStations);
-    toast({ title: "İstasyon Silindi", description: "İstasyon başarıyla kaldırıldı."});
   };
 
   const handleScanNetwork = () => {
@@ -459,7 +463,6 @@ export function DashboardClient({
    }
    const newStation: Station = { id: (Date.now() + Math.random()).toString(36), name: newStationName, source: newStationSource };
    onStationsChange([...stations, newStation]);
-   toast({ title: "İstasyon Eklendi", description: `"${newStationName}" manuel olarak eklendi.` });
    setNewStationName("");
    setNewStationSource("");
    setOpenAddDialog(false);
@@ -761,19 +764,14 @@ export function SettingsContent({
   operators,
   onOperatorsChange,
 }: SettingsContentProps) {
-  const [currentOperators, setCurrentOperators] = useState(operators);
   const [isEditing, setIsEditing] = useState<string | null>(null);
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [currentOperator, setCurrentOperator] = useState<Partial<Operator>>({});
 
   const { toast } = useToast();
 
-  useEffect(() => {
-    setCurrentOperators(operators);
-  }, [operators]);
-
   const handleAddNew = () => {
-    setCurrentOperator({});
+    setCurrentOperator({ name: '', email: '', title: '', phone: '' });
     setIsEditing(null);
     setOpenAddDialog(true);
   };
@@ -785,31 +783,28 @@ export function SettingsContent({
   };
 
   const handleDelete = (id: string) => {
-    const updatedOperators = currentOperators.filter(op => op.id !== id);
-    // No need to call setCurrentOperators here as it will be updated by parent
+    const updatedOperators = operators.filter(op => op.id !== id);
     onOperatorsChange(updatedOperators);
-    toast({
-        title: "Operatör Silindi",
-        description: "Operatör başarıyla listeden kaldırıldı.",
-    });
   };
   
   const handleSaveOperator = () => {
-    if (!currentOperator.name || !currentOperator.email) {
-      toast({ variant: 'destructive', title: 'Eksik Bilgi', description: 'Lütfen operatör adı ve e-posta adresini girin.' });
+    if (!currentOperator.name || !currentOperator.email || !currentOperator.title || !currentOperator.phone) {
+      toast({ variant: 'destructive', title: 'Eksik Bilgi', description: 'Lütfen tüm operatör bilgilerini girin.' });
       return;
     }
     
     let updatedOperators;
     if (isEditing) {
-      updatedOperators = currentOperators.map(op => op.id === isEditing ? {...op, ...currentOperator} as Operator : op);
+      updatedOperators = operators.map(op => op.id === isEditing ? {...op, ...currentOperator} as Operator : op);
     } else {
       const newOperator: Operator = {
         id: (Date.now() + Math.random()).toString(36),
         name: currentOperator.name,
         email: currentOperator.email,
+        title: currentOperator.title,
+        phone: currentOperator.phone,
       };
-      updatedOperators = [...currentOperators, newOperator];
+      updatedOperators = [...operators, newOperator];
     }
     
     onOperatorsChange(updatedOperators);
@@ -828,7 +823,7 @@ export function SettingsContent({
 
 
   return (
-     <div className="space-y-8 max-w-4xl mx-auto">
+     <div className="space-y-8 max-w-5xl mx-auto">
         {activeSection === 'operators' && (
              <Card className="bg-card/50 border-white/10 h-full">
                 <CardHeader>
@@ -849,17 +844,23 @@ export function SettingsContent({
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>İsim</TableHead>
+                                <TableHead>İsim Soyisim</TableHead>
+                                <TableHead>Ünvan</TableHead>
+                                <TableHead>Telefon</TableHead>
                                 <TableHead>E-posta</TableHead>
+                                <TableHead>Son Giriş</TableHead>
                                 <TableHead className="text-right">Eylemler</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {currentOperators.length > 0 ? (
-                                currentOperators.map(op => (
+                            {operators.length > 0 ? (
+                                operators.map(op => (
                                     <TableRow key={op.id}>
                                         <TableCell className="font-medium">{op.name}</TableCell>
+                                        <TableCell>{op.title}</TableCell>
+                                        <TableCell>{op.phone}</TableCell>
                                         <TableCell>{op.email}</TableCell>
+                                        <TableCell>{op.lastLogin || 'N/A'}</TableCell>
                                         <TableCell className="text-right space-x-2">
                                             <Button variant="ghost" size="icon" onClick={() => handleEdit(op)}>
                                                 <Pencil className="h-4 w-4" />
@@ -872,7 +873,7 @@ export function SettingsContent({
                                 ))
                             ) : (
                                 <TableRow>
-                                    <TableCell colSpan={3} className="h-24 text-center">
+                                    <TableCell colSpan={6} className="h-24 text-center">
                                         Henüz operatör eklenmemiş.
                                     </TableCell>
                                 </TableRow>
@@ -884,14 +885,22 @@ export function SettingsContent({
         )}
 
         <Dialog open={openAddDialog} onOpenChange={handleCloseDialog}>
-            <DialogContent>
+            <DialogContent className="sm:max-w-[480px]">
                 <DialogHeader>
                     <DialogTitle>{isEditing ? 'Operatörü Düzenle' : 'Yeni Operatör Ekle'}</DialogTitle>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
                     <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="op-name" className="text-right">İsim</Label>
+                        <Label htmlFor="op-name" className="text-right">İsim Soyisim</Label>
                         <Input id="op-name" value={currentOperator.name || ''} onChange={(e) => setCurrentOperator({...currentOperator, name: e.target.value})} className="col-span-3" />
+                    </div>
+                     <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="op-title" className="text-right">Ünvan</Label>
+                        <Input id="op-title" value={currentOperator.title || ''} onChange={(e) => setCurrentOperator({...currentOperator, title: e.target.value})} className="col-span-3" />
+                    </div>
+                     <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="op-phone" className="text-right">Telefon</Label>
+                        <Input id="op-phone" type="tel" value={currentOperator.phone || ''} onChange={(e) => setCurrentOperator({...currentOperator, phone: e.target.value})} className="col-span-3" />
                     </div>
                     <div className="grid grid-cols-4 items-center gap-4">
                         <Label htmlFor="op-email" className="text-right">E-posta</Label>

@@ -83,7 +83,10 @@ function PageContent() {
             if(savedOperators) {
               setOperators(JSON.parse(savedOperators));
             } else {
-              const defaultOperators: Operator[] = [{id: '1', name: 'Mustafa Uslu', email: 'mustafa@example.com'}];
+              const defaultOperators: Operator[] = [
+                {id: '1', name: 'Mustafa Uslu', email: 'mustafa@example.com', title: 'Vardiya Amiri', phone: '555-123-4567', lastLogin: '2025-10-26 08:00'},
+                {id: '2', name: 'Ayşe Yılmaz', email: 'ayse@example.com', title: 'Kalite Kontrol', phone: '555-987-6543', lastLogin: '2025-10-26 08:05'}
+              ];
               setOperators(defaultOperators);
               localStorage.setItem("konveyorAIOperators", JSON.stringify(defaultOperators));
             }
@@ -93,7 +96,10 @@ function PageContent() {
             const defaultStations: Station[] = [{ id: '1', name: 'Bant 1', source: '/conveyor-video.mp4' }];
             setStations(defaultStations);
             setSettings(defaultSettings);
-            const defaultOperators: Operator[] = [{id: '1', name: 'Mustafa Uslu', email: 'mustafa@example.com'}];
+            const defaultOperators: Operator[] = [
+              {id: '1', name: 'Mustafa Uslu', email: 'mustafa@example.com', title: 'Vardiya Amiri', phone: '555-123-4567', lastLogin: '2025-10-26 08:00'},
+              {id: '2', name: 'Ayşe Yılmaz', email: 'ayse@example.com', title: 'Kalite Kontrol', phone: '555-987-6543', lastLogin: '2025-10-26 08:05'}
+            ];
             setOperators(defaultOperators);
         }
     }, []);
@@ -104,7 +110,7 @@ function PageContent() {
         localStorage.setItem("konveyorAIOperators", JSON.stringify(newOperators));
         toast({
             title: "Operatörler Güncellendi",
-            description: "Operatör listesi başarıyla kaydedildi.",
+            description: "Değişiklikler başarıyla kaydedildi.",
         });
       }
     }, [isClient, toast]);
@@ -115,7 +121,7 @@ function PageContent() {
         localStorage.setItem("konveyorAIStations", JSON.stringify(newStations));
          toast({
             title: "İstasyonlar Güncellendi",
-            description: "İstasyon yapılandırması kaydedildi.",
+            description: "Değişiklikler anında kaydedildi.",
         });
       }
     }, [isClient, toast]);
@@ -126,7 +132,7 @@ function PageContent() {
           localStorage.setItem("konveyorAISettings", JSON.stringify(newSettings));
            toast({
             title: "Ayarlar Güncellendi",
-            description: "AI yapılandırması kaydedildi.",
+            description: "Değişiklikler anında kaydedildi.",
         });
         }
     }, [isClient, toast]);
