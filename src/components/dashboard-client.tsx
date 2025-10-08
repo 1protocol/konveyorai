@@ -97,8 +97,6 @@ export type Operator = {
   title: string;
   phone: string;
   lastLogin?: string;
-  sessionDuration?: string;
-  lastActions?: string[];
 };
 
 interface DashboardClientProps {
@@ -914,3 +912,5 @@ export function SettingsContent({
     </div>
   );
 }
+
+    
