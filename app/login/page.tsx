@@ -117,7 +117,7 @@ export default function LoginPage() {
       </div>
       <div className="hidden bg-muted lg:block">
         <Image
-          data-ai-hint="industrial technology"
+          data-ai-hint="konveyor robotic"
           src="https://picsum.photos/seed/1/1920/1080"
           alt="Endüstriyel otomasyon"
           width="1920"
