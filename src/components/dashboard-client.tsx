@@ -738,8 +738,7 @@ export function DashboardClient({
                             className="h-24 text-center text-muted-foreground"
                             >
                             Henüz anomali yok.
-                            </TableCell>
-                        </TableRow>
+                            </TableCell>                        </TableRow>
                         )}
                     </TableBody>
                     </Table>
