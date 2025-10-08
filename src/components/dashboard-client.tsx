@@ -453,7 +453,6 @@ export function DashboardClient({
         source: camera.source || ''
     };
     onStationsChange([...stations, newStation]);
-    toast({ title: "İstasyon Eklendi", description: `"${newStation.name}" ağdan eklendi.` });
   };
   
   const handleManualAddStation = () => {
