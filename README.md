@@ -42,10 +42,12 @@ Proje, modern ve ölçeklenebilir teknolojiler kullanılarak inşa edilmiştir:
 
 ### Temel Yetenekler
 
+- **Güvenli Giriş Sistemi:** Kontrol paneline erişim, kullanıcı adı ve şifre ile korunan bir giriş ekranı üzerinden sağlanır.
 - **Bağlama Duyarlı Kontrol Paneli:** Her istasyon, kendi özel kontrol merkezine sahiptir. Canlı izleme ekranının altındaki sekmeli yapı sayesinde, o istasyona özel **Canlı Veri**, **İstasyon Ayarları** ve **AI Yapılandırması** gibi tüm kritik araçlara anında erişim sağlanır.
 - **Gerçek Zamanlı AI Analizi:** Canlı video akışları veya video dosyaları üzerinden anlık görüntü işleme ve sapma tespiti.
 - **Proaktif Anomali Tespiti:** Her istasyon için ayrı ayrı yapılandırılabilen bir eşik değerini aşan sapmaları "anomali" olarak sınıflandırma.
-- **Akıllı İstasyon Yönetimi:** Ağdaki kameraları otomatik olarak "tarama" ve sisteme tek tıkla ekleme yeteneği. Ayrıca, farklı kaynak türleri (IP Kamera, Webcam, Video Dosyası) için gelişmiş manuel ekleme seçenekleri.
+- **Gelişmiş İstasyon Yönetimi:** Ağdaki kameraları otomatik olarak "tarama" ve sisteme tek tıkla ekleme yeteneği. Ayrıca, farklı kaynak türleri (IP Kamera, Webcam, Video Dosyası) için gelişmiş manuel ekleme seçenekleri.
+- **Detaylı Operatör Yönetimi:** Operatörleri "isim", "ünvan", "telefon" ve "e-posta" gibi detaylı bilgilerle yönetme.
 - **Anlık Uyarı Mekanizması:** Anomali durumunda operatörleri bilgilendirmek için sesli bildirimler.
 - **Esnek Kaynak Desteği:** IP kameralar (RTSP/HTTP), USB/Dahili web kameraları ve video dosyaları gibi çok çeşitli video kaynaklarıyla tam uyumluluk.
 
@@ -73,9 +75,14 @@ Projeyi yerel geliştirme ortamınızda başlatmak için aşağıdaki adımları
 
 Bu komutlardan sonra uygulama `http://localhost:9002` adresinde çalışmaya başlayacaktır.
 
+### Demo Giriş Bilgileri
+Kontrol paneline erişmek için aşağıdaki kimlik bilgilerini kullanabilirsiniz:
+- **Kullanıcı Adı:** `admin`
+- **Şifre:** `gemini123`
+
 ### Teknik Notlar
 
-- **Merkezi Bileşen Mimarisi:** Kontrol panelinin tüm mantığı `src/components/dashboard-client.tsx` dosyasındaki `DashboardClient` bileşeni tarafından yönetilir. Bu bileşen, istasyon ve ayar durumlarını yönetir, video analizini tetikler ve kullanıcı arayüzünü günceller.
+- **Merkezi Durum Yönetimi:** Uygulama genelindeki tüm kritik durumlar (`stations`, `settings`, `operators`), `src/app/dashboard/page.tsx` dosyasındaki `PageContent` ana bileşeni tarafından yönetilir. Bu merkezi yaklaşım, veri tutarlılığını sağlar ve durumu alt bileşenlere `prop` olarak aktarır (`DashboardClient`, `SettingsContent`).
+- **Güvenli Rota ve Oturum Yönetimi:** Uygulama, `src/auth/context.tsx` dosyasında tanımlanan bir `AuthContext` (React Context API) kullanarak kullanıcı oturumlarını yönetir. `app/dashboard/page.tsx` korumalı bir rotadır ve giriş yapmamış kullanıcıları otomatik olarak `/login` sayfasına yönlendirir.
 - **Yapay Zeka Akışı:** Görüntü analizi yapan Genkit akışı `src/ai/flows/analyze-conveyor-flow.ts` dosyasında tanımlanmıştır. Bu akış, bir görüntü verisini (data URI) alıp, içerisindeki konveyör sapma miktarını milimetre cinsinden döndüren bir Gemini modelini kullanır.
-- **Bağlama Duyarlı Yapılandırma:** Tüm ayarlar (anomali eşiği, istasyon kaynakları, sesli uyarı durumu vb.), artık her istasyonun kendi panelindeki sekmeler (`İstasyon Ayarları`, `AI Yapılandırması`) üzerinden yönetilir. Bu, global bir ayarlar sayfasını ortadan kaldırarak daha modüler ve sezgisel bir yönetim sağlar. Tüm yapılandırmalar, tarayıcının `localStorage`'ında saklanarak kalıcılık sağlanır.
-- **Akıllı İstasyon Yönetimi:** Ağ tarama ve manuel istasyon ekleme özellikleri, `Dialog` bileşenleri kullanılarak modern ve etkileşimli bir kullanıcı deneyimi sunar. Bu mantık da `DashboardClient` içerisinde yönetilmektedir.
+- **Bağlama Duyarlı Yapılandırma:** Tüm ayarlar (anomali eşiği, istasyon kaynakları, sesli uyarı durumu vb.), her istasyonun kendi panelindeki sekmeler (`İstasyon Ayarları`, `AI Yapılandırması`) üzerinden yönetilir. Tüm yapılandırmalar, tarayıcının `localStorage`'ında saklanarak kalıcılık sağlanır.
