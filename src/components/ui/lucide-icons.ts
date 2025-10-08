@@ -14,11 +14,14 @@ export {
     Download,
     FileText,
     Github,
+    Info,
     KeyRound,
     Layers,
     LayoutDashboard,
     Loader,
     Network,
+    PanelLeftOpen,
+    Pencil,
     PlusCircle,
     Rocket,
     Scan,
@@ -32,5 +35,4 @@ export {
     Users,
     Video,
     VideoOff,
-    PanelLeftOpen
 } from 'lucide-react'

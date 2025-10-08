@@ -1,7 +1,7 @@
 
 "use client";
 import Link from 'next/link';
-import { ArrowRight, Bot, Cpu, Layers, ShieldCheck, Video, BrainCircuit, Bell, FileText, Download, Github, User, Rocket, TrainTrack } from '@/components/ui/lucide-icons';
+import { ArrowRight, Bot, Cpu, Layers, ShieldCheck, Video, BrainCircuit, Bell, FileText, Download, Github, User, Rocket, TrainTrack, KeyRound } from '@/components/ui/lucide-icons';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/icons';
@@ -44,11 +44,17 @@ export default function LandingPage() {
                              </p>
                         </div>
                     </CardContent>
-                    <CardFooter className="p-0 pt-6">
+                    <CardFooter className="p-0 pt-6 flex flex-wrap gap-4">
                         <Button asChild variant="outline">
                             <Link href="/README.md" target="_blank">
                                 <FileText className="mr-2"/>
                                 Proje Raporunu İncele
+                            </Link>
+                        </Button>
+                        <Button asChild variant="outline">
+                            <Link href="https://aistudio.google.com/app/apikey" target="_blank">
+                                <KeyRound className="mr-2"/>
+                                API Anahtarı Al
                             </Link>
                         </Button>
                     </CardFooter>
