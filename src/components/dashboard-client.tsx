@@ -3,8 +3,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import Link from 'next/link';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import {
@@ -24,13 +23,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import {
   Dialog,
   DialogContent,
@@ -56,20 +48,15 @@ import {
   AlertTriangle,
   CheckCircle,
   Video,
-  Settings,
   BrainCircuit,
-  Bell,
   Users,
-  Camera,
   Loader,
   VideoOff,
   Scan,
   PlusCircle,
   Trash2,
-  ChevronDown,
   AreaChart,
   Network,
-  Check,
   Info,
   Pencil,
 } from "@/components/ui/lucide-icons";
@@ -125,8 +112,7 @@ export function DashboardClient({
   audioRef,
 }: DashboardClientProps) {
   const searchParams = useSearchParams();
-  const router = useRouter();
-  const pathname = usePathname();
+  const { toast } = useToast();
   
   const selectedStationId = searchParams.get('station') || (stations.length > 0 ? stations[0].id : null);
   const selectedStation = stations.find(s => s.id === selectedStationId) || (stations.length > 0 ? stations[0] : null);
@@ -138,7 +124,6 @@ export function DashboardClient({
   );
   const [logs, setLogs] = useState<AnomalyLog[]>([]);
   const [deviationData, setDeviationData] = useState<DeviationData[]>([]);
-  const { toast } = useToast();
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const captureCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -671,7 +656,7 @@ export function DashboardClient({
 
         {/* Side Column */}
         <div className="lg:col-span-1 space-y-6 lg:space-y-8">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-6 lg:gap-8">
+            <div className="grid grid-cols-1 gap-6 lg:gap-8">
                 <Card className={cn("transition-all duration-300 bg-card/60 backdrop-blur-lg border border-white/10 hover:border-accent/50", isAnomaly && "bg-destructive/30 text-destructive-foreground border-destructive/50")}>
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm font-medium flex items-center justify-between">
@@ -787,10 +772,6 @@ export function SettingsContent({
     setCurrentOperators(operators);
   }, [operators]);
 
-  const handleSave = () => {
-    onOperatorsChange(currentOperators);
-  };
-
   const handleAddNew = () => {
     setCurrentOperator({});
     setIsEditing(null);
@@ -805,7 +786,7 @@ export function SettingsContent({
 
   const handleDelete = (id: string) => {
     const updatedOperators = currentOperators.filter(op => op.id !== id);
-    setCurrentOperators(updatedOperators);
+    // No need to call setCurrentOperators here as it will be updated by parent
     onOperatorsChange(updatedOperators);
     toast({
         title: "Operatör Silindi",
@@ -822,7 +803,6 @@ export function SettingsContent({
     let updatedOperators;
     if (isEditing) {
       updatedOperators = currentOperators.map(op => op.id === isEditing ? {...op, ...currentOperator} as Operator : op);
-      toast({ title: "Operatör Güncellendi" });
     } else {
       const newOperator: Operator = {
         id: (Date.now() + Math.random()).toString(36),
@@ -830,10 +810,8 @@ export function SettingsContent({
         email: currentOperator.email,
       };
       updatedOperators = [...currentOperators, newOperator];
-      toast({ title: "Operatör Eklendi" });
     }
     
-    setCurrentOperators(updatedOperators);
     onOperatorsChange(updatedOperators);
     setOpenAddDialog(false);
     setIsEditing(null);

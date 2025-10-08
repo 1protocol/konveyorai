@@ -4,7 +4,7 @@
 
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { LayoutDashboard, Network, User, Settings, BrainCircuit, Camera, Bell, Users } from '@/components/ui/lucide-icons';
+import { LayoutDashboard, Network, User, Settings, Users } from '@/components/ui/lucide-icons';
 import { AppSettings, Station, Operator } from '@/components/dashboard-client';
 
 import {
@@ -23,7 +23,7 @@ import { DashboardClient, SettingsContent } from '@/components/dashboard-client'
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useToast } from '@/hooks/use-toast';
 
 const defaultSettings: AppSettings = {
@@ -42,9 +42,9 @@ export default function DashboardPage() {
 
 function PageContent() {
     const searchParams = useSearchParams();
+    const { toast } = useToast();
     const view = searchParams.get('view');
     const section = searchParams.get('section');
-    const { toast } = useToast();
 
     const [stations, setStations] = useState<Station[]>([]);
     const [settings, setSettings] = useState<AppSettings>(defaultSettings);
@@ -113,15 +113,23 @@ function PageContent() {
       setStations(newStations);
       if (isClient) {
         localStorage.setItem("konveyorAIStations", JSON.stringify(newStations));
+         toast({
+            title: "İstasyonlar Güncellendi",
+            description: "İstasyon yapılandırması kaydedildi.",
+        });
       }
-    }, [isClient]);
+    }, [isClient, toast]);
 
     const saveSettings = useCallback((newSettings: AppSettings) => {
         setSettings(newSettings);
         if (isClient) {
           localStorage.setItem("konveyorAISettings", JSON.stringify(newSettings));
+           toast({
+            title: "Ayarlar Güncellendi",
+            description: "AI yapılandırması kaydedildi.",
+        });
         }
-    }, [isClient]);
+    }, [isClient, toast]);
 
     const currentStationId = searchParams.get('station') || (stations.length > 0 ? stations[0].id : null);
     const isSettingsView = view === 'settings';
@@ -141,7 +149,7 @@ function PageContent() {
         </SidebarHeader>
         <SidebarContent>
           <SidebarMenu>
-             <SidebarMenuItem>
+            <SidebarMenuItem>
                  <SidebarMenuButton tooltip="Kontrol Paneli" className="data-[state=open]:bg-sidebar-accent pointer-events-none">
                     <LayoutDashboard className="size-5" />
                     <span className="group-data-[state=collapsed]:hidden">Kontrol Paneli</span>

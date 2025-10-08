@@ -1,8 +1,8 @@
-# Konveyor AI: Endüstriyel Görüntü İşleme ile Konveyör Bandı Güvenlik Sisteminin Akademik Analizi ve Sunumu
+# Konveyor AI: Endüstriyel Görüntü İşleme ile Konveyör Bandı Güvenlik Sisteminin Analizi ve Sunumu
 
-**Hazırlayan:** Mustafa USLU (Proje Geliştirici) & Gemini (AI Kod Ortağı)
-**Tarih:** 24.08.2024
-**Proje Niteliği:** Akademik Proje Sunumu
+**Hazırlayan:** Mustafa USLU (Proje Geliştirici) & Genkit SDK
+**Tarih:** 08.10.2025
+**Proje Niteliği:** Proje Sunumu
 
 ---
 
