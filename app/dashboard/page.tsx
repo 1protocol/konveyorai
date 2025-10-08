@@ -4,7 +4,7 @@
 
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { LayoutDashboard, Network, User, Settings, BrainCircuit, Camera, Bell, Users } from '@/components/ui/lucide-icons';
+import { LayoutDashboard, Network, User, Settings, Users } from '@/components/ui/lucide-icons';
 import { AppSettings, Station, Operator } from '@/components/dashboard-client';
 
 import {
@@ -24,6 +24,9 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/auth/context';
+import { useRouter } from 'next/navigation';
 
 const defaultSettings: AppSettings = {
   anomalyThreshold: 2.0,
@@ -31,6 +34,23 @@ const defaultSettings: AppSettings = {
 };
 
 export default function DashboardPage() {
+  const { user, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/login');
+    }
+  }, [user, loading, router]);
+
+  if (loading || !user) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <Loader className="h-16 w-16 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   return (
     <SidebarProvider>
       <PageContent />
@@ -41,6 +61,9 @@ export default function DashboardPage() {
 
 function PageContent() {
     const searchParams = useSearchParams();
+    const { toast } = useToast();
+    const { logout } = useAuth();
+    const router = useRouter();
     const view = searchParams.get('view');
     const section = searchParams.get('section');
 
@@ -81,7 +104,10 @@ function PageContent() {
             if(savedOperators) {
               setOperators(JSON.parse(savedOperators));
             } else {
-              const defaultOperators: Operator[] = [{id: '1', name: 'Mustafa Uslu', email: 'mustafa@example.com'}];
+              const defaultOperators: Operator[] = [
+                {id: '1', name: 'Mustafa Uslu', email: 'mustafa@example.com', title: 'Vardiya Amiri', phone: '555-123-4567', lastLogin: '2025-10-26 08:00'},
+                {id: '2', name: 'Ayşe Yılmaz', email: 'ayse@example.com', title: 'Kalite Kontrol', phone: '555-987-6543', lastLogin: '2025-10-26 08:05'}
+              ];
               setOperators(defaultOperators);
               localStorage.setItem("konveyorAIOperators", JSON.stringify(defaultOperators));
             }
@@ -91,7 +117,10 @@ function PageContent() {
             const defaultStations: Station[] = [{ id: '1', name: 'Bant 1', source: '/conveyor-video.mp4' }];
             setStations(defaultStations);
             setSettings(defaultSettings);
-            const defaultOperators: Operator[] = [{id: '1', name: 'Mustafa Uslu', email: 'mustafa@example.com'}];
+            const defaultOperators: Operator[] = [
+              {id: '1', name: 'Mustafa Uslu', email: 'mustafa@example.com', title: 'Vardiya Amiri', phone: '555-123-4567', lastLogin: '2025-10-26 08:00'},
+              {id: '2', name: 'Ayşe Yılmaz', email: 'ayse@example.com', title: 'Kalite Kontrol', phone: '555-987-6543', lastLogin: '2025-10-26 08:05'}
+            ];
             setOperators(defaultOperators);
         }
     }, []);
@@ -100,10 +129,41 @@ function PageContent() {
       setOperators(newOperators);
       if(isClient){
         localStorage.setItem("konveyorAIOperators", JSON.stringify(newOperators));
+        toast({
+            title: "Operatörler Güncellendi",
+            description: "Değişiklikler başarıyla kaydedildi.",
+        });
       }
-    }, [isClient]);
+    }, [isClient, toast]);
 
-    const currentStationId = searchParams.get('station') || (stations.length > 0 ? stations[0].id : '1');
+    const saveStations = useCallback((newStations: Station[]) => {
+      setStations(newStations);
+      if (isClient) {
+        localStorage.setItem("konveyorAIStations", JSON.stringify(newStations));
+         toast({
+            title: "İstasyonlar Güncellendi",
+            description: "Değişiklikler anında kaydedildi.",
+        });
+      }
+    }, [isClient, toast]);
+
+    const saveSettings = useCallback((newSettings: AppSettings) => {
+        setSettings(newSettings);
+        if (isClient) {
+          localStorage.setItem("konveyorAISettings", JSON.stringify(newSettings));
+           toast({
+            title: "Ayarlar Güncellendi",
+            description: "Değişiklikler anında kaydedildi.",
+        });
+        }
+    }, [isClient, toast]);
+
+    const handleLogout = () => {
+      logout();
+      router.push('/login');
+    }
+
+    const currentStationId = searchParams.get('station') || (stations.length > 0 ? stations[0].id : null);
     const isSettingsView = view === 'settings';
 
     return (
@@ -122,18 +182,9 @@ function PageContent() {
         <SidebarContent>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/dashboard" isActive={!isSettingsView && !currentStationId} tooltip="Kontrol Paneli">
-                <LayoutDashboard className="size-5" />
-                <span className="group-data-[state=collapsed]:hidden">
-                  Kontrol Paneli
-                </span>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            
-            <SidebarMenuItem>
-                 <SidebarMenuButton tooltip="İstasyonlar" className="pointer-events-none data-[state=open]:bg-sidebar-accent">
-                    <Network className="size-5" />
-                    <span className="group-data-[state=collapsed]:hidden">İstasyonlar</span>
+                 <SidebarMenuButton tooltip="Kontrol Paneli" className="data-[state=open]:bg-sidebar-accent pointer-events-none">
+                    <LayoutDashboard className="size-5" />
+                    <span className="group-data-[state=collapsed]:hidden">Kontrol Paneli</span>
                 </SidebarMenuButton>
                 <SidebarMenu className="p-0 pl-7 pt-1 group-data-[state=collapsed]:hidden">
                      {!isClient ? (
@@ -157,7 +208,7 @@ function PageContent() {
                         ))
                     ) : (
                         <div className="text-center text-xs text-sidebar-foreground/70 p-4">
-                            İstasyon bulunamadı.
+                            İstasyon yok.
                         </div>
                     )}
                 </SidebarMenu>
@@ -183,7 +234,7 @@ function PageContent() {
         <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-sm sm:px-6">
           <div className="flex flex-1 items-center gap-4">
             <SidebarTrigger className="md:hidden" />
-             <div className="hidden sm:flex">
+             <div className="hidden xs:flex">
               <h1 className="font-bold text-lg">{isSettingsView ? 'Operatör Yönetimi' : 'Kontrol Paneli'}</h1>
             </div>
           </div>
@@ -197,6 +248,10 @@ function PageContent() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Hesabım</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleLogout}>
+                    Çıkış Yap
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -212,6 +267,8 @@ function PageContent() {
                 <DashboardClient 
                     stations={stations} 
                     settings={settings}
+                    onStationsChange={saveStations}
+                    onSettingsChange={saveSettings}
                     audioRef={audioRef}
                 />
             )}
@@ -220,3 +277,4 @@ function PageContent() {
     </>
   );
 }
+
