@@ -19,6 +19,7 @@ export {
     Layers,
     LayoutDashboard,
     Loader,
+    LogIn,
     Network,
     PanelLeftOpen,
     Pencil,
