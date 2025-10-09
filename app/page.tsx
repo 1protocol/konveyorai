@@ -45,7 +45,7 @@ export default function LandingPage() {
                         <div className="space-y-2">
                              <h4 className="font-semibold flex items-center gap-2 text-xl"><Rocket className="text-accent/60 w-5 h-5"/>Proje Sunumu</h4>
                              <p className="text-muted-foreground text-base">
-                                "Bu proje, endüstriyel verimliliği ve iş güvenliğini bir araya getiren bir mühendislik vizyonunun somut bir çıktısıdır. Konveyor AI ile amacım, reaktif bakımın getirdiği üretim kayıplarını ortadan kaldırmak ve yapay zeka destekli proaktif analizlerle 'sıfır duruş' hedefine bir adım daha yaklaşmaktır. Bu sistem, sadece bir anomali tespit aracı değil, aynı zamanda daha akıllı ve öngörülebilir bir üretim geleceğine atılan bir adımdır."
+                                "Konveyor AI , endüstriyel üretim hatlarındaki verimlilik ve iş miktarını artırmak amacıyla geliştirilmiş, yapay zeka tabanlı bir anomali tespit sistemidir. Geleneksel reaktif bakım yöntemlerinin neden olduğu üretim kayıplarını ve güvenlik risklerini ortadan kaldırmayı hedefler. Sistem, canlı video akışlarını veya mevcut video Google Gemini modeliyle analiz ederek, bantlarındaki milimetrik sapmaları dahi gerçek zamanlı olarak tespit eder. Belirlenen kritik eşik aşıldığında operatörleri anında uyararak proaktif müdahaleye olanak tanır. Bu proje, sadece bir hata tespit aracının ötesinde, üretim süreçlerini daha akıllı, öngörülebilir ve verimli hale getiren modern bir endüstriyel otomasyon çözümüdür."
                              </p>
                         </div>
                     </CardContent>
