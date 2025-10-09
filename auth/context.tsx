@@ -33,7 +33,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (username: string, pass: string) => {
     // Demo credentials
-    if (username === 'admin' && pass === 'gemini123') {
+    if (username === 'admin' && pass === 'yongatek') {
       const userData = { username: 'admin' };
       localStorage.setItem('konveyor-user', JSON.stringify(userData));
       setUser(userData);
