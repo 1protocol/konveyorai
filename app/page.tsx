@@ -153,18 +153,26 @@ export default function LandingPage() {
              <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-8">
                 Yorumunuz deneyim için bir rota.Gelişim için yeniliği açan anahtar.
             </h2>
-             <Button size="lg" asChild className="h-14 text-lg font-semibold group">
-                <Link href="/dashboard">
-                    Kontrol Panelini Keşfet
-                    <ArrowRight className="ml-2 h-6 w-6 transition-transform duration-300 group-hover:translate-x-1" />
-                </Link>
-            </Button>
+            <div className="flex justify-center items-center gap-4">
+                 <Button size="lg" asChild variant="outline" className="h-14 text-lg font-semibold group">
+                    <Link href="https://github.com/1protocol/konveyorai" target="_blank">
+                        <Github className="mr-2 h-5 w-5" />
+                        Proje Genel Raporu
+                    </Link>
+                </Button>
+                <Button size="lg" asChild className="h-14 text-lg font-semibold group">
+                    <Link href="/dashboard">
+                        Kontrol Panelini Keşfet
+                        <ArrowRight className="ml-2 h-6 w-6 transition-transform duration-300 group-hover:translate-x-1" />
+                    </Link>
+                </Button>
+            </div>
         </section>
 
       </main>
 
       <footer className="container mx-auto px-4 py-6 text-center text-muted-foreground border-t border-border">
-        <p>©2025 Mustafa USLU - Proje Geliştirici - KonveyorAİ Sunumu</p>
+        <p>©2025 Mustafa USLU - Proje Sunumu</p>
       </footer>
     </div>
   );
