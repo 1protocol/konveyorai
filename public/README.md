@@ -2,7 +2,7 @@
 
 **Proje Adı:** Konveyor AI
 **Proje Amacı:** Endüstriyel konveyör bant sapmalarını yapay zeka ile proaktif olarak tespit ederek, anormal durumları anında bildirmek, riskleri yönetmek ve üretim süreçlerinde sürdürülebilir verimlilik sağlamak.
-**Geliştirici:** Adınız Soyadınız
+**Geliştirici:** Mustafa USLU
 
 ---
 

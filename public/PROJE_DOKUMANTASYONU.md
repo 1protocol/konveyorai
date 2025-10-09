@@ -1,6 +1,6 @@
 # Konveyor AI: Endüstriyel Görüntü İşleme ile Konveyör Bandı Güvenlik Sisteminin Analizi ve Sunumu
 
-**Hazırlayan:** Mustafa USLU (Proje Geliştirici) & Genkit SDK
+**Hazırlayan:** Mustafa USLU (Geliştirici) & Genkit SDK
 **Tarih:** 08.10.2025
 **Proje Niteliği:** Proje Sunumu
 

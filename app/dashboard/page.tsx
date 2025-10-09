@@ -62,7 +62,7 @@ export default function DashboardPage() {
 function PageContent() {
     const searchParams = useSearchParams();
     const { toast } = useToast();
-    const { logout } = useAuth();
+    const { user, logout } = useAuth();
     const router = useRouter();
     const view = searchParams.get('view');
     const section = searchParams.get('section');
@@ -142,7 +142,7 @@ function PageContent() {
         localStorage.setItem("konveyorAIStations", JSON.stringify(newStations));
          toast({
             title: "İstasyonlar Güncellendi",
-            description: "Değişiklikler anında kaydedildi.",
+            description: "Değişiklikler başarıyla kaydedildi.",
         });
       }
     }, [isClient, toast]);
@@ -153,7 +153,7 @@ function PageContent() {
           localStorage.setItem("konveyorAISettings", JSON.stringify(newSettings));
            toast({
             title: "Ayarlar Güncellendi",
-            description: "Değişiklikler anında kaydedildi.",
+            description: "Değişiklikler başarıyla kaydedildi.",
         });
         }
     }, [isClient, toast]);
@@ -247,7 +247,7 @@ function PageContent() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Hesabım</DropdownMenuLabel>
+                <DropdownMenuLabel>Hesabım ({user?.username})</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout}>
                     Çıkış Yap

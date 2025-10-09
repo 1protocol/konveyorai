@@ -17,6 +17,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Prevent hydration errors by running this effect only on the client
     try {
       const storedUser = localStorage.getItem('konveyor-user');
       if (storedUser) {
@@ -25,8 +26,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (error) {
       console.error("Failed to parse user from localStorage", error);
       localStorage.removeItem('konveyor-user');
+    } finally {
+        setLoading(false);
     }
-    setLoading(false);
   }, []);
 
   const login = async (username: string, pass: string) => {

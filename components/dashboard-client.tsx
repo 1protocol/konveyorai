@@ -106,27 +106,35 @@ export type Station = {
 export type Operator = {
   id: string;
   name: string;
+  title: string;
+  phone: string;
   email: string;
+  lastLogin?: string;
 };
 
 interface DashboardClientProps {
   stations: Station[];
   settings: AppSettings;
+  onStationsChange: (stations: Station[]) => void;
+  onSettingsChange: (settings: AppSettings) => void;
   audioRef: React.RefObject<HTMLAudioElement>;
 }
 
 export function DashboardClient({ 
   stations: initialStations, 
-  settings: initialSettings, 
-  audioRef
+  settings: initialSettings,
+  onStationsChange,
+  onSettingsChange,
+  audioRef,
 }: DashboardClientProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
+  const { toast } = useToast();
   
   const [stations, setStations] = useState<Station[]>(initialStations);
   const [settings, setSettings] = useState<AppSettings>(initialSettings);
-
+  
   const selectedStationId = searchParams.get('station') || (stations.length > 0 ? stations[0].id : null);
   const selectedStation = stations.find(s => s.id === selectedStationId) || (stations.length > 0 ? stations[0] : null);
 
@@ -137,7 +145,6 @@ export function DashboardClient({
   );
   const [logs, setLogs] = useState<AnomalyLog[]>([]);
   const [deviationData, setDeviationData] = useState<DeviationData[]>([]);
-  const { toast } = useToast();
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const captureCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -161,49 +168,33 @@ export function DashboardClient({
   const isAnomaly = status === "ANOMALİ";
   const isCalibrating = calibratingStationId === selectedStationId;
 
+  // Sync props to state
+  useEffect(() => {
+    setStations(initialStations);
+  }, [initialStations]);
+
+  useEffect(() => {
+    setSettings(initialSettings);
+  }, [initialSettings]);
 
   useEffect(() => {
     setIsClient(true);
-    setStations(initialStations);
-    setSettings(initialSettings);
-  }, [initialStations, initialSettings]);
-
-  useEffect(() => {
-    if (isClient) {
-      try {
-        const savedLogs = localStorage.getItem("konveyorAILogs");
-        if (savedLogs) {
-          setLogs(JSON.parse(savedLogs));
-        }
-      } catch (error) {
-        console.error("Yerel depolamadan kayıtlar okunurken hata oluştu:", error);
+    try {
+      const savedLogs = localStorage.getItem("konveyorAILogs");
+      if (savedLogs) {
+        setLogs(JSON.parse(savedLogs));
       }
+    } catch (error) {
+      console.error("Yerel depolamadan kayıtlar okunurken hata oluştu:", error);
     }
-  }, [isClient]);
+  }, []);
   
   const saveLogs = useCallback((newLogs: AnomalyLog[]) => {
     setLogs(newLogs);
-    if (isClient) {
+    if (typeof window !== 'undefined') {
         localStorage.setItem("konveyorAILogs", JSON.stringify(newLogs));
     }
-  }, [isClient]);
-
-  const saveStations = useCallback((newStations: Station[]) => {
-      setStations(newStations);
-      if (isClient) {
-        localStorage.setItem("konveyorAIStations", JSON.stringify(newStations));
-        window.dispatchEvent(new StorageEvent('storage', { key: 'konveyorAIStations', newValue: JSON.stringify(newStations) }));
-      }
-  }, [isClient]);
-
-  const saveSettings = useCallback((newSettings: AppSettings) => {
-    setSettings(newSettings);
-    if (isClient) {
-      localStorage.setItem("konveyorAISettings", JSON.stringify(newSettings));
-      window.dispatchEvent(new StorageEvent('storage', { key: 'konveyorAISettings', newValue: JSON.stringify(newSettings) }));
-    }
-  }, [isClient]);
-
+  }, []);
 
   const playAlertSound = useCallback(() => {
     if (settings.isSoundAlertEnabled && audioRef.current) {
@@ -447,12 +438,12 @@ export function DashboardClient({
   
   const filteredLogs = selectedStationId ? logs.filter(log => log.stationId === selectedStationId) : [];
 
-  const handleSaveSettings = () => {
-    saveStations(stations);
-    saveSettings(settings);
+  const handleSaveAllChanges = () => {
+    onStationsChange(stations);
+    onSettingsChange(settings);
     toast({
         title: "Ayarlar Kaydedildi",
-        description: "Yeni yapılandırmanız başarıyla kaydedildi.",
+        description: "Tüm değişiklikler başarıyla kaydedildi.",
     });
   };
 
@@ -465,7 +456,8 @@ export function DashboardClient({
       toast({ variant: 'destructive', title: 'Son İstasyon Silinemez', description: 'Sistemde en az bir istasyon bulunmalıdır.' });
       return;
     }
-    setStations(prev => prev.filter(station => station.id !== id));
+    const newStations = stations.filter(station => station.id !== id);
+    setStations(newStations);
   };
 
   const handleScanNetwork = () => {
@@ -657,7 +649,7 @@ export function DashboardClient({
                                     </DialogContent>
                                 </Dialog>
                             </div>
-                             <div className="flex justify-end pt-4"><Button onClick={handleSaveSettings}>Değişiklikleri Kaydet</Button></div>
+                             <div className="flex justify-end pt-4"><Button onClick={handleSaveAllChanges}>Değişiklikleri Kaydet</Button></div>
                         </CardContent>
                     </Card>
                 </TabsContent>
@@ -689,7 +681,7 @@ export function DashboardClient({
                                 </div>
                             </CardContent>
                         </Card>
-                        <div className="flex justify-end pt-4"><Button onClick={handleSaveSettings}>Değişiklikleri Kaydet</Button></div>
+                        <div className="flex justify-end pt-4"><Button onClick={handleSaveAllChanges}>Değişiklikleri Kaydet</Button></div>
                     </div>
                 </TabsContent>
             </Tabs>
@@ -799,10 +791,10 @@ interface SettingsContentProps {
 
 export function SettingsContent({
   activeSection,
-  operators,
+  operators: initialOperators,
   onOperatorsChange,
 }: SettingsContentProps) {
-  const [currentOperators, setCurrentOperators] = useState(operators);
+  const [operators, setOperators] = useState(initialOperators);
   const [isEditing, setIsEditing] = useState<string | null>(null);
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [currentOperator, setCurrentOperator] = useState<Partial<Operator>>({});
@@ -810,19 +802,12 @@ export function SettingsContent({
   const { toast } = useToast();
 
   useEffect(() => {
-    setCurrentOperators(operators);
-  }, [operators]);
-
-  const handleSave = () => {
-    onOperatorsChange(currentOperators);
-    toast({
-        title: "Operatörler Kaydedildi",
-        description: "Değişiklikler başarıyla kaydedildi.",
-    });
-  };
+    setOperators(initialOperators);
+  }, [initialOperators]);
 
   const handleAddNew = () => {
-    setCurrentOperator({});
+    setCurrentOperator({ name: '', email: '', title: '', phone: '' });
+    setIsEditing(null);
     setOpenAddDialog(true);
   };
   
@@ -833,34 +818,51 @@ export function SettingsContent({
   };
 
   const handleDelete = (id: string) => {
-    setCurrentOperators(prev => prev.filter(op => op.id !== id));
+    const updatedOperators = operators.filter(op => op.id !== id);
+    setOperators(updatedOperators);
   };
   
   const handleSaveOperator = () => {
-    if (!currentOperator.name || !currentOperator.email) {
-      toast({ variant: 'destructive', title: 'Eksik Bilgi', description: 'Lütfen operatör adı ve e-posta adresini girin.' });
+    if (!currentOperator.name || !currentOperator.email || !currentOperator.title || !currentOperator.phone) {
+      toast({ variant: 'destructive', title: 'Eksik Bilgi', description: 'Lütfen tüm operatör bilgilerini girin.' });
       return;
     }
     
+    let updatedOperators;
     if (isEditing) {
-      setCurrentOperators(prev => prev.map(op => op.id === isEditing ? {...op, ...currentOperator} : op));
+      updatedOperators = operators.map(op => op.id === isEditing ? {...op, ...currentOperator} as Operator : op);
     } else {
       const newOperator: Operator = {
         id: (Date.now() + Math.random()).toString(36),
-        name: currentOperator.name,
-        email: currentOperator.email,
+        name: currentOperator.name!,
+        email: currentOperator.email!,
+        title: currentOperator.title!,
+        phone: currentOperator.phone!,
+        lastLogin: new Date().toLocaleString('tr-TR')
       };
-      setCurrentOperators(prev => [...prev, newOperator]);
+      updatedOperators = [...operators, newOperator];
     }
     
+    setOperators(updatedOperators);
     setOpenAddDialog(false);
     setIsEditing(null);
     setCurrentOperator({});
   };
 
+  const handleCloseDialog = (isOpen: boolean) => {
+    if (!isOpen) {
+        setIsEditing(null);
+        setCurrentOperator({});
+    }
+    setOpenAddDialog(isOpen);
+  }
+
+  const handleSaveChanges = () => {
+    onOperatorsChange(operators);
+  };
 
   return (
-     <div className="space-y-8 max-w-4xl mx-auto">
+     <div className="space-y-8 max-w-5xl mx-auto">
         {activeSection === 'operators' && (
              <Card className="bg-card/50 border-white/10 h-full">
                 <CardHeader>
@@ -881,17 +883,23 @@ export function SettingsContent({
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>İsim</TableHead>
+                                <TableHead>İsim Soyisim</TableHead>
+                                <TableHead>Ünvan</TableHead>
+                                <TableHead>Telefon</TableHead>
                                 <TableHead>E-posta</TableHead>
+                                <TableHead>Son Giriş</TableHead>
                                 <TableHead className="text-right">Eylemler</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {currentOperators.length > 0 ? (
-                                currentOperators.map(op => (
+                            {operators.length > 0 ? (
+                                operators.map(op => (
                                     <TableRow key={op.id}>
                                         <TableCell className="font-medium">{op.name}</TableCell>
+                                        <TableCell>{op.title}</TableCell>
+                                        <TableCell>{op.phone}</TableCell>
                                         <TableCell>{op.email}</TableCell>
+                                        <TableCell>{op.lastLogin || 'N/A'}</TableCell>
                                         <TableCell className="text-right space-x-2">
                                             <Button variant="ghost" size="icon" onClick={() => handleEdit(op)}>
                                                 <Pencil className="h-4 w-4" />
@@ -904,7 +912,7 @@ export function SettingsContent({
                                 ))
                             ) : (
                                 <TableRow>
-                                    <TableCell colSpan={3} className="h-24 text-center">
+                                    <TableCell colSpan={6} className="h-24 text-center">
                                         Henüz operatör eklenmemiş.
                                     </TableCell>
                                 </TableRow>
@@ -915,15 +923,23 @@ export function SettingsContent({
             </Card>
         )}
 
-        <Dialog open={openAddDialog} onOpenChange={setOpenAddDialog}>
-            <DialogContent>
+        <Dialog open={openAddDialog} onOpenChange={handleCloseDialog}>
+            <DialogContent className="sm:max-w-[480px]">
                 <DialogHeader>
                     <DialogTitle>{isEditing ? 'Operatörü Düzenle' : 'Yeni Operatör Ekle'}</DialogTitle>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
                     <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="op-name" className="text-right">İsim</Label>
+                        <Label htmlFor="op-name" className="text-right">İsim Soyisim</Label>
                         <Input id="op-name" value={currentOperator.name || ''} onChange={(e) => setCurrentOperator({...currentOperator, name: e.target.value})} className="col-span-3" />
+                    </div>
+                     <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="op-title" className="text-right">Ünvan</Label>
+                        <Input id="op-title" value={currentOperator.title || ''} onChange={(e) => setCurrentOperator({...currentOperator, title: e.target.value})} className="col-span-3" />
+                    </div>
+                     <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="op-phone" className="text-right">Telefon</Label>
+                        <Input id="op-phone" type="tel" value={currentOperator.phone || ''} onChange={(e) => setCurrentOperator({...currentOperator, phone: e.target.value})} className="col-span-3" />
                     </div>
                     <div className="grid grid-cols-4 items-center gap-4">
                         <Label htmlFor="op-email" className="text-right">E-posta</Label>
@@ -931,15 +947,14 @@ export function SettingsContent({
                     </div>
                 </div>
                 <DialogFooter>
-                    <Button type="button" variant="outline" onClick={() => { setOpenAddDialog(false); setIsEditing(null); }}>İptal</Button>
+                    <Button type="button" variant="outline" onClick={() => handleCloseDialog(false)}>İptal</Button>
                     <Button onClick={handleSaveOperator}>{isEditing ? 'Değişiklikleri Kaydet' : 'Operatör Ekle'}</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
-
         {activeSection === 'operators' && (
             <div className="flex justify-end pt-4">
-                 <Button onClick={handleSave}>Değişiklikleri Kaydet</Button>   
+                 <Button onClick={handleSaveChanges}>Değişiklikleri Kaydet</Button>   
             </div>
         )}
     </div>
