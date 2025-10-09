@@ -45,23 +45,12 @@ export default function LandingPage() {
                         <div className="space-y-2">
                              <h4 className="font-semibold flex items-center gap-2 text-xl"><Rocket className="text-accent/60 w-5 h-5"/>Proje Sunumu</h4>
                              <p className="text-muted-foreground text-base">
-                                "Konveyor AI , endüstriyel üretim hatlarındaki verimlilik ve iş miktarını artırmak amacıyla geliştirilmiş, yapay zeka tabanlı bir anomali tespit sistemidir. Geleneksel reaktif bakım yöntemlerinin neden olduğu üretim kayıplarını ve güvenlik risklerini ortadan kaldırmayı hedefler. Sistem, canlı video akışlarını veya mevcut video Google Gemini modeliyle analiz ederek, bantlarındaki milimetrik sapmaları dahi gerçek zamanlı olarak tespit eder. Belirlenen kritik eşik aşıldığında operatörleri anında uyararak proaktif müdahaleye olanak tanır. Bu proje, sadece bir hata tespit aracının ötesinde, üretim süreçlerini daha akıllı, öngörülebilir ve verimli hale getiren modern bir endüstriyel otomasyon çözümüdür."
+                                Konveyor AI , endüstriyel üretim hatlarındaki verimlilik ve iş miktarını artırmak amacıyla geliştirilmiş, yapay zeka tabanlı bir anomali tespit sistemidir. Geleneksel reaktif bakım yöntemlerinin neden olduğu üretim kayıplarını ve güvenlik risklerini ortadan kaldırmayı hedefler. Sistem, canlı video akışlarını veya mevcut video Google Gemini modeliyle analiz ederek, bantlarındaki milimetrik sapmaları dahi gerçek zamanlı olarak tespit eder. Belirlenen kritik eşik aşıldığında operatörleri anında uyararak proaktif müdahaleye olanak tanır.  Bu proje, sadece bir hata tespit aracının ötesinde, üretim süreçlerini daha akıllı, öngörülebilir ve verimli hale getiren modern bir endüstriyel otomasyon çözümüdür.
                              </p>
                         </div>
                     </CardContent>
                     <CardFooter className="p-0 pt-6 flex flex-wrap gap-4">
-                        <Button asChild variant="outline">
-                            <Link href="/README.md" target="_blank">
-                                <FileText className="mr-2"/>
-                                Proje Raporunu İncele
-                            </Link>
-                        </Button>
-                        <Button asChild variant="outline">
-                            <Link href="https://aistudio.google.com/app/apikey" target="_blank">
-                                <KeyRound className="mr-2"/>
-                                API Anahtarı Al
-                            </Link>
-                        </Button>
+                        
                     </CardFooter>
                 </div>
             </div>
@@ -175,7 +164,7 @@ export default function LandingPage() {
       </main>
 
       <footer className="container mx-auto px-4 py-6 text-center text-muted-foreground border-t border-border">
-        <p>©2025 Mustafa USLU - Proje Sunumu</p>
+        <p>©2025 Mustafa USLU - Proje Geliştirici - KonveyorAİ Sunumu</p>
       </footer>
     </div>
   );
