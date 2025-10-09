@@ -96,12 +96,6 @@ Projeyi yerel makinenizde çalıştırmak için aşağıdaki adımları izleyin.
 
 Uygulama artık tarayıcınızda çalışmaya hazır!
 
-## <a name="login"></a>🔑 Giriş Bilgileri
-
-Uygulama, temel bir kimlik doğrulama sistemi kullanır. Kontrol paneline erişmek için aşağıdaki demo kimlik bilgilerini kullanabilirsiniz:
-
-- **Kullanıcı Adı:** `admin`
-- **Şifre:** `gemini123`
 
 ## <a name="file-structure"></a>📂 Dosya Yapısı ve Mimarisi
 
