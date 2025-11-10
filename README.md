@@ -24,7 +24,7 @@
 
 ## <a name="about"></a>📖 Proje Hakkında
 
-**Konveyor AI**, endüstriyel üretim hatlarındaki verimliliği ve iş güvenliğini artırmak amacıyla geliştirilmiş, yapay zeka tabanlı bir anomali tespit sistemidir. Geleneksel reaktif bakım yöntemlerinin neden olduğu üretim kayıplarını ve güvenlik risklerini ortadan kaldırmayı hedefler. Sistem, canlı video akışlarını veya mevcut video dosyalarını **Google Gemini** modeliyle analiz ederek, konveyör bantlarındaki milimetrik sapmaları dahi gerçek zamanlı olarak tespit eder. Belirlenen kritik eşik aşıldığında operatörleri anında uyararak proaktif müdahaleye olanak tanır.
+**Konveyor AI**, endüstriyel üretim hatlarındaki verimliliği ve iş güvenliğini artırmak amacıyla geliştirilmiş, yapay zeka tabanlı bir anomali tespit sistemidir. Geleneksel reaktif bakım yöntemlerinin neden olduğu üretim kayıplarını ve güvenlik risklerini ortadan kaldırmayı hedefler. Sistem, canlı video akışlarını veya mevcut video dosyalarını analiz ederek, konveyör bantlarındaki milimetrik sapmaları gerçek zamanlı olarak tespit eder. Belirlenen kritik eşik aşıldığında operatörleri anında uyararak proaktif müdahaleye olanak tanır.
 
 Bu proje, sadece bir hata tespit aracı olmanın ötesinde, üretim süreçlerini daha akıllı, öngörülebilir ve verimli hale getiren modern bir endüstriyel otomasyon çözümüdür.
 
@@ -135,5 +135,5 @@ konveyorai/
 
 ---
 <div align="center">
-  <p>© 2025 Mustafa USLU - Proje Sunumu</p>
+  <p>© 2025 Mustafa USLU -/p>
 </div>
